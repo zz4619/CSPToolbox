@@ -1,0 +1,77 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_MALEHY01
+_chemical_name_common            'Maleic hydrazide'
+_chemical_formula_moiety         'C4 H4 N2 O2'
+_chemical_name_systematic        1,2-Dihydropyridazine-3,6-dione
+_chemical_properties_biological  'growth inhibitory activity in agriculture'
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/c'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2ybc'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,1/2+y,1/2-z
+3 -x,-y,-z
+4 x,1/2-y,1/2+z
+_cell_length_a                   6.891(2)
+_cell_length_b                   9.674(2)
+_cell_length_c                   6.946(1)
+_cell_angle_alpha                90
+_cell_angle_beta                 100.07(2)
+_cell_angle_gamma                90
+_cell_volume                     455.912
+_chemical_melting_point          306-308K
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+N1 N 0.7376(2) 0.1104(1) 0.1054(2)
+N2 N 0.9292(2) 0.1485(1) 0.1129(2)
+C1 C 0.9621(2) 0.2804(1) 0.1295(2)
+O1 O 1.1468(2) 0.3258(1) 0.1384(2)
+C2 C 0.8131(2) 0.3795(1) 0.1390(3)
+C3 C 0.6261(2) 0.3364(1) 0.1309(2)
+C4 C 0.5824(2) 0.1915(1) 0.1121(2)
+O2 O 0.4129(2) 0.1406(1) 0.1039(2)
+H1 H 0.717(4) 0.028(4) 0.083(4)
+H2 H 1.236(5) 0.244(5) 0.132(5)
+H3 H 0.844(4) 0.472(3) 0.149(4)
+H4 H 0.520(3) 0.398(3) 0.135(3)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+N1 N2 1_555 1_555
+N2 C1 1_555 1_555
+C1 O1 1_555 1_555
+O1 H2 1_555 1_555
+C2 C1 1_555 1_555
+C3 C2 1_555 1_555
+C4 N1 1_555 1_555
+O2 C4 1_555 1_555
+H1 N1 1_555 1_555
+H3 C2 1_555 1_555
+H4 C3 1_555 1_555
+C3 C4 1_555 1_555
+
+#END

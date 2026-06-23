@@ -1,0 +1,80 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_AMNTPY
+_chemical_formula_moiety         'C5 H5 N3 O2'
+_chemical_name_systematic        2-Amino-3-nitropyridine
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/n'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2yn'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2-x,1/2+y,1/2-z
+3 -x,-y,-z
+4 1/2+x,1/2-y,1/2+z
+_cell_length_a                   8.743(1)
+_cell_length_b                   4.898(1)
+_cell_length_c                   14.473(1)
+_cell_angle_alpha                90
+_cell_angle_beta                 106.57(1)
+_cell_angle_gamma                90
+_cell_volume                     594.042
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C1 C 0.32173 0.16128 0.47594
+C2 C 0.21437 -0.05798 0.46982
+C3 C 0.19416 -0.17417 0.55308
+C4 C 0.27964 -0.07537 0.64098
+C5 C 0.38186 0.13976 0.64219
+H1 H 0.43400 0.43100 0.41500
+H2 H 0.30700 0.22800 0.34400
+H3 H 0.11600 -0.32500 0.54500
+H4 H 0.27300 -0.14900 0.70200
+H5 H 0.44400 0.21500 0.70100
+N1 N 0.40401 0.25785 0.56456
+N2 N 0.35207 0.29200 0.40207
+N3 N 0.12528 -0.17335 0.37890
+O1 O 0.14801 -0.08376 0.30413
+O2 O 0.02980 -0.35806 0.37814
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+C1 C2 1_555 1_555
+C2 C3 1_555 1_555
+C3 C4 1_555 1_555
+C4 C5 1_555 1_555
+C5 H5 1_555 1_555
+H1 N2 1_555 1_555
+H2 N2 1_555 1_555
+H3 C3 1_555 1_555
+H4 C4 1_555 1_555
+N1 C1 1_555 1_555
+N2 C1 1_555 1_555
+N3 C2 1_555 1_555
+O1 N3 1_555 1_555
+O2 N3 1_555 1_555
+C5 N1 1_555 1_555
+
+#END

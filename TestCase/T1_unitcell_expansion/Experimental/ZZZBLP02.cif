@@ -1,0 +1,128 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_ZZZBLP02
+_chemical_formula_moiety         'C14 H8 Cl2'
+_chemical_name_systematic        1,8-Dichloroanthracene
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/c'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2ybc'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,1/2+y,1/2-z
+3 -x,-y,-z
+4 x,1/2-y,1/2+z
+_cell_length_a                   19.0070(14)
+_cell_length_b                   3.8621(3)
+_cell_length_c                   15.1370(11)
+_cell_angle_alpha                90
+_cell_angle_beta                 107.4103(15)
+_cell_angle_gamma                90
+_cell_volume                     1060.25
+_exptl_crystal_colour            colorless
+_exptl_crystal_description       needle
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+Cl2 Cl 0.382516(13) 0.29325(7) 0.371481(17) 0.0173 Uani
+Cl1 Cl 0.130329(14) 0.83680(7) 0.229521(17) 0.0183 Uani
+C1 C 0.12833(5) 0.9344(3) 0.34099(7) 0.0140 Uani
+C2 C 0.06746(6) 1.0937(3) 0.35174(7) 0.0165 Uani
+H2 H 0.0270 1.1473 0.2991 0.0200 Uiso
+C3 C 0.06480(6) 1.1791(3) 0.44184(8) 0.0179 Uani
+H3 H 0.0220 1.2864 0.4494 0.0210 Uiso
+C4 C 0.12310(6) 1.1087(3) 0.51775(7) 0.0168 Uani
+H4 H 0.1209 1.1719 0.5775 0.0200 Uiso
+C5 C 0.37151(6) 0.6169(3) 0.65498(7) 0.0172 Uani
+H5 H 0.3702 0.6826 0.7150 0.0210 Uiso
+C6 C 0.43164(6) 0.4487(3) 0.64500(7) 0.0187 Uani
+H6 H 0.4719 0.3980 0.6982 0.0220 Uiso
+C7 C 0.43488(6) 0.3484(3) 0.55613(8) 0.0173 Uani
+H7 H 0.4771 0.2309 0.5500 0.0210 Uiso
+C8 C 0.37733(5) 0.4207(3) 0.47958(7) 0.0141 Uani
+C9 C 0.25283(5) 0.6755(3) 0.40811(7) 0.0131 Uani
+H9 H 0.2546 0.6121 0.3482 0.0160 Uiso
+C10 C 0.24777(6) 0.8657(3) 0.58497(7) 0.0152 Uani
+H10 H 0.2463 0.9321 0.6448 0.0180 Uiso
+C11 C 0.19057(5) 0.8459(3) 0.41776(7) 0.0130 Uani
+C12 C 0.18742(5) 0.9407(3) 0.50812(7) 0.0141 Uani
+C13 C 0.31246(5) 0.5974(3) 0.48543(7) 0.0129 Uani
+C14 C 0.31032(6) 0.6954(3) 0.57603(7) 0.0141 Uani
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+Cl2 0.01612(11) 0.01846(12) 0.01843(12) -0.00174(8) 0.00698(8) 0.00085(8)
+Cl1 0.01790(12) 0.02263(13) 0.01357(11) -0.00045(8) 0.00371(8) 0.00230(9)
+C1 0.0140(4) 0.0139(4) 0.0146(4) -0.0002(3) 0.0049(3) -0.0012(3)
+C2 0.0145(4) 0.0151(4) 0.0201(4) -0.0005(4) 0.0054(3) 0.0000(3)
+C3 0.0161(4) 0.0167(5) 0.0232(5) -0.0015(4) 0.0093(4) 0.0009(3)
+C4 0.0184(4) 0.0159(4) 0.0190(4) -0.0019(4) 0.0101(4) -0.0007(4)
+C5 0.0195(4) 0.0165(5) 0.0136(4) 0.0009(4) 0.0018(3) -0.0032(4)
+C6 0.0192(4) 0.0163(5) 0.0172(4) 0.0016(4) 0.0001(3) -0.0020(4)
+C7 0.0147(4) 0.0154(4) 0.0201(4) 0.0011(4) 0.0026(3) -0.0006(3)
+C8 0.0136(4) 0.0132(4) 0.0156(4) -0.0002(3) 0.0044(3) -0.0012(3)
+C9 0.0126(4) 0.0138(4) 0.0132(4) -0.0003(3) 0.0042(3) -0.0016(3)
+C10 0.0174(4) 0.0155(4) 0.0134(4) -0.0009(3) 0.0059(3) -0.0031(3)
+C11 0.0134(4) 0.0126(4) 0.0136(4) -0.0002(3) 0.0051(3) -0.0020(3)
+C12 0.0162(4) 0.0130(4) 0.0148(4) -0.0013(3) 0.0071(3) -0.0025(3)
+C13 0.0130(4) 0.0124(4) 0.0135(4) -0.0001(3) 0.0043(3) -0.0023(3)
+C14 0.0161(4) 0.0132(4) 0.0128(4) 0.0000(3) 0.0040(3) -0.0035(3)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+Cl2 C8 1_555 1_555
+Cl1 C1 1_555 1_555
+C1 C2 1_555 1_555
+C2 H2 1_555 1_555
+C3 C2 1_555 1_555
+H3 C3 1_555 1_555
+C4 C3 1_555 1_555
+H4 C4 1_555 1_555
+C5 H5 1_555 1_555
+C6 C5 1_555 1_555
+H6 C6 1_555 1_555
+C7 C6 1_555 1_555
+H7 C7 1_555 1_555
+C8 C7 1_555 1_555
+C9 H9 1_555 1_555
+C10 H10 1_555 1_555
+C11 C1 1_555 1_555
+C12 C4 1_555 1_555
+C13 C8 1_555 1_555
+C14 C5 1_555 1_555
+C9 C11 1_555 1_555
+C9 C13 1_555 1_555
+C10 C12 1_555 1_555
+C10 C14 1_555 1_555
+C11 C12 1_555 1_555
+C13 C14 1_555 1_555
+
+#END

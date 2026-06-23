@@ -1,0 +1,108 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_CONVIL01
+_chemical_name_common            'chlorokojic acid'
+_chemical_formula_moiety         'C6 H5 Cl1 O3'
+_chemical_name_systematic        2-(Chloromethyl)-5-hydroxy-4H-pyran-4-one
+_symmetry_cell_setting           orthorhombic
+_symmetry_space_group_name_H-M   'P n a 21'
+_symmetry_Int_Tables_number      33
+_space_group_name_Hall           'P 2c -2n'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,-y,1/2+z
+3 1/2-x,1/2+y,1/2+z
+4 1/2+x,1/2-y,z
+_cell_length_a                   20.4155(4)
+_cell_length_b                   4.28430(10)
+_cell_length_c                   7.24990(10)
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_volume                     634.121
+_exptl_crystal_colour            colorless
+_exptl_crystal_description       plate
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+ClCL(1) Cl 0.721726(7) 0.06264(4) 0.741603(1) 0.0156 Uani
+O(1) O 0.65549(4) 0.19196(19) 0.35408(11) 0.0130 Uani
+O(7) O 0.50661(4) -0.4295(2) 0.28901(14) 0.0137 Uani
+O(8) O 0.58101(4) -0.2405(2) -0.01588(12) 0.0151 Uani
+C(2) C 0.62087(3) 0.09629(17) 0.50179(9) 0.0108 Uani
+C(3) C 0.57048(3) -0.10834(17) 0.48782(10) 0.0114 Uani
+C(4) C 0.55201(3) -0.23816(16) 0.31122(9) 0.0106 Uani
+C(5) C 0.59162(3) -0.13259(17) 0.15628(9) 0.0113 Uani
+C(6) C 0.64091(3) 0.07374(18) 0.18499(10) 0.0132 Uani
+C(9) C 0.64491(3) 0.23710(18) 0.67698(10) 0.0124 Uani
+H(3) H 0.545685 -0.173 0.614224 0.0270 Uani
+H(8) H 0.539191 -0.35219 -0.022485 0.0260 Uani
+H(6) H 0.67808 0.159164 0.091118 0.0329 Uani
+H(9A) H 0.609532 0.19949 0.787556 0.0284 Uani
+H(9B) H 0.653647 0.48636 0.658446 0.0300 Uani
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+ClCL(1) 0.01224(5) 0.02128(7) 0.01316(5) -0.00215(6) -0.00177(5) 0.00248(5)
+O(1) 0.0145(2) 0.0148(3) 0.0096(2) 0.0002(2) 0.0003(2) -0.0043(2)
+O(7) 0.0134(3) 0.0154(3) 0.0122(2) 0.0005(2) 0.0000(2) -0.0047(3)
+O(8) 0.0157(3) 0.0202(3) 0.0094(2) -0.0017(2) 0.0004(2) -0.0060(3)
+C(2) 0.0117(2) 0.0113(2) 0.0093(2) 0.00025(18) -0.00040(18) -0.00074(19)
+C(3) 0.0118(2) 0.0129(2) 0.0096(2) 0.00031(19) 0.00062(19) -0.0011(2)
+C(4) 0.0105(2) 0.0117(2) 0.0095(2) 0.00056(17) -0.00005(17) -0.00097(19)
+C(5) 0.0115(2) 0.0133(3) 0.0091(2) 0.00003(18) 0.00007(18) -0.0021(2)
+C(6) 0.0139(2) 0.0164(3) 0.0093(2) 0.0002(2) 0.0003(2) -0.0046(2)
+C(9) 0.0135(2) 0.0130(3) 0.0107(2) -0.0008(2) -0.0014(2) 0.0011(2)
+H(3) 0.028095 0.03539 0.017615 0.002958 0.005779 -0.006032
+H(8) 0.023635 0.032062 0.022313 -0.003209 0.000464 -0.009037
+H(6) 0.032031 0.044701 0.021978 0.000224 0.007904 -0.017396
+H(9A) 0.024314 0.040523 0.020282 0.000829 0.003906 0.001281
+H(9B) 0.036883 0.020483 0.032725 0.000531 -0.006821 -0.003115
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+ClCL(1) C(9) 1_555 1_555
+O(1) C(2) 1_555 1_555
+O(7) C(4) 1_555 1_555
+O(8) C(5) 1_555 1_555
+C(2) C(3) 1_555 1_555
+C(3) C(4) 1_555 1_555
+C(4) C(5) 1_555 1_555
+C(5) C(6) 1_555 1_555
+C(6) O(1) 1_555 1_555
+C(9) C(2) 1_555 1_555
+H(3) C(3) 1_555 1_555
+H(8) O(8) 1_555 1_555
+H(6) C(6) 1_555 1_555
+H(9A) C(9) 1_555 1_555
+H(9B) C(9) 1_555 1_555
+
+#END

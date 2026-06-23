@@ -1,0 +1,85 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_ACETPH
+_chemical_name_common            'Teaching Subset: Fundamental Chemistry'
+_chemical_formula_moiety         'C8 H8 O1'
+_chemical_name_systematic        Acetophenone
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/n'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2yn'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2-x,1/2+y,1/2-z
+3 -x,-y,-z
+4 1/2+x,1/2-y,1/2+z
+_cell_length_a                   10.256(1)
+_cell_length_b                   8.678(2)
+_cell_length_c                   8.558(1)
+_cell_angle_alpha                90
+_cell_angle_beta                 121.0(1)
+_cell_angle_gamma                90
+_cell_volume                     652.883
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C1 C 0.37450 -0.18150 0.41940
+C2 C 0.40040 -0.28970 0.55240
+C3 C 0.32860 -0.27500 0.65140
+C4 C 0.23130 -0.15300 0.61940
+C5 C 0.20560 -0.04450 0.48820
+C6 C 0.27680 -0.05890 0.38760
+C7 C 0.45240 -0.20250 0.31380
+C8 C 0.41680 -0.09340 0.16110
+H1 H 0.46900 -0.37700 0.57200
+H2 H 0.35100 -0.35500 0.74800
+H3 H 0.18000 -0.13600 0.69300
+H4 H 0.13600 0.04400 0.46700
+H5 H 0.26000 0.02500 0.29600
+H6 H 0.43800 0.01400 0.20200
+H7 H 0.47900 -0.11900 0.10600
+H8 H 0.30500 -0.10400 0.06300
+O1 O 0.54090 -0.30880 0.35000
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+C1 C2 1_555 1_555
+C2 C3 1_555 1_555
+C3 C4 1_555 1_555
+C4 C5 1_555 1_555
+C5 C6 1_555 1_555
+C6 C1 1_555 1_555
+C7 C1 1_555 1_555
+C8 C7 1_555 1_555
+H1 C2 1_555 1_555
+H2 C3 1_555 1_555
+H3 C4 1_555 1_555
+H4 C5 1_555 1_555
+H5 C6 1_555 1_555
+H6 C8 1_555 1_555
+H7 C8 1_555 1_555
+H8 C8 1_555 1_555
+O1 C7 1_555 1_555
+
+#END

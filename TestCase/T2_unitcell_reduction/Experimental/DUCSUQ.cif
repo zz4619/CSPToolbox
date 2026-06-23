@@ -1,0 +1,95 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_DUCSUQ
+_chemical_name_common            (Z)-2,2,2-Trichloro-N$2!-cyanoacetamidine
+_chemical_formula_moiety         'C3 H2 Cl3 N3'
+_chemical_name_systematic        2,2,2-Trichloro-N'-cyanoethanimidamide
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/n'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2yn'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2-x,1/2+y,1/2-z
+3 -x,-y,-z
+4 1/2+x,1/2-y,1/2+z
+_cell_length_a                   5.5388(4)
+_cell_length_b                   6.6127(4)
+_cell_length_c                   18.4727(12)
+_cell_angle_alpha                90
+_cell_angle_beta                 95.1220(10)
+_cell_angle_gamma                90
+_cell_volume                     673.887
+_exptl_crystal_colour            colorless
+_exptl_crystal_description       block
+_chemical_melting_point          '441 K'
+_cell_formula_units_Z            4
+_exptl_crystal_recrystallization_method acetonitrile
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+Cl1 Cl 0.23790(5) 0.15285(5) 0.181208(18) 0.0298 Uani
+Cl2 Cl 0.66794(6) 0.37010(5) 0.233709(17) 0.0298 Uani
+Cl3 Cl 0.33903(6) 0.53919(5) 0.119806(17) 0.0299 Uani
+C1 C 0.62444(19) 0.20753(17) 0.10178(6) 0.0179 Uani
+C2 C 0.7632(2) -0.09854(17) 0.06561(7) 0.0223 Uani
+C3 C 0.4692(2) 0.31232(17) 0.15584(6) 0.0196 Uani
+N1 N 0.62859(18) 0.01089(15) 0.10646(5) 0.0229 Uani
+N2 N 0.74493(18) 0.32334(15) 0.05999(6) 0.0230 Uani
+H1 H 0.8430 0.2689 0.0305 0.0280 Uiso
+H2 H 0.7277 0.4555 0.0614 0.0280 Uiso
+N3 N 0.8680(2) -0.21297(17) 0.03320(6) 0.0298 Uani
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+Cl1 0.02508(16) 0.02924(17) 0.03733(18) 0.00338(12) 0.01472(13) -0.00196(11)
+Cl2 0.03001(17) 0.03173(17) 0.02701(16) -0.01080(12) -0.00034(12) 0.00592(12)
+Cl3 0.03524(18) 0.02289(16) 0.03307(17) 0.00600(11) 0.01157(13) 0.01263(12)
+C1 0.0173(5) 0.0184(5) 0.0181(5) -0.0011(4) 0.0022(4) 0.0013(4)
+C2 0.0260(6) 0.0158(5) 0.0259(6) 0.0019(4) 0.0060(5) -0.0021(4)
+C3 0.0199(5) 0.0175(5) 0.0221(5) 0.0012(4) 0.0054(4) 0.0025(4)
+N1 0.0269(5) 0.0166(5) 0.0264(5) 0.0000(4) 0.0096(4) 0.0015(4)
+N2 0.0270(5) 0.0168(5) 0.0270(5) 0.0001(4) 0.0121(4) 0.0010(4)
+N3 0.0364(6) 0.0194(5) 0.0355(6) -0.0025(4) 0.0136(5) 0.0012(4)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+Cl1 C3 1_555 1_555
+Cl2 C3 1_555 1_555
+Cl3 C3 1_555 1_555
+C1 C3 1_555 1_555
+C2 N1 1_555 1_555
+N1 C1 1_555 1_555
+N2 C1 1_555 1_555
+H1 N2 1_555 1_555
+H2 N2 1_555 1_555
+N3 C2 1_555 1_555
+
+#END

@@ -1,0 +1,82 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_ANLINT20
+_chemical_formula_moiety         'C7 H6 N2 S1'
+_chemical_name_systematic        p-Thiocyano-aniline
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/c'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2ybc'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,1/2+y,1/2-z
+3 -x,-y,-z
+4 x,1/2-y,1/2+z
+_cell_length_a                   12.364(5)
+_cell_length_b                   4.428(10)
+_cell_length_c                   17.510(5)
+_cell_angle_alpha                90
+_cell_angle_beta                 130.0(2)
+_cell_angle_gamma                90
+_cell_volume                     734.356
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+S1 S -0.31400 0.45390 0.34040
+N1 N -0.12850 1.28040 0.67270
+N2 N -0.31620 0.84110 0.21050
+C1 C -0.17320 1.09960 0.59320
+C2 C -0.31310 1.00300 0.52480
+C3 C -0.35630 0.81170 0.44800
+C4 C -0.26010 0.71260 0.43750
+C5 C -0.12070 0.80370 0.50560
+C6 C -0.07810 0.99490 0.58190
+C7 C -0.31430 0.68820 0.26350
+H1 H -0.19200 1.37300 0.67100
+H2 H -0.05000 1.39200 0.70000
+H3 H -0.37700 1.08000 0.53500
+H4 H -0.46100 0.73700 0.39600
+H5 H -0.05300 0.71900 0.50000
+H6 H 0.02000 1.06600 0.63200
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+S1 C4 1_555 1_555
+N1 C1 1_555 1_555
+N2 C7 1_555 1_555
+C1 C2 1_555 1_555
+C2 C3 1_555 1_555
+C3 C4 1_555 1_555
+C4 C5 1_555 1_555
+C5 C6 1_555 1_555
+C6 C1 1_555 1_555
+C7 S1 1_555 1_555
+H1 N1 1_555 1_555
+H2 N1 1_555 1_555
+H3 C2 1_555 1_555
+H4 C3 1_555 1_555
+H5 C5 1_555 1_555
+H6 C6 1_555 1_555
+
+#END

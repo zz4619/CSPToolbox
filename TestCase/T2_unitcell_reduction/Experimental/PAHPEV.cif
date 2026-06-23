@@ -1,0 +1,128 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_PAHPEV
+_chemical_formula_moiety         'C10 H8 N2 O3 S1'
+_chemical_name_systematic        
+3a,8a-Dihydroxy-2-thioxo-2,3,3a,8a-tetrahydroindeno[1,2-d]imidazol-8(1H)-one
+_chemical_properties_biological  'Antimicrobial activity'
+_symmetry_cell_setting           triclinic
+_symmetry_space_group_name_H-M   'P -1'
+_symmetry_Int_Tables_number      2
+_space_group_name_Hall           '-P 1'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,-y,-z
+_cell_length_a                   7.3461(1)
+_cell_length_b                   7.6776(1)
+_cell_length_c                   9.9715(1)
+_cell_angle_alpha                80.142(1)
+_cell_angle_beta                 85.166(1)
+_cell_angle_gamma                62.195(1)
+_cell_volume                     490.111
+_chemical_melting_point          'decomposes at 493-495 K'
+_cell_formula_units_Z            2
+_exptl_crystal_recrystallization_method chloroform/ethanol
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+S1 S 0.80281(3) 0.88214(3) 0.50296(2) 0.0123 Uani
+O1 O 1.60444(12) 0.63940(13) 0.28179(8) 0.0187 Uani
+O2 O 1.47293(10) 0.35351(10) 0.39639(7) 0.0120 Uani
+O3 O 1.19083(11) 0.36630(10) 0.21082(7) 0.0124 Uani
+N1 N 1.20105(12) 0.67240(12) 0.42752(8) 0.0110 Uani
+N2 N 0.97639(12) 0.66069(12) 0.30275(8) 0.0116 Uani
+C1 C 1.19927(13) 0.66117(13) 0.10178(9) 0.0107 Uani
+C2 C 1.08822(15) 0.71538(14) -0.01784(9) 0.0139 Uani
+C3 C 1.14588(16) 0.81297(15) -0.13111(10) 0.0162 Uani
+C4 C 1.31160(16) 0.85497(14) -0.12606(10) 0.0161 Uani
+C5 C 1.42139(15) 0.80173(14) -0.00659(10) 0.0142 Uani
+C6 C 1.36161(14) 0.70597(13) 0.10732(9) 0.0112 Uani
+C7 C 1.45604(14) 0.63225(13) 0.24237(9) 0.0114 Uani
+C8 C 1.33296(13) 0.53993(13) 0.33330(9) 0.0094 Uani
+C9 C 0.99961(13) 0.73278(13) 0.40983(9) 0.0100 Uani
+C10 C 1.16966(13) 0.54800(13) 0.23462(9) 0.0098 Uani
+H1 H 1.410(3) 0.296(3) 0.441(2) 0.0370 Uiso
+H2 H 1.174(3) 0.310(3) 0.2825(19) 0.0290 Uiso
+H3 H 1.245(3) 0.697(3) 0.4879(18) 0.0240 Uiso
+H4 H 0.863(3) 0.671(2) 0.2841(17) 0.0240 Uiso
+H5 H 0.975(3) 0.684(2) -0.0185(17) 0.0240 Uiso
+H6 H 1.352(3) 0.915(3) -0.2061(18) 0.0270 Uiso
+H7 H 1.069(3) 0.848(3) -0.2162(18) 0.0280 Uiso
+H8 H 1.539(2) 0.826(2) -0.0020(16) 0.0190 Uiso
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+S1 0.01113(10) 0.01077(10) 0.01370(11) -0.00226(7) 0.00235(7) -0.00418(8)
+O1 0.0144(3) 0.0293(4) 0.0184(3) -0.0018(3) -0.0020(3) -0.0153(3)
+O2 0.0097(3) 0.0113(3) 0.0139(3) 0.0001(2) -0.0026(2) -0.0041(2)
+O3 0.0159(3) 0.0128(3) 0.0119(3) -0.0026(2) -0.0002(2) -0.0091(2)
+N1 0.0089(3) 0.0137(3) 0.0115(3) -0.0044(2) -0.0008(2) -0.0052(3)
+N2 0.0076(3) 0.0163(3) 0.0123(3) -0.0041(3) -0.0001(2) -0.0061(3)
+C1 0.0102(3) 0.0115(3) 0.0103(3) -0.0020(3) -0.0006(3) -0.0048(3)
+C2 0.0147(4) 0.0151(4) 0.0118(4) -0.0018(3) -0.0033(3) -0.0064(3)
+C3 0.0197(4) 0.0151(4) 0.0111(4) -0.0010(3) -0.0025(3) -0.0056(3)
+C4 0.0187(4) 0.0141(4) 0.0123(4) -0.0003(3) 0.0024(3) -0.0058(3)
+C5 0.0140(4) 0.0136(4) 0.0145(4) -0.0016(3) 0.0020(3) -0.0065(3)
+C6 0.0103(3) 0.0121(3) 0.0114(3) -0.0014(3) 0.0002(3) -0.0056(3)
+C7 0.0098(3) 0.0136(4) 0.0120(3) -0.0021(3) -0.0001(3) -0.0062(3)
+C8 0.0081(3) 0.0111(3) 0.0094(3) -0.0016(3) -0.0009(3) -0.0047(3)
+C9 0.0097(3) 0.0098(3) 0.0106(3) -0.0001(3) -0.0002(3) -0.0050(3)
+C10 0.0088(3) 0.0120(3) 0.0100(3) -0.0024(3) -0.0009(3) -0.0056(3)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+S1 C9 1_555 1_555
+O1 C7 1_555 1_555
+O2 C8 1_555 1_555
+O3 C10 1_555 1_555
+N1 C8 1_555 1_555
+N2 C9 1_555 1_555
+C1 C2 1_555 1_555
+C2 C3 1_555 1_555
+C3 C4 1_555 1_555
+C4 C5 1_555 1_555
+C5 C6 1_555 1_555
+C6 C1 1_555 1_555
+C7 C6 1_555 1_555
+C8 C7 1_555 1_555
+C9 N1 1_555 1_555
+C10 N2 1_555 1_555
+H1 O2 1_555 1_555
+H2 O3 1_555 1_555
+H3 N1 1_555 1_555
+H4 N2 1_555 1_555
+H5 C2 1_555 1_555
+H6 C4 1_555 1_555
+H7 C3 1_555 1_555
+H8 C5 1_555 1_555
+C1 C10 1_555 1_555
+C8 C10 1_555 1_555
+
+#END

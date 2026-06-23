@@ -1,0 +1,38 @@
+%chk=hess.chk
+%mem=32000MB
+%nprocshared=8
+#P PBE1PBE/6-311G(d,p) int=(ultrafine) nosymm opt=(CalcAll,MaxCycle=150,MaxStep=20) pop=(hlygat) scf=(QC) scrf=(PCM,Read)
+
+Gas-phase optimization from crystal
+
+0 1
+H
+C 1 B1
+C 2 B2 1 A2
+H 3 B3 2 A3 1 D3
+C 3 B4 4 A4 2 D4
+H 5 B5 3 A5 4 D5
+O 2 B6 1 A6 3 D6
+H 5 B7 6 A7 3 D7
+
+B1=1.002873
+B2=1.451296
+A2=111.866294
+B3=0.925032
+A3=115.486512
+D3=-178.472020
+B4=1.308953
+A4=122.641769
+D4=-178.382895
+B5=0.962737
+A5=120.223044
+D5=-0.125003
+B6=1.207970
+A6=122.659897
+D6=179.934843
+B7=0.919550
+A7=120.288951
+D7=-174.733431
+Constants:
+EPS=11.0
+

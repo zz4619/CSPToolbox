@@ -1,0 +1,79 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_BAWNIW
+_chemical_name_common            Chlorothalonil
+_chemical_formula_moiety         'C8 Cl4 N2'
+_chemical_name_systematic        2,4,5,6-Tetrachloro-1,3-dicyanobenzene
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/a'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2yab'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2-x,1/2+y,-z
+3 -x,-y,-z
+4 1/2+x,1/2-y,z
+_cell_length_a                   24.753(12)
+_cell_length_b                   6.226(3)
+_cell_length_c                   6.340(3)
+_cell_angle_alpha                90
+_cell_angle_beta                 95.41(2)
+_cell_angle_gamma                90
+_cell_volume                     972.719
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+Cl1 Cl 0.16363 0.42380 0.23570
+Cl2 Cl 0.18411 -0.11379 -0.41075
+Cl3 Cl 0.08651 -0.38894 -0.27753
+Cl4 Cl 0.03040 -0.25273 0.12501
+N1 N 0.05358 0.19380 0.48620
+N2 N 0.24738 0.36440 -0.19790
+C1 C 0.09900 0.08000 0.15500
+C2 C 0.14185 0.20160 0.09250
+C3 C 0.16761 0.14230 -0.08440
+C4 C 0.15055 -0.04210 -0.19660
+C5 C 0.10768 -0.16530 -0.13690
+C6 C 0.08240 -0.10320 0.04030
+C7 C 0.07266 0.14330 0.33970
+C8 C 0.21227 0.26640 -0.14770
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+Cl1 C2 1_555 1_555
+Cl2 C4 1_555 1_555
+Cl3 C5 1_555 1_555
+Cl4 C6 1_555 1_555
+N1 C7 1_555 1_555
+N2 C8 1_555 1_555
+C1 C2 1_555 1_555
+C2 C3 1_555 1_555
+C3 C4 1_555 1_555
+C4 C5 1_555 1_555
+C5 C6 1_555 1_555
+C6 C1 1_555 1_555
+C7 C1 1_555 1_555
+C8 C3 1_555 1_555
+
+#END

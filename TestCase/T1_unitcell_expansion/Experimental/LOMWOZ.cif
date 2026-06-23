@@ -1,0 +1,94 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_LOMWOZ
+_chemical_formula_moiety         'C6 H7 N1 O3 S2'
+_chemical_name_systematic        
+'2,3-Dihydro-5H-thieno(2,3-e)-1,4,2-oxathiazepine 1,1-dioxide'
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/c'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2ybc'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,1/2+y,1/2-z
+3 -x,-y,-z
+4 x,1/2-y,1/2+z
+_cell_length_a                   8.0872(6)
+_cell_length_b                   6.9980(5)
+_cell_length_c                   14.572(1)
+_cell_angle_alpha                90
+_cell_angle_beta                 98.886(7)
+_cell_angle_gamma                90
+_cell_volume                     814.793
+_exptl_crystal_colour            colorless
+_exptl_crystal_description       plates
+_chemical_melting_point          '403-404 K'
+_cell_formula_units_Z            4
+_exptl_crystal_recrystallization_method 'dichloromethane/ethyl acetate'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+S1 S 0.80913(5) 0.32265(6) 0.47159(2)
+C1 C 0.7573(2) 0.5432(3) 0.42568(10)
+C2 C 0.7063(2) 0.6641(2) 0.48861(10)
+C3 C 0.7059(2) 0.5787(2) 0.57683(9)
+C4 C 0.6530(2) 0.6781(2) 0.65899(10)
+O1 O 0.77841(12) 0.67189(14) 0.74015(7)
+C5 C 0.7728(2) 0.5042(2) 0.79436(9)
+N1 N 0.85285(14) 0.3377(2) 0.76007(8)
+S2 S 0.76113(4) 0.23071(4) 0.66747(2)
+C6 C 0.7581(2) 0.3921(2) 0.57645(8)
+O2 O 0.86328(13) 0.0724(2) 0.64887(7)
+O3 O 0.59205(12) 0.1960(2) 0.68100(8)
+H1 H 0.768(3) 0.566(3) 0.363(2)
+H2 H 0.679(2) 0.795(3) 0.4788(14)
+H3 H 0.550(2) 0.620(3) 0.6776(12)
+H4 H 0.639(2) 0.813(3) 0.6431(14)
+H5 H 0.657(2) 0.466(2) 0.7976(12)
+H6 H 0.832(2) 0.532(3) 0.8524(13)
+H7 H 0.947(2) 0.345(3) 0.7619(14)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+S1 C1 1_555 1_555
+C1 C2 1_555 1_555
+C2 C3 1_555 1_555
+C3 C4 1_555 1_555
+C4 O1 1_555 1_555
+O1 C5 1_555 1_555
+C5 N1 1_555 1_555
+N1 S2 1_555 1_555
+S2 C6 1_555 1_555
+C6 S1 1_555 1_555
+O2 S2 1_555 1_555
+O3 S2 1_555 1_555
+H1 C1 1_555 1_555
+H2 C2 1_555 1_555
+H3 C4 1_555 1_555
+H4 C4 1_555 1_555
+H5 C5 1_555 1_555
+H6 C5 1_555 1_555
+H7 N1 1_555 1_555
+C3 C6 1_555 1_555
+
+#END

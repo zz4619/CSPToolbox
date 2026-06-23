@@ -1,0 +1,127 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_COUMAR14
+_chemical_name_common            Coumarin
+_chemical_formula_moiety         'C9 H6 O2'
+_chemical_name_systematic        2H-1-benzopyran-2-one
+_symmetry_cell_setting           orthorhombic
+_symmetry_space_group_name_H-M   'P 21 21 21'
+_symmetry_Int_Tables_number      19
+_space_group_name_Hall           'P 2ac 2ab'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2-x,-y,1/2+z
+3 -x,1/2+y,1/2-z
+4 1/2+x,1/2-y,-z
+_cell_length_a                   16.78223(33)
+_cell_length_b                   5.92141(13)
+_cell_length_c                   13.85224(55)
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_volume                     1376.56
+_exptl_crystal_colour            white
+_exptl_crystal_description       powder
+_chemical_melting_point          '339.15 K'
+_cell_formula_units_Z            8
+_exptl_crystal_recrystallization_method 'solid state recrystallization'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+C1 C -0.10872 0.15762 -0.24868 0.0127 Uiso
+C2 C -0.1180877 -0.0087078 -0.1820184 0.0127 Uiso
+C3 C -0.1534626 0.3652123 -0.2423507 0.0127 Uiso
+C4 C -0.1724467 0.01752035 -0.1031833 0.0127 Uiso
+C5 C -0.2159731 0.2202374 -0.09673169 0.0127 Uiso
+C6 C -0.184695 -0.148358 -0.03194698 0.0127 Uiso
+C7 C -0.2699183 0.2597478 -0.02210551 0.0127 Uiso
+C8 C -0.2389499 -0.1122485 0.04198155 0.0127 Uiso
+C9 C -0.2813452 0.092272 0.04692507 0.0127 Uiso
+O1 O -0.2066099 0.3857838 -0.1650797 0.0127 Uiso
+O2 O -0.1496848 0.5272961 -0.2973697 0.0127 Uiso
+H1 H -0.06625384 0.143566 -0.3080102 0.0127 Uiso
+H2 H -0.08306156 -0.1639099 -0.1867595 0.0127 Uiso
+H3 H -0.1504087 -0.3045712 -0.03625768 0.0127 Uiso
+H4 H -0.3019366 0.4198886 -0.01860403 0.0127 Uiso
+H5 H -0.248597 -0.2417199 0.09680588 0.0127 Uiso
+H6 H -0.3231007 0.1224007 0.1058526 0.0127 Uiso
+C10 C 0.02195 0.15812 -0.02298 0.0127 Uiso
+C11 C 0.01129121 0.0004549749 0.04719373 0.0127 Uiso
+C12 C -0.02010394 0.3703595 -0.02110323 0.0127 Uiso
+C13 C -0.04298147 0.04013455 0.1252553 0.0127 Uiso
+C14 C -0.0846956 0.2464615 0.1269728 0.0127 Uiso
+C15 C -0.05630689 -0.1156586 0.2003565 0.0127 Uiso
+C16 C -0.1387142 0.2972174 0.2002763 0.0127 Uiso
+C17 C -0.1089781 -0.06506099 0.2744328 0.0127 Uiso
+C18 C -0.1504785 0.140652 0.2740451 0.0127 Uiso
+O3 O -0.07251329 0.4058907 0.0562079 0.0127 Uiso
+O4 O -0.01399808 0.524852 -0.07966863 0.0127 Uiso
+H7 H 0.06338487 0.1325897 -0.08267024 0.0127 Uiso
+H8 H 0.04404111 -0.1588439 0.04574697 0.0127 Uiso
+H9 H -0.02461346 -0.27613 0.1983672 0.0127 Uiso
+H10 H -0.1706485 0.4578375 0.1992069 0.0127 Uiso
+H11 H -0.1186756 -0.1861101 0.332743 0.0127 Uiso
+H12 H -0.1934603 0.1779911 0.3307374 0.0127 Uiso
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+C1 C2 1_555 1_555
+C1 C3 1_555 1_555
+C1 H1 1_555 1_555
+C2 C4 1_555 1_555
+C2 H2 1_555 1_555
+C3 O1 1_555 1_555
+C3 O2 1_555 1_555
+C4 C5 1_555 1_555
+C4 C6 1_555 1_555
+C5 C7 1_555 1_555
+C5 O1 1_555 1_555
+C6 C8 1_555 1_555
+C6 H3 1_555 1_555
+C7 C9 1_555 1_555
+C7 H4 1_555 1_555
+C8 C9 1_555 1_555
+C8 H5 1_555 1_555
+C9 H6 1_555 1_555
+C10 C11 1_555 1_555
+C10 C12 1_555 1_555
+C10 H7 1_555 1_555
+C11 C13 1_555 1_555
+C11 H8 1_555 1_555
+C12 O3 1_555 1_555
+C12 O4 1_555 1_555
+C13 C14 1_555 1_555
+C13 C15 1_555 1_555
+C14 C16 1_555 1_555
+C14 O3 1_555 1_555
+C15 C17 1_555 1_555
+C15 H9 1_555 1_555
+C16 C18 1_555 1_555
+C16 H10 1_555 1_555
+C17 C18 1_555 1_555
+C17 H11 1_555 1_555
+C18 H12 1_555 1_555
+
+#END

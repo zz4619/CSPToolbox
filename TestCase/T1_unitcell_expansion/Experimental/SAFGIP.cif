@@ -1,0 +1,79 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_SAFGIP
+_chemical_name_common            Tropothione
+_chemical_formula_moiety         'C7 H6 S1'
+_chemical_name_systematic        2,4,6-Cycloheptatriene-1-thione
+_symmetry_cell_setting           triclinic
+_symmetry_space_group_name_H-M   'P -1'
+_symmetry_Int_Tables_number      2
+_space_group_name_Hall           '-P 1'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,-y,-z
+_cell_length_a                   7.404(15)
+_cell_length_b                   6.983(8)
+_cell_length_c                   7.022(7)
+_cell_angle_alpha                105.31(8)
+_cell_angle_beta                 114.19(12)
+_cell_angle_gamma                65.48(13)
+_cell_volume                     299.369
+_exptl_crystal_colour            red
+_chemical_melting_point          'decomposes at 294.5 K'
+_cell_formula_units_Z            2
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+S1 S 0.2501(2) 0.1261(2) 0.1260(2)
+C1 C 0.2491(6) 0.3244(6) 0.3223(7)
+C2 C 0.2130(6) 0.5294(7) 0.2807(7)
+C3 C 0.2076(6) 0.7146(7) 0.4096(7)
+C4 C 0.2327(7) 0.7609(7) 0.6291(8)
+C5 C 0.2686(7) 0.6287(7) 0.7610(7)
+C6 C 0.2915(6) 0.4109(7) 0.7142(7)
+C7 C 0.2877(6) 0.2792(7) 0.5300(7)
+H1 H 0.17(1) 0.84(1) 0.33(1)
+H2 H 0.32(1) 0.11(1) 0.53(1)
+H3 H 0.21(1) 0.92(1) 0.66(1)
+H4 H 0.32(1) 0.33(1) 0.83(1)
+H5 H 0.27(1) 0.69(1) 0.90(1)
+H6 H 0.19(1) 0.53(1) 0.12(1)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+S1 C1 1_555 1_555
+C1 C2 1_555 1_555
+C2 C3 1_555 1_555
+C3 C4 1_555 1_555
+C4 C5 1_555 1_555
+C5 C6 1_555 1_555
+C6 C7 1_555 1_555
+C7 C1 1_555 1_555
+H1 C3 1_555 1_555
+H2 C7 1_555 1_555
+H3 C4 1_555 1_555
+H4 C6 1_555 1_555
+H5 C5 1_555 1_555
+H6 C2 1_555 1_555
+
+#END

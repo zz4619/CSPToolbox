@@ -1,0 +1,127 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_AJOYEF
+_chemical_formula_moiety         'C11 H7 Cl1 F2 O2'
+_chemical_name_systematic        
+2-(Chloro(difluoro)methyl)-3-methyl-4H-chromen-4-one
+_symmetry_cell_setting           orthorhombic
+_symmetry_space_group_name_H-M   'P 21 21 21'
+_symmetry_Int_Tables_number      19
+_space_group_name_Hall           'P 2ac 2ab'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2-x,-y,1/2+z
+3 -x,1/2+y,1/2-z
+4 1/2+x,1/2-y,-z
+_cell_length_a                   5.1483(4)
+_cell_length_b                   7.3422(7)
+_cell_length_c                   27.394(2)
+_cell_angle_alpha                90.00
+_cell_angle_beta                 90.00
+_cell_angle_gamma                90.00
+_cell_volume                     1035.49
+_exptl_crystal_colour            colorless
+_exptl_crystal_description       plate
+_cell_formula_units_Z            4
+_exptl_crystal_recrystallization_method Hexane
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+C1 C -0.0071(10) 0.2553(7) 0.44045(18) 0.0780 Uani
+H1 H -0.1204 0.1602 0.4475 0.0940 Uiso
+C2 C -0.0185(10) 0.4143(8) 0.46723(17) 0.0800 Uani
+H2 H -0.1383 0.4248 0.4925 0.0960 Uiso
+C3 C 0.1432(10) 0.5561(6) 0.45717(15) 0.0693 Uani
+H3 H 0.1346 0.6617 0.4758 0.0830 Uiso
+C4 C 0.3211(8) 0.5438(5) 0.41909(13) 0.0537 Uani
+C5 C 0.4911(9) 0.6937(6) 0.40575(15) 0.0593 Uani
+C6 C 0.6601(9) 0.6657(5) 0.36329(14) 0.0553 Uani
+C7 C 0.6580(7) 0.5005(6) 0.34223(12) 0.0497 Uani
+C8 C 0.3316(8) 0.3825(5) 0.39320(13) 0.0500 Uani
+C9 C 0.1719(9) 0.2368(6) 0.40332(16) 0.0657 Uani
+H9 H 0.1844 0.1291 0.3856 0.0790 Uiso
+C10 C 0.8100(9) 0.4466(6) 0.29728(16) 0.0643 Uani
+C11 C 0.8238(10) 0.8228(6) 0.34715(18) 0.0807 Uani
+H11A H 0.9842 0.8227 0.3650 0.1210 Uiso
+H11B H 0.7327 0.9346 0.3532 0.1210 Uiso
+H11C H 0.8598 0.8118 0.3129 0.1210 Uiso
+O1 O 0.5041(6) 0.3589(4) 0.35496(9) 0.0552 Uani
+O2 O 0.4900(7) 0.8397(4) 0.42788(12) 0.0874 Uani
+F1 F 1.0461(4) 0.5206(4) 0.29705(10) 0.0883 Uani
+F2 F 0.8455(7) 0.2659(4) 0.29625(10) 0.0889 Uani
+Cl1 Cl 0.6511(2) 0.5097(2) 0.24361(4) 0.0848 Uani
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+C1 0.064(3) 0.093(4) 0.077(3) 0.025(3) 0.006(3) -0.013(3)
+C2 0.066(3) 0.119(4) 0.055(3) 0.014(3) 0.009(3) 0.009(3)
+C3 0.074(3) 0.083(3) 0.051(2) -0.002(2) 0.006(3) 0.012(3)
+C4 0.057(2) 0.059(2) 0.0450(19) -0.0021(18) -0.002(2) 0.000(2)
+C5 0.069(3) 0.053(2) 0.056(2) -0.007(2) -0.011(2) 0.001(2)
+C6 0.062(2) 0.048(2) 0.056(2) 0.0027(18) -0.008(2) -0.006(3)
+C7 0.0429(17) 0.056(2) 0.0502(19) 0.004(2) -0.0032(18) -0.006(3)
+C8 0.0430(19) 0.057(2) 0.050(2) 0.0065(18) 0.002(2) -0.003(2)
+C9 0.065(3) 0.060(3) 0.072(3) 0.006(2) 0.003(3) -0.011(3)
+C10 0.062(3) 0.066(3) 0.065(3) 0.005(2) 0.007(2) -0.002(3)
+C11 0.080(3) 0.063(3) 0.099(4) 0.013(3) -0.006(3) -0.022(3)
+O1 0.0586(17) 0.0486(14) 0.0585(16) -0.0031(13) 0.0093(15) -0.0050(16)
+O2 0.115(3) 0.0641(18) 0.083(2) -0.0201(18) -0.001(2) -0.004(2)
+F1 0.0486(13) 0.127(2) 0.0894(19) 0.006(2) 0.0091(13) -0.0106(18)
+F2 0.102(2) 0.0761(17) 0.0887(19) -0.0044(16) 0.030(2) 0.0238(18)
+Cl1 0.0782(7) 0.1215(11) 0.0546(6) 0.0045(8) 0.0003(6) 0.0093(10)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+C1 H1 1_555 1_555
+C1 C2 1_555 1_555
+C1 C9 1_555 1_555
+C2 H2 1_555 1_555
+C2 C3 1_555 1_555
+C3 H3 1_555 1_555
+C3 C4 1_555 1_555
+C4 C5 1_555 1_555
+C4 C8 1_555 1_555
+C5 C6 1_555 1_555
+C5 O2 1_555 1_555
+C6 C7 1_555 1_555
+C6 C11 1_555 1_555
+C7 C10 1_555 1_555
+C7 O1 1_555 1_555
+C8 C9 1_555 1_555
+C8 O1 1_555 1_555
+C9 H9 1_555 1_555
+C10 F1 1_555 1_555
+C10 F2 1_555 1_555
+C10 Cl1 1_555 1_555
+C11 H11A 1_555 1_555
+C11 H11B 1_555 1_555
+C11 H11C 1_555 1_555
+
+#END

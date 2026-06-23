@@ -1,0 +1,78 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_THPYDO
+_chemical_formula_moiety         'C5 H6 O2 S1'
+_chemical_name_systematic        2H-Thiopyran-1,1-dioxide
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/c'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2ybc'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,1/2+y,1/2-z
+3 -x,-y,-z
+4 x,1/2-y,1/2+z
+_cell_length_a                   6.580(2)
+_cell_length_b                   8.693(3)
+_cell_length_c                   11.333(3)
+_cell_angle_alpha                90
+_cell_angle_beta                 112.86(1)
+_cell_angle_gamma                90
+_cell_volume                     597.332
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C2 C 0.14700 0.17920 0.34880
+C3 C 0.38750 0.20760 0.42160
+C4 C 0.54270 0.14690 0.38860
+C5 C 0.49490 0.05250 0.27550
+C6 C 0.29500 0.04110 0.18130
+H1 H 0.04790 0.27490 0.35640
+H2 H 0.09690 0.07570 0.38290
+H3 H 0.42650 0.27080 0.50970
+H4 H 0.71400 0.16240 0.45050
+H5 H 0.62280 -0.01880 0.26690
+H6 H 0.25610 -0.02850 0.09630
+O1 O 0.08400 0.29970 0.12530
+O2 O -0.12350 0.06710 0.12870
+S1 S 0.07920 0.15310 0.18350
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+C2 C3 1_555 1_555
+C3 C4 1_555 1_555
+C4 C5 1_555 1_555
+C5 C6 1_555 1_555
+C6 H6 1_555 1_555
+H1 C2 1_555 1_555
+H2 C2 1_555 1_555
+H3 C3 1_555 1_555
+H4 C4 1_555 1_555
+H5 C5 1_555 1_555
+O1 S1 1_555 1_555
+O2 S1 1_555 1_555
+S1 C2 1_555 1_555
+C6 S1 1_555 1_555
+
+#END

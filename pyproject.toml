@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "csptoolbox"
+version = "0.1.0"
+description = "Utilities for crystal structure prediction workflows."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "ase",
+  "matplotlib",
+  "networkx",
+  "numpy",
+  "pandas",
+  "pymatgen",
+  "scipy",
+  "spglib",
+]
+
+[project.optional-dependencies]
+ccdc = []
+
+[project.scripts]
+csp-write-expanded-cifs = "Source.CLI_scripts.write_expanded_cifs:main"
+csp-vasp-cif-inputs = "Source.CLI_scripts.generate_vasp_inputs_from_cif_priority:main"
+csp-vasp-pbe0-inputs = "Source.CLI_scripts.generate_pbe0_vasp_inputs_from_latest_contcar:main"
+csp-vasp-summary = "Source.CLI_scripts.summarize_vasp_results:main"
+csp-vasp-manifest = "Source.CLI_scripts.vasp_file_manifest:main"
+
+[tool.setuptools.packages.find]
+include = ["Source", "Source.*", "csptoolbox", "csptoolbox.*"]

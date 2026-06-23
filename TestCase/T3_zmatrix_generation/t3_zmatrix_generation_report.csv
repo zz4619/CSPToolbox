@@ -1,0 +1,3 @@
+case_name,atom_count,zmat_count,proper_count,improper_count,fallback_count,ambiguous_count,warning_count,validation_error_count
+butane_chain,4,1,1,0,0,0,0,0
+methanol,6,1,1,2,0,0,0,0

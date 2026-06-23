@@ -1,0 +1,70 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_DCPYAZ
+_chemical_formula_moiety         'C4 H2 Cl2 N2'
+_chemical_name_systematic        2,6-Dichloropyrazine
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/c'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2ybc'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,1/2+y,1/2-z
+3 -x,-y,-z
+4 x,1/2-y,1/2+z
+_cell_length_a                   7.39(2)
+_cell_length_b                   11.09(3)
+_cell_length_c                   7.40(2)
+_cell_angle_alpha                90
+_cell_angle_beta                 90.2(2)
+_cell_angle_gamma                90
+_cell_volume                     606.464
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+Cl1 Cl 0.07240 0.36320 0.10610
+Cl2 Cl 0.66830 0.16640 0.35290
+C1 C 0.20110 0.23370 0.14500
+C2 C 0.45710 0.14970 0.25080
+C3 C 0.39380 0.03570 0.20220
+C4 C 0.13630 0.12480 0.09450
+H1 H 0.00430 0.11290 0.03300
+H2 H 0.47510 -0.04340 0.22040
+N1 N 0.36220 0.25040 0.22180
+N2 N 0.23230 0.02380 0.12250
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+Cl1 C1 1_555 1_555
+Cl2 C2 1_555 1_555
+C1 C4 1_555 1_555
+C2 C3 1_555 1_555
+C3 H2 1_555 1_555
+C4 H1 1_555 1_555
+N1 C1 1_555 1_555
+N2 C3 1_555 1_555
+C2 N1 1_555 1_555
+C4 N2 1_555 1_555
+
+#END

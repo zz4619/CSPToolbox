@@ -1,0 +1,46 @@
+START INTRA_MODEL
+    Intramolecular level:             PBE1PBE '6-311G(d,p)'! Intramolecular level of theory
+    PCM epsilon:                      11.0                 ! Epsilon value for PCM [0.0 = no PCM] 
+END
+START INTRA_LAMS
+    Valid torsion region:             5.0                  !Maximum change in torsion (deg) before update [default -> 5.0]
+    Valid angle region:               3.5                  !Maximum change in torsion (deg) before update [default -> 3.5]
+    Valid bond region:                0.05                 !Maximum change in bond (ang) before update [default -> 0.05]
+    Smoothing parameter:              1.0                  !Smoothing parameter for intra LAMs (normalised by validity regions) [default -> 1.0]
+    Weighting cutoff:                 1.0D-10              !Cutoff used to include LAMs include LAMs in smoothed LAM [default -> 1.0D-10]
+END
+START ELEC_LAMS
+    Valid torsion region:             5.0                  !Maximum change in torsion (deg) before update [default -> 5.0]
+    Valid angle region:               3.5                  !Maximum change in torsion (deg) before update [default -> 3.5]
+    Valid bond region:                0.05                 !Maximum change in bond (ang) before update [default -> 0.05]
+    Smoothing parameter:              1.0                  !Smoothing parameter for elec LAMs (normalised by validity regions) [default -> 1.0]
+    Weighting cutoff:                 1.0D-10              !Cutoff used to include LAMs include LAMs in smoothed LAM [default -> 1.0D-10]
+END 
+START CSO_FM_OPT_SETTINGS
+    Gaussian cores:                   8                    !Number of gaussian cores available
+    Gaussian memory:                  10000                !Amount of memory available for gaussian calculations as integer (MB)
+    System pressure:                  0.0                  !Pressue in Pa [default -> 0.0]
+    Finite differences - torsions:    1.0D-3               !Finite differences applied to torsions (deg) [default -> 1.0D-3]
+    Finite differences - angles:      1.0D-3               !Finite differences applied to angles (deg) [default -> 1.0D-3]
+    Finite differences - bonds:       1.0D-3               !Finite differences applied to bonds (ang) [default -> 1.0D-3]
+    Finite differences - order:       2
+    Optimality tolerance:             1.0D-8
+END
+START CSO_RM_OPT_SETTINGS
+    Verify gradients:                 no                   !Verify gradients at the start of E04UFF               [default -> no]
+    NAG convergence tolerence:        1.d-6                !Convergence tolerence for structure optimisation      [default -> 1.d-9]
+    Max number of newton updates:     15                    !Number of Newton updates for structure geometry       [default -> 2]
+    Update hessian:                   bfgs                 !Update hessian at each iteration (analytic,bfgs,none) [default -> analytic]
+    Newton convergence tol:           1.d-10               !The tolerance for newton step convergence             [default -> 1.d-10]
+    damping function for dispersion:                 1
+    damping function for electrostatics:             0
+END
+START LOCATIONS
+    Molecule definition:              mol.input            !Molecule(s) definition file
+    RD filename:                      bit_mp_mie_pcm11.inter          !Intermolecular potential file
+END
+START EXECUTABLES
+    Gaussian binary:           "/rds/general/user/zz4619/home/programme_utilities/GAUSSIAN/g16run"                ! (gaussian) Gaussian location
+    GDMA binary:               "/rds/general/user/zz4619/home/programme_utilities/GDMA/gdma2.2/bin/gdma"          ! (gdma) GDMA location
+END
+END

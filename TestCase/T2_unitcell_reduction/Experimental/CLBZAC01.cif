@@ -1,0 +1,107 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_CLBZAC01
+_chemical_name_common            '2-Chlorobenzoic acid'
+_chemical_formula_moiety         'C7 H5 Cl1 O2'
+_chemical_name_systematic        'o-Chlorobenzoic acid'
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'C 2/c'
+_symmetry_Int_Tables_number      15
+_space_group_name_Hall           '-C 2yc'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2+x,1/2+y,z
+3 -x,y,1/2-z
+4 1/2-x,1/2+y,1/2-z
+5 -x,-y,-z
+6 1/2-x,1/2-y,-z
+7 x,-y,1/2+z
+8 1/2+x,1/2-y,1/2+z
+_cell_length_a                   14.6382(16)
+_cell_length_b                   3.8142(6)
+_cell_length_c                   23.812(3)
+_cell_angle_alpha                90
+_cell_angle_beta                 101.146(11)
+_cell_angle_gamma                90
+_cell_volume                     1304.42
+_exptl_crystal_colour            colorless
+_exptl_crystal_description       needle
+_cell_formula_units_Z            8
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+Cl1 Cl 0.10159(5) 0.0735(2) 0.67822(3) 0.0286 Uani
+C1 C 0.19782(17) 0.3210(7) 0.59733(10) 0.0184 Uani
+C2 C 0.20105(18) 0.1699(7) 0.65103(11) 0.0200 Uani
+C3 C 0.28529(18) 0.0915(8) 0.68615(11) 0.0237 Uani
+H1 H 0.2866 -0.0083 0.7219 0.0280 Uiso
+C4 C 0.36759(19) 0.1616(8) 0.66805(11) 0.0268 Uani
+H2 H 0.4241 0.1058 0.6916 0.0320 Uiso
+C5 C 0.36650(18) 0.3143(8) 0.61518(11) 0.0256 Uani
+H3 H 0.4219 0.3633 0.6032 0.0310 Uiso
+C6 C 0.28215(18) 0.3928(7) 0.58055(11) 0.0214 Uani
+H4 H 0.2814 0.4962 0.5451 0.0260 Uiso
+C7 C 0.10958(18) 0.4012(7) 0.55617(11) 0.0205 Uani
+O1 O 0.12209(14) 0.6027(6) 0.51375(8) 0.0288 Uani
+H5 H 0.073(3) 0.622(11) 0.4924(16) 0.0670 Uiso
+O2 O 0.03352(12) 0.2844(6) 0.56032(7) 0.0314 Uani
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+Cl1 0.0200(4) 0.0444(5) 0.0205(4) 0.0071(3) 0.0017(3) -0.0053(3)
+C1 0.0180(14) 0.0211(14) 0.0150(13) -0.0026(11) 0.0005(10) -0.0005(11)
+C2 0.0172(13) 0.0208(14) 0.0214(13) -0.0026(11) 0.0023(10) -0.0011(11)
+C3 0.0230(14) 0.0292(16) 0.0162(13) 0.0028(11) -0.0032(11) -0.0008(12)
+C4 0.0191(14) 0.0318(17) 0.0253(15) -0.0027(13) -0.0064(11) 0.0030(13)
+C5 0.0168(14) 0.0343(17) 0.0255(15) -0.0052(13) 0.0034(11) -0.0013(12)
+C6 0.0219(14) 0.0244(15) 0.0172(14) -0.0006(11) 0.0024(11) -0.0020(12)
+C7 0.0187(14) 0.0257(16) 0.0164(13) -0.0011(11) 0.0016(11) 0.0003(12)
+O1 0.0177(11) 0.0456(14) 0.0203(10) 0.0121(9) -0.0034(9) -0.0038(9)
+O2 0.0172(11) 0.0495(14) 0.0250(11) 0.0134(10) -0.0020(8) -0.0035(10)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+Cl1 C2 1_555 1_555
+C1 C2 1_555 1_555
+C2 C3 1_555 1_555
+C3 H1 1_555 1_555
+C4 C3 1_555 1_555
+H2 C4 1_555 1_555
+C5 C4 1_555 1_555
+H3 C5 1_555 1_555
+C6 C1 1_555 1_555
+H4 C6 1_555 1_555
+C7 C1 1_555 1_555
+O1 C7 1_555 1_555
+H5 O1 1_555 1_555
+O2 C7 1_555 1_555
+C5 C6 1_555 1_555
+
+#END

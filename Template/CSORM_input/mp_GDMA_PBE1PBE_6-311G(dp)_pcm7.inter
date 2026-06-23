@@ -1,0 +1,55 @@
+START SPEC
+    Potential form:     buck                ! Potential form
+    Label type:         fit_hp              ! The label typing used (FIT,FIT_Hp,custom)
+END
+START PARAMS
+    C__                  C__                     3388.2427248657       0.2777777780      25.2593681138
+    C__                  H_c                      370.0465738141       0.2724795641       3.7706095041
+    C__                  O__                     2329.5069559528       0.2645502649      13.9914342589
+    C__                  N__                     2591.3053012004       0.2710027104      17.9246070729
+    C__                  F__                     2354.1821381250       0.2577319586       8.6772054827
+    C__                  Cl_                     5969.9771653748       0.2795248079      44.2404729304
+    C__                  S__                     4922.8765869210       0.2898550726      55.5200502451
+    C__                  H_p                     1112.1114934124       0.2421307509       0.0000000000
+    H_c                  H_c                      113.9086510839       0.2673796790       1.9062529055
+    H_c                  O__                      333.3223244683       0.2597402599       1.3687472651
+    H_c                  N__                      400.9732632121       0.2659574470       3.0719634308
+    H_c                  F__                      338.5495819752       0.2531645567       1.2109111369
+    H_c                  Cl_                      967.0523051112       0.2741603837      10.4774511957
+    H_c                  S__                      619.3975426162       0.2840909090       8.0317389058
+    H_c                  H_p                       86.9007468396       0.2380952382       0.0000000000
+    O__                  O__                     3567.4650582062       0.2525252530       9.5832260224
+    O__                  N__                     3163.0210271727       0.2583979333      16.3829569684
+    O__                  F__                     2146.9241530846       0.2463054187       2.1625271871
+    O__                  Cl_                     2074.8067833908       0.2661343981       9.6532372122
+    O__                  S__                     1599.9856724421       0.2754820939       3.3445002235
+    O__                  H_p                      182.1057254261       0.2320185619       0.0000000000
+    N__                  N__                     1513.3046524519       0.2645502650       7.2934658581
+    N__                  F__                     4106.5976288413       0.2518891688      14.3998175267
+    N__                  Cl_                     3837.9419798130       0.2726653035      17.7369443192
+    N__                  S__                     2201.8556483462       0.2824858759      15.6138309963
+    N__                  H_p                      409.0412659673       0.2369668250       0.0000000000
+    F__                  F__                     2124.3229177357       0.2403846150       5.1263784889
+    F__                  Cl_                     3895.3552138237       0.2592352557       7.9802465046
+    F__                  S__                     2296.9988855664       0.2680965145       0.5872840426
+    F__                  H_p                      788.0335473968       0.2267573696       0.0000000000
+    Cl_                  Cl_                    10764.8579353826       0.2812939520      73.6780246940
+    Cl_                  H_p                     3829.3098037003       0.2434570908       0.0000000000
+    S__                  S__                     5627.6438908007       0.3030303030     125.7209202583
+    S__                  H_p                      761.0295872825       0.2512562816       0.0000000000
+    H_p                  H_p                        0.7149284935       0.2145922750       0.0000000000
+END
+START ITER_MODEL
+    Electrostatic model:              multipole           ! Electrostatic model 
+    Charge density level:             PBE1PBE 6-311G(d,p) ! Intermolecular level of theory for electrostatic
+    PCM epsilon:                      7.00                ! Epsilon value for PCM [0.0 = no PCM] 
+    Fitting scheme:                   GDMA                ! Fitting scheme for multipoles or point charges 
+    Max multipole rank:               4                   ! Maximum multipole_rank  
+    Direct space summation limit:     10.0000000          ! Summation limit for real space interactions  
+    Accuracy of ewald summation:      1.00E-06            ! Accuracy of the ewald summation  
+    Vdw summation limit:              15.0000000          ! Summation limit for VdW interactions
+    Spline percentage:                10.0000000          ! Percentage of the interaction that is splined 
+    Dispersion damping:               0                   ! Damping on dispersion (0 = none,1 = TangTonnies) [default -> 0]
+    Electrostatic damping:            0                   ! Damping on electrostatics (0 = none,1 = TangTonnies) [default -> 0]
+END
+END

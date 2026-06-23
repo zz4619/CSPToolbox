@@ -1,0 +1,103 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_ACDHAL01
+_chemical_name_common            N-Acetyldehydroalanine
+_chemical_formula_moiety         'C5 H7 N1 O3'
+_chemical_name_systematic        '2-(Acetylamino)propenoic acid'
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/n'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2yn'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2-x,1/2+y,1/2-z
+3 -x,-y,-z
+4 1/2+x,1/2-y,1/2+z
+_cell_length_a                   3.8363(6)
+_cell_length_b                   10.0513(16)
+_cell_length_c                   14.892(2)
+_cell_angle_alpha                90
+_cell_angle_beta                 91.12(1)
+_cell_angle_gamma                90
+_cell_volume                     574.123
+_exptl_crystal_colour            'pale yellow'
+_exptl_crystal_description       needle
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+O1 O 0.3453(3) 0.30735(10) 0.38995(6) 0.0230 Uani
+H1 H 0.260(6) 0.286(2) 0.3350(15) 0.0500 Uiso
+O2 O 0.1354(3) 0.10854(9) 0.43175(6) 0.0201 Uani
+O3 O 0.6157(3) 0.22417(10) 0.72673(6) 0.0201 Uani
+N1 N 0.3545(3) 0.14026(11) 0.60136(7) 0.0149 Uani
+H2 H 0.237(5) 0.0747(17) 0.5793(12) 0.0230 Uiso
+C1 C 0.2918(4) 0.21127(13) 0.44809(8) 0.0154 Uani
+C2 C 0.4434(4) 0.24034(13) 0.53979(8) 0.0140 Uani
+C3 C 0.6392(4) 0.34714(14) 0.55538(9) 0.0186 Uani
+H3 H 0.742(4) 0.3642(16) 0.6120(12) 0.0250 Uiso
+H4 H 0.679(4) 0.4059(15) 0.5046(11) 0.0190 Uiso
+C4 C 0.4468(4) 0.13428(13) 0.68938(8) 0.0146 Uani
+C5 C 0.3384(4) 0.01133(14) 0.73863(9) 0.0176 Uani
+H5 H 0.169(5) -0.0392(17) 0.7054(12) 0.0290 Uiso
+H6 H 0.252(5) 0.0351(17) 0.7978(12) 0.0260 Uiso
+H7 H 0.546(5) -0.046(2) 0.7478(13) 0.0380 Uiso
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+O1 0.0364(7) 0.0212(5) 0.0112(5) 0.0035(4) -0.0069(4) -0.0063(5)
+O2 0.0283(6) 0.0178(5) 0.0139(5) -0.0006(4) -0.0044(4) -0.0038(4)
+O3 0.0282(6) 0.0195(5) 0.0124(4) -0.0020(4) -0.0057(4) -0.0025(4)
+N1 0.0197(6) 0.0141(5) 0.0107(5) -0.0009(4) -0.0028(4) -0.0011(5)
+C1 0.0177(7) 0.0177(6) 0.0108(6) -0.0002(5) -0.0019(5) 0.0032(5)
+C2 0.0176(7) 0.0150(6) 0.0092(5) 0.0001(4) -0.0019(5) 0.0032(5)
+C3 0.0223(8) 0.0201(7) 0.0132(6) 0.0005(5) -0.0029(5) 0.0012(6)
+C4 0.0158(7) 0.0165(6) 0.0114(6) -0.0011(5) -0.0011(5) 0.0043(5)
+C5 0.0217(7) 0.0197(7) 0.0114(6) 0.0018(5) -0.0028(5) -0.0006(6)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+O1 H1 1_555 1_555
+O2 C1 1_555 1_555
+O3 C4 1_555 1_555
+N1 H2 1_555 1_555
+C1 O1 1_555 1_555
+C2 N1 1_555 1_555
+C3 C2 1_555 1_555
+H3 C3 1_555 1_555
+H4 C3 1_555 1_555
+C4 N1 1_555 1_555
+C5 C4 1_555 1_555
+H5 C5 1_555 1_555
+H6 C5 1_555 1_555
+H7 C5 1_555 1_555
+C1 C2 1_555 1_555
+
+#END

@@ -1,0 +1,18 @@
+START OPT_SETTINGS
+    Verify gradients:                 no                   ! (verify_grad)     Verify gradients at the start of E04UFF               [default -> no]
+    NAG convergence tolerence:        1.d-10               ! (convergence_tol) Convergence tolerence for structure optimisation      [default -> 1.d-9]
+    Max number of newton updates:     50                    ! (newton_updates)  Number of Newton updates for structure geometry       [default -> 2]
+    Update hessian:                   bfgs                 ! (hess_update)     Update hessian at each iteration (analytic,bfgs,none) [default -> analytic]
+    Newton convergence tol:           1.d-10               ! (newton_tol)      The tolerance for newton step convergence             [default -> 1.d-10]
+    damping function for dispersion:			0
+    damping function for electrostatics:             	0
+END
+START LOCATIONS
+    Structure filenames:              DUMMEY_SYSTEM_NAME
+    RD filename:                      bit_mp_mie_pcm11.inter 
+END
+START EXECUTABLES
+    Gaussian binary:           '/rds/general/user/zz4619/home/programme_utilities/GAUSSIAN/g16run'                ! (gaussian) Gaussian location
+    GDMA binary:               '/rds/general/user/zz4619/home/programme_utilities/GDMA/gdma2.2/bin/gdma'          ! (gdma) GDMA location
+END
+END

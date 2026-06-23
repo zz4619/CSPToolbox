@@ -1,0 +1,74 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_CEHQEM
+_chemical_formula_moiety         'C3 H3 N3 S3'
+_chemical_name_systematic        'Trithiacyanuric acid'
+_symmetry_cell_setting           triclinic
+_symmetry_space_group_name_H-M   'P -1'
+_symmetry_Int_Tables_number      2
+_space_group_name_Hall           '-P 1'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,-y,-z
+_cell_length_a                   5.8571(4)
+_cell_length_b                   7.04750(25)
+_cell_length_c                   8.7999(6)
+_cell_angle_alpha                102.990(6)
+_cell_angle_beta                 92.874(6)
+_cell_angle_gamma                110.470(4)
+_cell_volume                     328.282
+_cell_formula_units_Z            2
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+C1 C 0.1995(15) 0.5973(26) 0.2721(8) 0.1000 Uiso
+N1 N 0.3238(16) 0.6557(29) 0.1505(10) 0.1000 Uiso
+C2 C 0.5698(11) 0.7787(19) 0.1803(9) 0.1000 Uiso
+N2 N 0.6925(10) 0.8401(18) 0.3294(11) 0.1000 Uiso
+C3 C 0.5681(9) 0.7813(15) 0.4510(8) 0.1000 Uiso
+N3 N 0.3223(15) 0.6588(27) 0.4211(8) 0.1000 Uiso
+S1 S -0.0986(11) 0.4504(18) 0.2365(8) 0.1000 Uiso
+S2 S 0.7212(12) 0.8500(21) 0.0324(9) 0.1000 Uiso
+S3 S 0.7177(11) 0.8577(16) 0.6336(8) 0.1000 Uiso
+H1 H 0.2383(18) 0.6125(31) 0.0465(12) 0.0250 Uiso
+H2 H 0.863(5) 0.924(9) 0.3499(22) 0.0250 Uiso
+H3 H 0.2367(18) 0.6185(33) 0.5049(20) 0.0250 Uiso
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+C1 N1 1_555 1_555
+N1 C2 1_555 1_555
+C2 N2 1_555 1_555
+N2 C3 1_555 1_555
+C3 N3 1_555 1_555
+N3 C1 1_555 1_555
+S1 C1 1_555 1_555
+S2 C2 1_555 1_555
+S3 C3 1_555 1_555
+H1 N1 1_555 1_555
+H2 N2 1_555 1_555
+H3 N3 1_555 1_555
+
+#END

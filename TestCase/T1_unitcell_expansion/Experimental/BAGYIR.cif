@@ -1,0 +1,79 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_BAGYIR
+_chemical_formula_moiety         'C4 H5 Cl3 O2'
+_chemical_name_systematic        2,3,5-Trichloro-1,4-dioxane
+_symmetry_cell_setting           orthorhombic
+_symmetry_space_group_name_H-M   'P c a 21'
+_symmetry_Int_Tables_number      29
+_space_group_name_Hall           'P 2c -2ac'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2-x,y,1/2+z
+3 1/2+x,-y,z
+4 -x,-y,1/2+z
+_cell_length_a                   9.796(2)
+_cell_length_b                   6.753(1)
+_cell_length_c                   10.832(2)
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_volume                     716.563
+_chemical_melting_point          41deg.C
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+Cl1 Cl 0.75710 -0.01720 0.27840
+Cl2 Cl 0.48860 0.16740 0.56520
+Cl3 Cl 0.57440 0.62970 0.49160
+O1 O 0.57440 0.27460 0.29080
+O2 O 0.73390 0.30980 0.49510
+C1 C 0.60850 0.10880 0.35340
+C2 C 0.64990 0.14360 0.48010
+C3 C 0.70670 0.47500 0.42470
+C4 C 0.67450 0.42610 0.29810
+H1 H 0.52440 0.02210 0.36080
+H2 H 0.70000 0.02800 0.50000
+H3 H 0.79330 0.56130 0.42590
+H4 H 0.64350 0.54930 0.25420
+H5 H 0.76210 0.37940 0.25410
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+Cl1 C1 1_555 1_555
+Cl2 C2 1_555 1_555
+Cl3 C3 1_555 1_555
+O1 C1 1_555 1_555
+O2 C2 1_555 1_555
+C1 C2 1_555 1_555
+C2 H2 1_555 1_555
+C3 O2 1_555 1_555
+C4 O1 1_555 1_555
+H1 C1 1_555 1_555
+H3 C3 1_555 1_555
+H4 C4 1_555 1_555
+H5 C4 1_555 1_555
+C3 C4 1_555 1_555
+
+#END

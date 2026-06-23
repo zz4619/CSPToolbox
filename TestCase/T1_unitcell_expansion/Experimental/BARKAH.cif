@@ -1,0 +1,116 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_BARKAH
+_chemical_formula_moiety         'C9 H9 N1 O2'
+_chemical_name_systematic        2,6-Diacetylpyridine
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/c'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2ybc'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 x,1/2-y,1/2+z
+3 -x,-y,-z
+4 -x,1/2+y,1/2-z
+_cell_length_a                   3.9445(4)
+_cell_length_b                   8.2845(8)
+_cell_length_c                   25.917(3)
+_cell_angle_alpha                90
+_cell_angle_beta                 94.325(2)
+_cell_angle_gamma                90
+_cell_volume                     844.509
+_exptl_crystal_colour            colorless
+_exptl_crystal_description       rod
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+N1 N 0.4295(3) 0.32177(14) 0.11710(4) 0.0280 Uani
+C1 C 0.2907(3) 0.37772(18) 0.15915(5) 0.0293 Uani
+C2 C 0.1633(4) 0.5492(2) 0.15622(6) 0.0353 Uani
+O1 O 0.0212(3) 0.60626(16) 0.19205(5) 0.0521 Uani
+C3 C 0.2149(5) 0.6431(2) 0.10819(7) 0.0430 Uani
+C4 C 0.2582(4) 0.2844(2) 0.20335(6) 0.0341 Uani
+C5 C 0.3748(4) 0.1266(2) 0.20386(6) 0.0375 Uani
+C6 C 0.5182(4) 0.06737(18) 0.16075(6) 0.0351 Uani
+C7 C 0.5398(3) 0.16900(17) 0.11815(5) 0.0288 Uani
+C8 C 0.6909(4) 0.10857(19) 0.07016(6) 0.0344 Uani
+O2 O 0.7963(4) -0.02904(15) 0.06890(5) 0.0538 Uani
+C9 C 0.7069(5) 0.2204(2) 0.02538(6) 0.0413 Uani
+H1 H 0.450(7) 0.651(3) 0.1024(9) 0.0740 Uiso
+H2 H 0.100(5) 0.751(2) 0.1100(7) 0.0450 Uiso
+H3 H 0.109(5) 0.581(2) 0.0789(7) 0.0470 Uiso
+H4 H 0.156(4) 0.331(2) 0.2322(7) 0.0360 Uiso
+H5 H 0.355(5) 0.062(2) 0.2360(7) 0.0450 Uiso
+H6 H 0.599(4) -0.055(2) 0.1610(6) 0.0310 Uiso
+H7 H 0.817(6) 0.319(3) 0.0362(8) 0.0640 Uiso
+H8 H 0.475(7) 0.261(3) 0.0125(9) 0.0770 Uiso
+H9 H 0.825(5) 0.168(2) -0.0013(7) 0.0450 Uiso
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+N1 0.0269(5) 0.0318(6) 0.0254(5) -0.0017(5) 0.0021(4) 0.0022(5)
+C1 0.0272(6) 0.0347(8) 0.0263(6) -0.0027(5) 0.0033(5) -0.0008(6)
+C2 0.0340(7) 0.0377(8) 0.0346(7) -0.0062(6) 0.0043(6) 0.0030(6)
+O1 0.0634(8) 0.0513(7) 0.0440(7) -0.0106(6) 0.0193(6) 0.0135(6)
+C3 0.0485(10) 0.0348(9) 0.0467(9) 0.0031(7) 0.0104(8) 0.0117(8)
+C4 0.0308(7) 0.0460(9) 0.0259(7) -0.0026(6) 0.0056(6) -0.0048(6)
+C5 0.0381(8) 0.0425(9) 0.0317(8) 0.0083(6) 0.0014(6) -0.0062(7)
+C6 0.0344(8) 0.0311(8) 0.0391(8) 0.0034(6) -0.0017(6) -0.0017(6)
+C7 0.0259(6) 0.0316(7) 0.0287(7) -0.0030(5) 0.0003(5) 0.0011(5)
+C8 0.0305(7) 0.0379(8) 0.0346(7) -0.0074(6) 0.0004(6) 0.0062(6)
+O2 0.0670(8) 0.0446(7) 0.0506(7) -0.0054(6) 0.0104(6) 0.0230(6)
+C9 0.0447(9) 0.0491(10) 0.0312(8) -0.0053(7) 0.0101(7) 0.0080(8)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+N1 C1 1_555 1_555
+C1 C2 1_555 1_555
+C2 O1 1_555 1_555
+C3 C2 1_555 1_555
+C4 C1 1_555 1_555
+C5 C4 1_555 1_555
+C6 C5 1_555 1_555
+C7 N1 1_555 1_555
+C8 C7 1_555 1_555
+O2 C8 1_555 1_555
+C9 C8 1_555 1_555
+H1 C3 1_555 1_555
+H2 C3 1_555 1_555
+H3 C3 1_555 1_555
+H4 C4 1_555 1_555
+H5 C5 1_555 1_555
+H6 C6 1_555 1_555
+H7 C9 1_555 1_555
+H8 C9 1_555 1_555
+H9 C9 1_555 1_555
+C6 C7 1_555 1_555
+
+#END

@@ -1,0 +1,80 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_VAZGIM
+_chemical_formula_moiety         'C5 H4 Cl2 O2 S1'
+_chemical_name_systematic        
+'3-Dichloromethylene-2,3-dihydrothiophen 1,1-dioxide'
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/m'
+_symmetry_Int_Tables_number      11
+_space_group_name_Hall           '-P 2yb'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,1/2+y,-z
+3 -x,-y,-z
+4 x,1/2-y,z
+_cell_length_a                   7.063(3)
+_cell_length_b                   6.903(2)
+_cell_length_c                   8.468(4)
+_cell_angle_alpha                90
+_cell_angle_beta                 111.88(3)
+_cell_angle_gamma                90
+_cell_volume                     383.125
+_chemical_melting_point          112-113deg.C
+_cell_formula_units_Z            2
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+S1 S 0.7687(2) 0.2500 0.5090(2)
+Cl1 Cl 0.7198(3) 0.2500 -0.0731(2)
+Cl2 Cl 0.2893(2) 0.2500 -0.1373(2)
+C1 C 0.7950(8) 0.2500 0.3056(7)
+C2 C 0.5804(8) 0.2500 0.1777(7)
+C3 C 0.4302(8) 0.2500 0.2579(8)
+C4 C 0.5036(7) 0.2500 0.4265(8)
+C5 C 0.5363(9) 0.2500 0.0103(7)
+O1 O 0.8457(4) 0.4261(5) 0.5991(4)
+H1 H 0.8635(66) 0.1364(51) 0.2997(49)
+H2 H 0.2863 0.2500 0.1918
+H3 H 0.4205 0.2500 0.4940
+O1C O 0.8457(4) 0.0739(5) 0.5991(4)
+H1C H 0.8635(66) 0.3636(51) 0.2997(49)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+S1 C1 1_555 1_555
+Cl1 C5 1_555 1_555
+Cl2 C5 1_555 1_555
+C1 C2 1_555 1_555
+C2 C3 1_555 1_555
+C3 C4 1_555 1_555
+C4 S1 1_555 1_555
+C5 C2 1_555 1_555
+O1 S1 1_555 1_555
+H1 C1 1_555 1_555
+H2 C3 1_555 1_555
+H3 C4 1_555 1_555
+O1C S1 1_555 1_555
+H1C C1 1_555 1_555
+
+#END

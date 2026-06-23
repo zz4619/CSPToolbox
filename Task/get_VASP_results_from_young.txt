@@ -1,0 +1,23 @@
+#This file descipt a step-by-step task breakdown to get VASP results from young hpc at a specific local. The subtask should be executed in order.
+
+Input not included here, but should get from prompt:
+A: Path to the VASP job folder
+B: Path to the local folder that results should be download to.
+
+Start of subtasks:
+1. ssh connect to young hpc. The ssh config is already specified in config file as:
+Host y young.rc.ucl.ac.uk
+ User mmm1598
+ HostName young.rc.ucl.ac.uk
+ IdentityFile ~/.ssh/id_rsa
+
+2. Go to location A on young hpc. Under path A, there maybe many folders, each correspond to a chemical system. The folder name is the name of the system. The VASP calculation for each system always follow a specific folder structure. That is:
+System_name/1/2/3/...
+Where System_name level contains the first optimization calculation. System_name/1 level contains subsequent calculation from the result of first one. System_name/1/2/.. follows the same logic. The depth of this calculation chain can be arbitrary, but this chain is not branched.
+
+3. Gather the vasprun.xml INCAR KPOINTS CONTCAR file from each layer for each system.
+
+4. Tar tge gathered file and scp download to local path B.
+
+5. untar the files and local path B.
+ 

@@ -1,0 +1,39 @@
+data_DCLETH02_full_unit_cell
+_audit_creation_method 'CCDC Python API; Crystal.packing(inclusion=UniqueIncluded); explicit P1 unit-cell CIF'
+_database_code_CSD DCLETH02
+_csptoolbox_explict_unit_cell true
+_cell_length_a 4.8190000000
+_cell_length_b 5.3490000000
+_cell_length_c 8.1490000000
+_cell_angle_alpha 90.0000000000
+_cell_angle_beta 102.2600000000
+_cell_angle_gamma 90.0000000000
+_symmetry_space_group_name_H-M 'P 1'
+_symmetry_Int_Tables_number 1
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+Cl1_1 Cl 0.8215300000 0.2220800000 0.5838900000 1.0
+C1_1 C 0.5954100000 0.4878700000 0.5855600000 1.0
+H1_1 H 0.7206000000 0.6285000000 0.6166000000 1.0
+H2_1 H 0.4916000000 0.4574000000 0.6690000000 1.0
+C1B_1 C 0.4045900000 0.5121300000 0.4144400000 1.0
+Cl1B_1 Cl 0.1784700000 0.7779200000 0.4161100000 1.0
+H1B_1 H 0.2794000000 0.3715000000 0.3834000000 1.0
+H2B_1 H 0.5084000000 0.5426000000 0.3310000000 1.0
+Cl1_2 Cl 0.1784700000 0.7220800000 0.9161100000 1.0
+C1_2 C 0.4045900000 0.9878700000 0.9144400000 1.0
+H1_2 H 0.2794000000 0.1285000000 0.8834000000 1.0
+H2_2 H 0.5084000000 0.9574000000 0.8310000000 1.0
+C1B_2 C 0.5954100000 0.0121300000 0.0855600000 1.0
+Cl1B_2 Cl 0.8215300000 0.2779200000 0.0838900000 1.0
+H1B_2 H 0.7206000000 0.8715000000 0.1166000000 1.0
+H2B_2 H 0.4916000000 0.0426000000 0.1690000000 1.0

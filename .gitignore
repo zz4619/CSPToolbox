@@ -3,6 +3,13 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# OS/editor metadata
+.DS_Store
+.vscode/
+
+# Local generated artifacts for Codex handoff/review
+Codex_workspace/
+
 # C extensions
 *.so
 

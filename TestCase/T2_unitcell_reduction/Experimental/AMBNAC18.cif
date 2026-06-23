@@ -1,0 +1,106 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_AMBNAC18
+_chemical_formula_moiety         'C7 H7 N1 O2'
+_chemical_name_systematic        '4-aminobenzoic acid'
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P n'
+_symmetry_Int_Tables_number      7
+_space_group_name_Hall           'P -2yac'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2+x,-y,1/2+z
+_cell_length_a                   6.4003(11)
+_cell_length_b                   4.5981(4)
+_cell_length_c                   10.4452(15)
+_cell_angle_alpha                90
+_cell_angle_beta                 100.748(14)
+_cell_angle_gamma                90
+_cell_volume                     302.001
+_exptl_crystal_colour            colorless
+_exptl_crystal_description       block
+_cell_formula_units_Z            2
+_exptl_crystal_preparation       
+'Crystals loaded into a diamond anvil cell and 1.3 GPa pressure applied. Growth of new solid form (not present form) was observed after 8 hours. Annealling this solid reduced the pressure to 0.8 GPa and the delta form.'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+O2 O 0.8190(15) 0.6975(11) 0.4521(10) 0.0483 Uani
+O1 O 0.4994(14) 0.7990(11) 0.3257(8) 0.0404 Uani
+H1 H 0.565053 0.925362 0.294392 0.0600 Uiso
+C7 C 0.638(3) 0.6566(16) 0.4271(18) 0.0275 Uani
+N1 N 0.1886(16) -0.1764(11) 0.6777(11) 0.0300 Uani
+H1A H 0.221602 -0.358657 0.662403 0.0360 Uiso
+H1B H 0.220097 -0.143978 0.761877 0.0360 Uiso
+C2 C 0.2898(12) 0.3904(8) 0.4435(7) 0.0300 Uani
+H2 H 0.215865 0.490882 0.371868 0.0360 Uiso
+C3 C 0.1856(12) 0.1846(8) 0.5062(7) 0.0247 Uani
+H3 H 0.041873 0.147448 0.476508 0.0300 Uiso
+C4 C 0.2961(13) 0.0345(7) 0.6132(7) 0.0209 Uani
+C5 C 0.5109(13) 0.0900(8) 0.6575(7) 0.0270 Uani
+H5 H 0.584865 -0.010454 0.729127 0.0320 Uiso
+C6 C 0.6152(12) 0.2958(9) 0.5948(7) 0.0321 Uani
+H6 H 0.758861 0.332976 0.624488 0.0390 Uiso
+C1 C 0.5046(12) 0.4460(8) 0.4878(7) 0.0260 Uani
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+O2 0.025(12) 0.054(3) 0.066(12) 0.010(4) 0.009(10) -0.009(5)
+O1 0.040(13) 0.042(3) 0.041(11) 0.015(4) 0.012(11) 0.005(5)
+C7 0.026(13) 0.025(3) 0.031(11) -0.008(5) 0.004(10) -0.002(6)
+N1 0.040(15) 0.030(3) 0.023(13) 0.002(4) 0.014(14) 0.005(4)
+C2 0.030(12) 0.026(3) 0.033(12) -0.006(5) 0.003(11) -0.005(5)
+C3 0.011(13) 0.036(3) 0.024(13) -0.007(5) -0.005(12) -0.007(5)
+C4 0.024(12) 0.023(3) 0.015(12) -0.007(5) 0.002(11) -0.003(5)
+C5 0.027(14) 0.037(3) 0.014(12) 0.000(5) -0.004(11) 0.000(5)
+C6 0.034(13) 0.025(3) 0.036(13) 0.003(5) 0.003(11) 0.000(5)
+C1 0.019(11) 0.021(3) 0.039(11) -0.002(5) 0.008(10) 0.001(4)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+O2 C7 1_555 1_555
+O1 H1 1_555 1_555
+O1 C7 1_555 1_555
+C7 C1 1_555 1_555
+N1 H1A 1_555 1_555
+N1 H1B 1_555 1_555
+N1 C4 1_555 1_555
+C2 H2 1_555 1_555
+C2 C3 1_555 1_555
+C2 C1 1_555 1_555
+C3 H3 1_555 1_555
+C3 C4 1_555 1_555
+C4 C5 1_555 1_555
+C5 H5 1_555 1_555
+C5 C6 1_555 1_555
+C6 H6 1_555 1_555
+C6 C1 1_555 1_555
+
+#END

@@ -1,0 +1,76 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_HYTHIO
+_chemical_formula_moiety         'C3 H6 O3 S1'
+_chemical_name_systematic        3-Hydroxythietane-1,1-dioxide
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/c'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2ybc'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,1/2+y,1/2-z
+3 -x,-y,-z
+4 x,1/2-y,1/2+z
+_cell_length_a                   5.50(1)
+_cell_length_b                   16.27(1)
+_cell_length_c                   5.57(1)
+_cell_angle_alpha                90
+_cell_angle_beta                 103.8(2)
+_cell_angle_gamma                90
+_cell_volume                     484.044
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C1 C 0.54390 0.34030 0.48030
+C2 C 0.75640 0.41850 0.23970
+C3 C 0.81520 0.35670 0.45320
+H1 H 0.49500 0.36700 0.63300
+H2 H 0.49100 0.28300 0.44700
+H3 H 0.82500 0.39700 0.10700
+H4 H 0.79300 0.47200 0.27200
+H5 H 0.94300 0.38300 0.57300
+H6 H 0.95900 0.26200 0.44900
+O1 O 0.29900 0.47510 0.26210
+O2 O 0.31740 0.35520 -0.00020
+O3 O 0.93210 0.28740 0.37580
+S1 S 0.42950 0.40280 0.21470
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+C1 C3 1_555 1_555
+C2 C3 1_555 1_555
+C3 H5 1_555 1_555
+H1 C1 1_555 1_555
+H2 C1 1_555 1_555
+H3 C2 1_555 1_555
+H4 C2 1_555 1_555
+H6 O3 1_555 1_555
+O1 S1 1_555 1_555
+O2 S1 1_555 1_555
+O3 C3 1_555 1_555
+S1 C1 1_555 1_555
+C2 S1 1_555 1_555
+
+#END

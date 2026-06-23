@@ -1,0 +1,35 @@
+data_THTOXC_full_unit_cell
+_audit_creation_method 'CCDC Python API; Crystal.packing(inclusion=UniqueIncluded); explicit P1 unit-cell CIF'
+_database_code_CSD THTOXC
+_csptoolbox_explict_unit_cell true
+_cell_length_a 6.0810000000
+_cell_length_b 6.4380000000
+_cell_length_c 6.5520000000
+_cell_angle_alpha 63.8500000000
+_cell_angle_beta 80.3200000000
+_cell_angle_gamma 71.8600000000
+_symmetry_space_group_name_H-M 'P 1'
+_symmetry_Int_Tables_number 1
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+S1 S 0.1896000000 0.4448000000 0.1160000000 1.0
+O1 O 0.2913000000 0.1994000000 0.2587000000 1.0
+O2 O 0.2792000000 0.6324000000 0.0967000000 1.0
+C1 C 0.1345000000 0.4781000000 0.8302000000 1.0
+Cl1 Cl 0.2188000000 0.7153000000 0.6090000000 1.0
+Cl2 Cl 0.2385000000 0.2091000000 0.8007000000 1.0
+C1A C 0.8655000000 0.5219000000 0.1698000000 1.0
+S1A S 0.8104000000 0.5552000000 0.8840000000 1.0
+Cl1A Cl 0.7812000000 0.2847000000 0.3910000000 1.0
+Cl2A Cl 0.7615000000 0.7909000000 0.1993000000 1.0
+O1A O 0.7087000000 0.8006000000 0.7413000000 1.0
+O2A O 0.7208000000 0.3676000000 0.9033000000 1.0

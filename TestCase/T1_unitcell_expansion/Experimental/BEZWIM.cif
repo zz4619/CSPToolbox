@@ -1,0 +1,94 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_BEZWIM
+_chemical_formula_moiety         'C8 H10 O3'
+_chemical_name_systematic        
+'cis-1,2-Cyclohexane-dicarboxylic acid anhydride'
+_symmetry_cell_setting           orthorhombic
+_symmetry_space_group_name_H-M   'P 21 21 21'
+_symmetry_Int_Tables_number      19
+_space_group_name_Hall           'P 2ac 2ab'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2+x,1/2-y,-z
+3 -x,1/2+y,1/2-z
+4 1/2-x,-y,1/2+z
+_cell_length_a                   14.382(8)
+_cell_length_b                   7.874(5)
+_cell_length_c                   6.769(5)
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_volume                     766.548
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C1 C 0.08610 0.36580 0.70650
+C2 C 0.07230 0.26920 0.51050
+C3 C 0.16450 0.21240 0.41680
+C4 C 0.23000 0.12940 0.56780
+C5 C 0.25100 0.25410 0.73400
+C6 C 0.16330 0.30380 0.84060
+C7 C 0.09210 0.54820 0.63940
+C8 C 0.03100 0.40170 0.37620
+O7 O 0.12360 0.67000 0.72600
+O8 O -0.00830 0.38060 0.21860
+O78 O 0.04930 0.55970 0.45490
+H1 H 0.03200 0.36100 0.77300
+H2 H 0.02100 0.16000 0.52300
+H31 H 0.15200 0.12900 0.31300
+H32 H 0.19500 0.32900 0.35400
+H41 H 0.28300 0.09400 0.49400
+H42 H 0.20100 0.01900 0.63500
+H51 H 0.28400 0.33200 0.68600
+H52 H 0.30100 0.18800 0.81700
+H61 H 0.13700 0.19800 0.91300
+H62 H 0.17000 0.36700 0.91300
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+C1 C2 1_555 1_555
+C2 C3 1_555 1_555
+C3 C4 1_555 1_555
+C4 C5 1_555 1_555
+C5 C6 1_555 1_555
+C6 C1 1_555 1_555
+C7 C1 1_555 1_555
+C8 C2 1_555 1_555
+O7 C7 1_555 1_555
+O8 C8 1_555 1_555
+O78 C7 1_555 1_555
+H1 C1 1_555 1_555
+H2 C2 1_555 1_555
+H31 C3 1_555 1_555
+H32 C3 1_555 1_555
+H41 C4 1_555 1_555
+H42 C4 1_555 1_555
+H51 C5 1_555 1_555
+H52 C5 1_555 1_555
+H61 C6 1_555 1_555
+H62 C6 1_555 1_555
+C8 O78 1_555 1_555
+
+#END

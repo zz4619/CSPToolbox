@@ -1,0 +1,78 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_CDCDOX
+_chemical_formula_moiety         'C4 H6 Cl2 O2'
+_chemical_name_systematic        cis-2,3-Dichloro-1,4-dioxane
+_symmetry_cell_setting           orthorhombic
+_symmetry_space_group_name_H-M   'P 21 21 21'
+_symmetry_Int_Tables_number      19
+_space_group_name_Hall           'P 2ac 2ab'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2+x,1/2-y,-z
+3 -x,1/2+y,1/2-z
+4 1/2-x,-y,1/2+z
+_cell_length_a                   4.463
+_cell_length_b                   10.720
+_cell_length_c                   13.130
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_volume                     628.183
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+Cl1 Cl -0.01290 0.12060 0.15150
+Cl2 Cl -0.01610 -0.17850 0.15800
+C1 C -0.24700 0.03020 0.06530
+C2 C -0.11400 -0.09850 0.04390
+C3 C 0.09000 -0.02790 -0.11090
+C4 C -0.03000 0.10120 -0.08860
+H1 H -0.44100 0.00500 0.10000
+H2 H -0.26700 -0.15000 0.00100
+H3 H 0.26400 -0.01200 -0.15900
+H4 H -0.03800 -0.07800 -0.15900
+H5 H -0.09600 0.14100 -0.16000
+H6 H 0.10500 0.16000 -0.05000
+O1 O -0.30000 0.09450 -0.02520
+O2 O 0.15550 -0.09160 -0.01400
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+Cl1 C1 1_555 1_555
+Cl2 C2 1_555 1_555
+C1 C2 1_555 1_555
+C2 H2 1_555 1_555
+C3 C4 1_555 1_555
+C4 H5 1_555 1_555
+H1 C1 1_555 1_555
+H3 C3 1_555 1_555
+H4 C3 1_555 1_555
+H6 C4 1_555 1_555
+O1 C1 1_555 1_555
+O2 C2 1_555 1_555
+C3 O2 1_555 1_555
+C4 O1 1_555 1_555
+
+#END

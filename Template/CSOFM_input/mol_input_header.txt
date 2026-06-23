@@ -1,0 +1,13 @@
+############################################################################################
+#                                Molecule Definition File                                  #
+############################################################################################
+  
+Nmol_asm  |XXX|       #number of distinct molecules present in the .res file    
+Nmol_unique  |YYY|    #number of unique molecules present in the .res file
+
+############################################################################################
+#      Molecules entered in the order they are processed in the specified .res file        #
+#               Dashed lines (------) are used as dividers between entries                 #
+############################################################################################
+
+--------------------------------------------------------------------------------------------

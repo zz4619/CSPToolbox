@@ -1,0 +1,115 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_DOXJAD
+_chemical_formula_moiety         'C9 H8 O2 S1'
+_chemical_name_systematic        '1H-isothiochromene 2,2-dioxide'
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'C c'
+_symmetry_Int_Tables_number      9
+_space_group_name_Hall           'C -2yc'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 x,-y,1/2+z
+3 1/2+x,1/2+y,z
+4 1/2+x,1/2-y,1/2+z
+_cell_length_a                   9.543(9)
+_cell_length_b                   11.071(8)
+_cell_length_c                   8.888(8)
+_cell_angle_alpha                90.00
+_cell_angle_beta                 118.785(18)
+_cell_angle_gamma                90.00
+_cell_volume                     822.99
+_exptl_crystal_colour            colorless
+_exptl_crystal_description       Platelet
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+C1 C 0.2063(4) 0.7486(3) 0.7849(5) 0.0314 Uani
+H1A H 0.1750 0.6945 0.6851 0.0380 Uiso
+H1B H 0.2514 0.6975 0.8892 0.0380 Uiso
+S2 S 0.35748(8) 0.84714(6) 0.79814(8) 0.0303 Uani
+O1 O 0.4355(3) 0.9023(2) 0.9650(3) 0.0401 Uani
+O2 O 0.4578(3) 0.7830(2) 0.7450(3) 0.0492 Uani
+C3 C 0.2505(4) 0.9579(3) 0.6504(4) 0.0418 Uani
+H3A H 0.2965 0.9983 0.5904 0.0500 Uiso
+C4A C 0.0089(3) 0.9218(2) 0.6838(3) 0.0255 Uani
+C4 C 0.1026(4) 0.9872(3) 0.6198(4) 0.0367 Uani
+H4A H 0.0547 1.0563 0.5507 0.0440 Uiso
+C5 C -0.1379(3) 0.9704(3) 0.6557(4) 0.0313 Uani
+H5A H -0.1724 1.0459 0.5987 0.0380 Uiso
+C6 C -0.2333(3) 0.9100(3) 0.7097(4) 0.0326 Uani
+H6A H -0.3318 0.9442 0.6909 0.0390 Uiso
+C7 C -0.1834(3) 0.7990(3) 0.7915(4) 0.0324 Uani
+H7A H -0.2489 0.7564 0.8270 0.0390 Uiso
+C8 C -0.0387(3) 0.7502(3) 0.8216(4) 0.0302 Uani
+H8A H -0.0048 0.6750 0.8797 0.0360 Uiso
+C8A C 0.0582(3) 0.8102(3) 0.7675(3) 0.0262 Uani
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+C1 0.0225(14) 0.0275(14) 0.0448(17) 0.0027(12) 0.0167(13) 0.0035(12)
+S2 0.0219(3) 0.0357(3) 0.0339(4) -0.0008(3) 0.0140(3) -0.0003(3)
+O1 0.0306(11) 0.0468(12) 0.0374(14) -0.0076(11) 0.0119(11) -0.0058(10)
+O2 0.0365(13) 0.0545(14) 0.0700(17) -0.0137(13) 0.0363(13) -0.0014(11)
+C3 0.0380(19) 0.0531(18) 0.0378(19) 0.0139(16) 0.0210(17) -0.0003(15)
+C4A 0.0245(14) 0.0278(13) 0.0213(13) -0.0036(11) 0.0086(12) -0.0014(10)
+C4 0.0361(18) 0.0378(16) 0.0398(19) 0.0094(14) 0.0211(16) 0.0011(13)
+C5 0.0289(16) 0.0337(14) 0.0267(15) 0.0002(12) 0.0097(13) 0.0081(12)
+C6 0.0214(15) 0.0409(15) 0.0329(16) -0.0088(13) 0.0111(14) 0.0025(13)
+C7 0.0249(18) 0.0399(14) 0.0321(15) -0.0043(14) 0.0136(16) -0.0046(12)
+C8 0.0257(16) 0.0321(14) 0.0321(15) 0.0019(12) 0.0134(13) -0.0036(12)
+C8A 0.0200(15) 0.0312(14) 0.0218(14) -0.0021(12) 0.0055(13) 0.0007(11)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+C1 H1A 1_555 1_555
+C1 H1B 1_555 1_555
+C1 S2 1_555 1_555
+C1 C8A 1_555 1_555
+S2 O1 1_555 1_555
+S2 O2 1_555 1_555
+S2 C3 1_555 1_555
+C3 H3A 1_555 1_555
+C3 C4 1_555 1_555
+C4A C4 1_555 1_555
+C4A C5 1_555 1_555
+C4A C8A 1_555 1_555
+C4 H4A 1_555 1_555
+C5 H5A 1_555 1_555
+C5 C6 1_555 1_555
+C6 H6A 1_555 1_555
+C6 C7 1_555 1_555
+C7 H7A 1_555 1_555
+C7 C8 1_555 1_555
+C8 H8A 1_555 1_555
+C8 C8A 1_555 1_555
+
+#END

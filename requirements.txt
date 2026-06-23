@@ -1,0 +1,32 @@
+# Derived from the local conda environment `csp_310` on 2026-04-05
+# and a repo-wide import scan of Python sources in CSP-personal.
+#
+# This is a practical dependency list for the major packages used by the
+# current CSP pipeline code. It is not a full lockfile.
+#
+# Observed interpreter in `csp_310`:
+#   Python 3.12.12
+#
+# Core scientific stack present in `csp_310`
+numpy==2.4.1
+scipy==1.17.0
+pandas==3.0.0
+matplotlib==3.10.8
+ase==3.27.0
+pymatgen==2025.10.7
+openbabel==3.1.1
+rdkit==2025.09.4
+networkx
+spglib
+
+# External dependency used by the screening and some VASP/CSOFM helpers.
+# Not present in the local `csp_310` env, and usually installed from the
+# CSD Python API rather than standard pip/conda channels.
+# ccdc
+
+# Optional extras referenced by legacy GUI / utility scripts but not found
+# in the local `csp_310` env:
+# seaborn
+# PyQt5
+# vtk
+# atomman

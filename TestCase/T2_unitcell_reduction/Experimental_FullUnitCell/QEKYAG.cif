@@ -1,0 +1,39 @@
+data_QEKYAG_full_unit_cell
+_audit_creation_method 'CCDC Python API; Crystal.packing(inclusion=UniqueIncluded); explicit P1 unit-cell CIF'
+_database_code_CSD QEKYAG
+_csptoolbox_explict_unit_cell true
+_cell_length_a 4.0370000000
+_cell_length_b 5.3407000000
+_cell_length_c 7.4520000000
+_cell_angle_alpha 80.4400000000
+_cell_angle_beta 87.9200000000
+_cell_angle_gamma 86.9700000000
+_symmetry_space_group_name_H-M 'P 1'
+_symmetry_Int_Tables_number 1
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+S1 S 0.1469000000 0.8106000000 0.8413000000 1.0
+C1 C 0.3199000000 0.5441000000 0.7390000000 1.0
+C2 C 0.4404000000 0.6169000000 0.5415000000 1.0
+H1 H 0.4250000000 0.9087000000 0.8231000000 1.0
+H2 H 0.1402000000 0.4314000000 0.7552000000 1.0
+H3 H 0.4823000000 0.4584000000 0.8107000000 1.0
+H4 H 0.2561000000 0.7064000000 0.4760000000 1.0
+H5 H 0.6354000000 0.7322000000 0.5304000000 1.0
+C2A C 0.5596000000 0.3831000000 0.4585000000 1.0
+C1A C 0.6801000000 0.4559000000 0.2610000000 1.0
+S1A S 0.8531000000 0.1894000000 0.1587000000 1.0
+H1A H 0.5750000000 0.0913000000 0.1769000000 1.0
+H2A H 0.8598000000 0.5686000000 0.2448000000 1.0
+H3A H 0.5177000000 0.5416000000 0.1893000000 1.0
+H4A H 0.7439000000 0.2936000000 0.5240000000 1.0
+H5A H 0.3646000000 0.2678000000 0.4696000000 1.0

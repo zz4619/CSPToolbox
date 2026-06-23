@@ -1,0 +1,79 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_ATDZDX
+_chemical_formula_moiety         'C3 H5 N3 O2 S1'
+_chemical_name_systematic        5-Amino-2H-1,2,6-thiadiazine-1,1-dioxide
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/a'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2yab'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2-x,1/2+y,-z
+3 -x,-y,-z
+4 1/2+x,1/2-y,z
+_cell_length_a                   15.845(3)
+_cell_length_b                   5.313(1)
+_cell_length_c                   7.252(1)
+_cell_angle_alpha                90
+_cell_angle_beta                 103.04(1)
+_cell_angle_gamma                90
+_cell_volume                     594.763
+_chemical_melting_point          179-181deg.C
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+S1 S 0.14044 0.83070 0.31160
+O1 O 0.21720 0.67920 0.35990
+O2 O 0.09300 0.85460 0.45560
+N1 N 0.16930 1.11710 0.26130
+N2 N 0.04500 0.68830 -0.19540
+N3 N 0.07860 0.73290 0.12240
+C1 C 0.17210 1.17460 0.07950
+C2 C 0.13550 1.03650 -0.07010
+C3 C 0.08690 0.81310 -0.04650
+H1 H 0.18300 1.23400 0.35400
+H2 H 0.04800 0.73400 -0.31300
+H3 H 0.01200 0.55300 -0.18100
+H4 H 0.20400 1.33300 0.05700
+H5 H 0.14300 1.08500 -0.20000
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+S1 O1 1_555 1_555
+O2 S1 1_555 1_555
+N1 S1 1_555 1_555
+N2 C3 1_555 1_555
+N3 S1 1_555 1_555
+C1 N1 1_555 1_555
+C2 C1 1_555 1_555
+C3 N3 1_555 1_555
+H1 N1 1_555 1_555
+H2 N2 1_555 1_555
+H3 N2 1_555 1_555
+H4 C1 1_555 1_555
+H5 C2 1_555 1_555
+C2 C3 1_555 1_555
+
+#END

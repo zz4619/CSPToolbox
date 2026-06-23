@@ -1,0 +1,15 @@
+Number of molecules  1
+Molecule Name        WATER
+nAtoms               3
+Charge               0    
+Multiplicity         1    
+scal_disp            1.0
+scal_elec            1.0
+Gas phase energy     -76.3688745965  Hartree  
+
+# Database file names and paths 
+Local intra     './intra_lam_tmp_2'                         #Should be referenced locally
+Global intra    '|ZZZ|'
+Local elec      './elec_lam_tmp_2'                         #Should be referenced locally
+Global elec     '|TTT|'    #Should be referenced globally
+--------------------------------------------------------------------------------------------

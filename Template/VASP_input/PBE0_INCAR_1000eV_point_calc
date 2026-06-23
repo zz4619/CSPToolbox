@@ -1,0 +1,41 @@
+System=Dummy_System
+
+# Performance Optimization
+NCORE= 8     #  2 4 8;  Rec: closest integer to sqrt(no of cores) that evenly divides the no of cores
+KPAR= 1      #  ; Rec: integer that evenly divides the no of cores
+LREAL= Auto  # True potentially changes energy results; Real space or reciprocal space calculation
+
+# Electronic Optimization	
+PREC= Accurate
+ENCUT= 1000.0      #  change to 1000;  Basis set energy cut-off in eV
+ALGO= Damped         # Algorithm for electronic optmization 
+EDIFF= 1E-6  # could be 1e-8;  Termination criteria for SCF calculations (dE between steps in eV)
+TIME     = 0.4
+PRECFOCK = Fast
+LASPH    = .TRUE.
+
+# Smearing Settings
+SIGMA = 0.05
+ISMEAR= 0        # change between 0, -5; Type (0 = Gauss, -1 = Fermi, -2 = fixed INCAR, -3 = looped INCAR, -4 = tetra, -5 = Blochl corr. tetra)
+
+# Ionic Relaxation
+NSW= 0          # Number of steps allowed for relaxation (0 = single-point/no nuclei movement)
+IBRION= -1         # change according to convergence; -1 = single-point calculation, 0 = MD calculation, 1-8 = relaxation
+
+# XC functional and vdW correction
+GGA= PE           # PBE GGA functional
+LHFCALC   = .TRUE.
+AEXX      = 0.25
+HFSCREEN  = 0.0
+
+IVDW= 12          # Type of vdW correction (12 = DFT-D3 + BJ damping, 13 = DFT-D4, 20 = TS, 21 = TS + Hirshfeld partitioning)
+VDW_S6= 1.0000    # Scale factor for C6 in D3 # D3 parameters for PBE0
+VDW_S8= 1.2177    # Scale factor for C8 in D3
+VDW_A1= 0.4145    # Damping coefficient in BJ damping
+VDW_A2= 4.8593    # Damping coefficient in BJ damping
+
+# Output Settings
+LCHARG= .TRUE.   # Write charge densities in CHGCAR and CHG
+LWAVE= .TRUE.    # Write wavefunctions to WAVECAR
+
+# energy change > 1-5 meV per atom should be noticed.

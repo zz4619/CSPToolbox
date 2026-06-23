@@ -1,0 +1,15 @@
+Number of molecules  1
+Molecule Name        DUMMY_SYSTEM
+nAtoms               |NNN|
+Charge               0    
+Multiplicity         1    
+scal_disp            1.0
+scal_elec            1.0
+Gas phase energy     |EEE|  Hartree  
+
+# Database file names and paths 
+Local intra     './intra_lam_tmp_1'                         #Should be referenced locally
+Global intra    '|ZZZ|'
+Local elec      './elec_lam_tmp_1'                         #Should be referenced locally
+Global elec     '|TTT|'    #Should be referenced globally
+--------------------------------------------------------------------------------------------

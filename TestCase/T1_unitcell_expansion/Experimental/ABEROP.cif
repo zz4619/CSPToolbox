@@ -1,0 +1,114 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_ABEROP
+_chemical_formula_moiety         'C8 H6 Cl1 N3'
+_chemical_name_systematic        2-Amino-7-chloro-1,8-naphthyridine
+_chemical_properties_biological  'potential biological activity'
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/n'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2yn'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2+x,1/2-y,1/2+z
+3 -x,-y,-z
+4 1/2-x,1/2+y,1/2-z
+_cell_length_a                   6.906(7)
+_cell_length_b                   12.538(13)
+_cell_length_c                   9.099(9)
+_cell_angle_alpha                90
+_cell_angle_beta                 91.012(17)
+_cell_angle_gamma                90
+_cell_volume                     787.736
+_exptl_crystal_colour            orange
+_exptl_crystal_description       block
+_chemical_melting_point          '452-455 K'
+_cell_formula_units_Z            4
+_exptl_crystal_recrystallization_method acetone
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+_atom_site_thermal_displace_type
+Cl1 Cl 1.14367(7) 0.81937(4) 0.55480(5) 0.0605 Uani
+N1 N 0.92935(19) 0.66304(10) 0.45997(13) 0.0409 Uani
+N2 N 0.71727(17) 0.52888(10) 0.39707(13) 0.0406 Uani
+C1 C 1.2349(2) 0.68261(13) 0.33712(19) 0.0507 Uani
+H1 H 1.3502 0.7204 0.3293 0.0610 Uiso
+N3 N 0.5031(2) 0.39486(12) 0.34545(16) 0.0556 Uani
+H2 H 0.4302 0.4187 0.4137 0.0670 Uiso
+H3 H 0.4684 0.3396 0.2956 0.0670 Uiso
+C2 C 0.8888(2) 0.57736(11) 0.37248(14) 0.0368 Uani
+C3 C 1.0958(2) 0.71003(13) 0.44037(16) 0.0434 Uani
+C4 C 1.0192(2) 0.54205(12) 0.26415(15) 0.0400 Uani
+C5 C 0.6709(2) 0.44386(13) 0.31670(16) 0.0425 Uani
+C6 C 1.1932(2) 0.59769(14) 0.24847(18) 0.0484 Uani
+H4 H 1.2805 0.5767 0.1774 0.0580 Uiso
+C7 C 0.9629(2) 0.45210(13) 0.17916(16) 0.0465 Uani
+H5 H 1.0436 0.4267 0.1063 0.0560 Uiso
+C8 C 0.7931(3) 0.40338(14) 0.20357(17) 0.0477 Uani
+H6 H 0.7554 0.3444 0.1481 0.0570 Uiso
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+Cl1 0.0608(3) 0.0563(3) 0.0647(3) -0.01139(19) 0.0119(2) -0.01606(19)
+N1 0.0409(6) 0.0425(7) 0.0395(6) 0.0014(5) 0.0062(5) 0.0004(5)
+N2 0.0381(6) 0.0451(7) 0.0387(6) -0.0019(5) 0.0059(5) 0.0002(5)
+C1 0.0427(8) 0.0528(9) 0.0571(9) 0.0069(7) 0.0129(7) -0.0042(7)
+N3 0.0478(7) 0.0600(9) 0.0593(8) -0.0190(7) 0.0097(6) -0.0114(7)
+C2 0.0371(7) 0.0403(7) 0.0331(6) 0.0057(5) 0.0043(5) 0.0045(5)
+C3 0.0453(8) 0.0423(8) 0.0428(7) 0.0040(6) 0.0054(6) -0.0013(6)
+C4 0.0416(7) 0.0427(8) 0.0358(7) 0.0068(6) 0.0076(5) 0.0075(6)
+C5 0.0419(8) 0.0468(8) 0.0388(7) -0.0003(6) 0.0020(6) 0.0017(6)
+C6 0.0464(8) 0.0525(9) 0.0469(8) 0.0060(7) 0.0178(7) 0.0044(7)
+C7 0.0540(9) 0.0485(9) 0.0375(7) 0.0007(6) 0.0121(6) 0.0104(7)
+C8 0.0564(9) 0.0463(9) 0.0405(8) -0.0066(6) 0.0047(6) 0.0022(7)
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+Cl1 C3 1_555 1_555
+N1 C2 1_555 1_555
+N2 C2 1_555 1_555
+C1 H1 1_555 1_555
+N3 H2 1_555 1_555
+H3 N3 1_555 1_555
+C2 C4 1_555 1_555
+C3 N1 1_555 1_555
+C4 C6 1_555 1_555
+C5 N2 1_555 1_555
+C6 C1 1_555 1_555
+H4 C6 1_555 1_555
+C7 C4 1_555 1_555
+H5 C7 1_555 1_555
+C8 C5 1_555 1_555
+H6 C8 1_555 1_555
+C1 C3 1_555 1_555
+N3 C5 1_555 1_555
+C7 C8 1_555 1_555
+
+#END

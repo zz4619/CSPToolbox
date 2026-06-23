@@ -1,0 +1,106 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_BAHCUI
+_chemical_name_common            
+5,6-bis(Chloromethyl)-1,2,3,4,7,7-hexachloronorborn-2-ene
+_chemical_formula_moiety         'C9 H6 Cl8'
+_chemical_name_systematic        
+1,2,3,4,7,7-Hexachloro-5,6-bis(chloromethyl)-bicyclo(2.2.1)hept-2-ene
+_symmetry_cell_setting           orthorhombic
+_symmetry_space_group_name_H-M   'P b c a'
+_symmetry_Int_Tables_number      61
+_space_group_name_Hall           '-P 2ac 2ab'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2-x,1/2+y,z
+3 x,1/2-y,1/2+z
+4 1/2-x,-y,1/2+z
+5 -x,-y,-z
+6 1/2+x,1/2-y,-z
+7 -x,1/2+y,1/2-z
+8 1/2+x,y,1/2-z
+_cell_length_a                   16.596(3)
+_cell_length_b                   11.893(4)
+_cell_length_c                   14.379(5)
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_volume                     2838.07
+_exptl_crystal_colour            colorless
+_chemical_melting_point          376K
+_cell_formula_units_Z            8
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+Cl1 Cl 0.35790 -0.00240 0.55800
+Cl2 Cl 0.34890 0.02770 0.75450
+Cl3 Cl 0.53770 -0.02490 0.67680
+Cl4 Cl 0.51940 -0.21300 0.84570
+Cl5 Cl 0.32460 -0.31160 0.84340
+Cl6 Cl 0.22540 -0.17980 0.67710
+Cl7 Cl 0.36610 -0.45020 0.49840
+Cl8 Cl 0.62010 -0.25610 0.57870
+C1 C 0.36840 -0.25240 0.59550
+C2 C 0.45850 -0.20980 0.59480
+C3 C 0.45800 -0.12210 0.67620
+C4 C 0.44570 -0.18730 0.76600
+C5 C 0.37000 -0.22430 0.76620
+C6 C 0.33100 -0.18420 0.67650
+C7 C 0.37360 -0.06960 0.66620
+C8 C 0.35210 -0.37780 0.60650
+C9 C 0.51980 -0.30440 0.60260
+H1 H 0.34500 -0.22180 0.53460
+H2 H 0.45930 -0.16670 0.53410
+H3 H 0.39440 -0.41290 0.64740
+H4 H 0.30620 -0.39040 0.63100
+H5 H 0.50720 -0.35990 0.54950
+H6 H 0.52130 -0.33940 0.65740
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+Cl1 C7 1_555 1_555
+Cl2 C7 1_555 1_555
+Cl3 C3 1_555 1_555
+Cl4 C4 1_555 1_555
+Cl5 C5 1_555 1_555
+Cl6 C6 1_555 1_555
+Cl7 C8 1_555 1_555
+Cl8 C9 1_555 1_555
+C1 C2 1_555 1_555
+C2 C3 1_555 1_555
+C3 C4 1_555 1_555
+C4 C5 1_555 1_555
+C5 C6 1_555 1_555
+C6 C1 1_555 1_555
+C7 C3 1_555 1_555
+C8 C1 1_555 1_555
+C9 C2 1_555 1_555
+H1 C1 1_555 1_555
+H2 C2 1_555 1_555
+H3 C8 1_555 1_555
+H4 C8 1_555 1_555
+H5 C9 1_555 1_555
+H6 C9 1_555 1_555
+C6 C7 1_555 1_555
+
+#END

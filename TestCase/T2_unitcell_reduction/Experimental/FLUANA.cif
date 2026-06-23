@@ -1,0 +1,78 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_FLUANA
+_chemical_formula_moiety         'C6 H2 F2 O4'
+_chemical_name_systematic        'Fluoranilic acid'
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/a'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2yab'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2-x,1/2+y,-z
+3 -x,-y,-z
+4 1/2+x,1/2-y,z
+_cell_length_a                   8.690(3)
+_cell_length_b                   5.717(1)
+_cell_length_c                   7.356(2)
+_cell_angle_alpha                90
+_cell_angle_beta                 120.54(2)
+_cell_angle_gamma                90
+_cell_volume                     314.754
+_cell_formula_units_Z            2
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C1 C 0.46740 0.32680 0.11560
+C2 C 0.58650 0.52220 0.22480
+C3 C 0.38540 0.30240 -0.09320
+F1 F 0.44140 0.17340 0.23880
+H1 H 0.24910 0.13010 -0.30930
+O1 O 0.66320 0.55090 0.41460
+O2 O 0.27160 0.12860 -0.19620
+C3B C 0.61460 0.69760 0.09320
+C2B C 0.41350 0.47780 -0.22480
+C1B C 0.53260 0.67320 -0.11560
+O2B O 0.72840 0.87140 0.19620
+O1B O 0.33680 0.44910 -0.41460
+F1B F 0.55860 0.82660 -0.23880
+H1B H 0.75090 0.86990 0.30930
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+C1 C2 1_555 1_555
+C2 O1 1_555 1_555
+C3 C1 1_555 1_555
+F1 C1 1_555 1_555
+H1 O2 1_555 1_555
+O2 C3 1_555 1_555
+C3B C2 1_555 1_555
+C2B C3 1_555 1_555
+C1B C3B 1_555 1_555
+O2B C3B 1_555 1_555
+O1B C2B 1_555 1_555
+F1B C1B 1_555 1_555
+H1B O2B 1_555 1_555
+C2B C1B 1_555 1_555
+
+#END

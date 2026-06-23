@@ -1,0 +1,104 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_BURXAN
+_chemical_compound_source        'Blackstonia perfoliata (L.) Hudson'
+_chemical_name_common            Gentiogenal
+_chemical_formula_moiety         'C10 H10 O4'
+_chemical_name_systematic        
+(+-)-6-Methyl-1-oxo-3,4-dihydro-1H,6H-pyrano(3,4-c)pyran-5-carbaldehyde
+_chemical_properties_biological  'activity against Penicillium expansum'
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/c'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2ybc'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 -x,1/2+y,1/2-z
+3 -x,-y,-z
+4 x,1/2-y,1/2+z
+_cell_length_a                   9.368(5)
+_cell_length_b                   8.282(5)
+_cell_length_c                   11.969(4)
+_cell_angle_alpha                90
+_cell_angle_beta                 103.71(4)
+_cell_angle_gamma                90
+_cell_volume                     902.166
+_exptl_crystal_colour            yellow
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+O1 O 0.37350 0.13210 0.69860
+O2 O 0.20870 0.65400 0.55860
+O3 O 0.40190 0.33750 0.81580
+O4 O 0.00360 0.45470 0.23670
+C1 C 0.05760 0.36660 0.31690
+C2 C 0.27600 0.54970 0.63830
+C3 C 0.35730 0.28990 0.71930
+C4 C 0.28430 0.38960 0.62130
+C5 C 0.20420 0.32200 0.51300
+C6 C 0.19060 0.14140 0.51440
+C7 C 0.33570 0.07330 0.58090
+C8 C 0.17940 0.60160 0.43760
+C9 C 0.14680 0.42290 0.42570
+C10 C 0.30780 0.65120 0.39150
+H1 H 0.04300 0.25000 0.30800
+H2 H 0.32000 0.58900 0.71300
+H3 H 0.10200 0.11800 0.54900
+H4 H 0.16000 0.09700 0.44000
+H5 H 0.41700 0.10500 0.54500
+H6 H 0.33100 -0.04100 0.59100
+H7 H 0.08600 0.66800 0.40300
+H8 H 0.39000 0.59900 0.43000
+H9 H 0.32100 0.77300 0.39900
+H10 H 0.27400 0.63300 0.31000
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+O1 C3 1_555 1_555
+O2 C2 1_555 1_555
+O3 C3 1_555 1_555
+O4 C1 1_555 1_555
+C1 C9 1_555 1_555
+C2 C4 1_555 1_555
+C3 C4 1_555 1_555
+C4 C5 1_555 1_555
+C5 C6 1_555 1_555
+C6 C7 1_555 1_555
+C7 O1 1_555 1_555
+C8 O2 1_555 1_555
+C9 C5 1_555 1_555
+C10 C8 1_555 1_555
+H1 C1 1_555 1_555
+H2 C2 1_555 1_555
+H3 C6 1_555 1_555
+H4 C6 1_555 1_555
+H5 C7 1_555 1_555
+H6 C7 1_555 1_555
+H7 C8 1_555 1_555
+H8 C10 1_555 1_555
+H9 C10 1_555 1_555
+H10 C10 1_555 1_555
+C8 C9 1_555 1_555
+
+#END

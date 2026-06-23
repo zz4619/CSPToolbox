@@ -1,0 +1,100 @@
+
+#######################################################################
+#
+#                 Cambridge Crystallographic Data Centre
+#                                CCDC 
+#
+#######################################################################
+#
+# If this CIF has been generated from an entry in the Cambridge 
+# Structural Database, then it will include bibliographic, chemical, 
+# crystal, experimental, refinement or atomic coordinate data resulting 
+# from the CCDC's data processing and validation procedures.
+#
+#######################################################################
+
+data_THBZPS10
+_chemical_name_common            'Teaching Subset: Fundamental Chemistry'
+_chemical_formula_moiety         'C13 H10 S1'
+_chemical_name_systematic        Thiobenzophenone
+_symmetry_cell_setting           monoclinic
+_symmetry_space_group_name_H-M   'P 21/n'
+_symmetry_Int_Tables_number      14
+_space_group_name_Hall           '-P 2yn'
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 x,y,z
+2 1/2-x,1/2+y,1/2-z
+3 -x,-y,-z
+4 1/2+x,1/2-y,1/2+z
+_cell_length_a                   14.042(2)
+_cell_length_b                   5.863(2)
+_cell_length_c                   13.403(3)
+_cell_angle_alpha                90
+_cell_angle_beta                 106.40(2)
+_cell_angle_gamma                90
+_cell_volume                     1058.55
+_cell_formula_units_Z            4
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C1 C 0.21080 0.23420 0.55030
+C2 C 0.26150 0.42730 0.59800
+C3 C 0.21840 0.57110 0.65370
+C4 C 0.12720 0.52480 0.66570
+C5 C 0.07690 0.33330 0.62120
+C6 C 0.11770 0.19040 0.56290
+C7 C 0.18890 0.00160 0.38700
+C8 C 0.20220 -0.21090 0.34410
+C9 C 0.14570 -0.26870 0.24610
+C10 C 0.07600 -0.12150 0.18780
+C11 C 0.06150 0.08710 0.22910
+C12 C 0.11620 0.14470 0.32810
+C13 C 0.25400 0.07690 0.48790
+S1 S 0.37080 0.00220 0.52820
+H1 H 0.32600 0.45300 0.58900
+H2 H 0.25300 0.68700 0.68300
+H3 H 0.09800 0.62500 0.70400
+H4 H 0.01500 0.30300 0.62900
+H5 H 0.08300 0.06000 0.53000
+H6 H 0.25400 -0.30300 0.38700
+H7 H 0.15700 -0.40600 0.22000
+H8 H 0.03800 -0.16000 0.11800
+H9 H 0.01700 0.18900 0.18900
+H10 H 0.10800 0.28600 0.35800
+loop_
+_geom_bond_atom_site_label_1
+_geom_bond_atom_site_label_2
+_geom_bond_site_symmetry_1
+_geom_bond_site_symmetry_2
+C1 C2 1_555 1_555
+C2 C3 1_555 1_555
+C3 C4 1_555 1_555
+C4 C5 1_555 1_555
+C5 C6 1_555 1_555
+C6 C1 1_555 1_555
+C7 C8 1_555 1_555
+C8 C9 1_555 1_555
+C9 C10 1_555 1_555
+C10 C11 1_555 1_555
+C11 C12 1_555 1_555
+C12 C7 1_555 1_555
+C13 C1 1_555 1_555
+S1 C13 1_555 1_555
+H1 C2 1_555 1_555
+H2 C3 1_555 1_555
+H3 C4 1_555 1_555
+H4 C5 1_555 1_555
+H5 C6 1_555 1_555
+H6 C8 1_555 1_555
+H7 C9 1_555 1_555
+H8 C10 1_555 1_555
+H9 C11 1_555 1_555
+H10 C12 1_555 1_555
+C7 C13 1_555 1_555
+
+#END
