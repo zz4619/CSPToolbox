@@ -28,6 +28,7 @@ csp-vasp-cif-inputs = "Source.CLI_scripts.generate_vasp_inputs_from_cif_priority
 csp-vasp-pbe0-inputs = "Source.CLI_scripts.generate_pbe0_vasp_inputs_from_latest_contcar:main"
 csp-vasp-summary = "Source.CLI_scripts.summarize_vasp_results:main"
 csp-vasp-manifest = "Source.CLI_scripts.vasp_file_manifest:main"
+csp-zmat-viewer = "Source.CLI_scripts.zmatrix_viewer:main"
 
 [tool.setuptools.packages.find]
 include = ["Source", "Source.*", "csptoolbox", "csptoolbox.*"]

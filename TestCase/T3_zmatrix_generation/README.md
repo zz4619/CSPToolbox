@@ -31,6 +31,8 @@ The test suite validates that:
   using the molecule bonding graph,
 - methanol methyl hydrogens after the first hydrogen use improper references,
 - the butane heavy-atom chain produces a proper torsion.
+- the automatic `branch_improper` mode generates valid Z-matrices and converts
+  methyl branch hydrogens to improper references.
 
 ## Run Tests
 
@@ -56,6 +58,40 @@ Generated output:
 - `Generated/*.zmat`
 - `t3_zmatrix_generation_report.csv`
 - `t3_zmatrix_generation_report.md`
+
+## Branch-Improper API Z-Matrices
+
+The `branch_improper` mode implements the automatic branch rule:
+
+1. Build a proper-first Z-matrix tree.
+2. At each branch center, keep one branch as the proper branch.
+3. Prefer keeping heavy-atom branches over hydrogen branches, then larger
+   downstream subtrees, then the earlier generated branch.
+4. Convert the other branches to improper torsion references when two
+   already-defined neighbors of the branch center are available.
+
+Run the branch-improper report on the exported unit-cell CIFs:
+
+```bash
+/opt/anaconda3/envs/csp_310/bin/python -B \
+  TestCase/T3_zmatrix_generation/run_branch_improper_unit_cell_report.py
+```
+
+The runner reads:
+
+```text
+TestCase/T3_zmatrix_generation/HA_pair_TPSS_CONTCAR_labelled_diagrams/unit_cells
+```
+
+For each unit cell, it deduplicates chemically identical molecules, removes
+water, selects the largest carbon-containing non-water representative molecule
+as the organic API molecule, and writes one branch-improper Z-matrix.
+
+Generated output:
+
+- `BranchImproper_API_Zmatrices/*_branch_improper.zmat`
+- `branch_improper_unit_cell_report.csv`
+- `branch_improper_unit_cell_report.md`
 
 ## Export Labelled CONTCAR Diagrams
 
@@ -85,3 +121,8 @@ Output includes:
 - `unit_cell_diagrams/*_unit_cell_labelled.png`
 - `molecule_diagrams/*_molecule_NN_labelled.png`
 - `labelled_diagram_manifest.csv`
+
+The `molecule_diagrams/` images are deduplicated chemically identical
+representative molecules, with water removed. The manifest records raw molecule
+counts, unique molecule counts, non-water representative molecule sizes, and
+duplicate counts.

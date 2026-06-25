@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Axitinib exp_crys branch improper</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f6f8;
+      --panel: #ffffff;
+      --text: #1d2430;
+      --muted: #5d6978;
+      --line: #d8dee7;
+      --line-strong: #b7c0cc;
+      --accent: #d76b00;
+      --accent-soft: #fff0df;
+      --atom-hover: #0077c8;
+      --atom-hover-soft: #e6f3ff;
+      --focus: #0089a7;
+      --shadow: 0 10px 28px rgba(33, 43, 54, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    body {
+      min-width: 320px;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      height: 100vh;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 64px;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    h1,
+    h2,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(18px, 2vw, 24px);
+      line-height: 1.2;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .source {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .summary {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .summary span {
+      padding: 5px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fafbfc;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+      min-height: 0;
+    }
+
+    .viewer {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      background: #eef2f6;
+      border-right: 1px solid var(--line);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    canvas.is-dragging {
+      cursor: grabbing;
+    }
+
+    canvas.is-atom-hover {
+      cursor: pointer;
+    }
+
+    .canvas-actions {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .tool-button {
+      min-height: 34px;
+      padding: 0 12px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(33, 43, 54, 0.10);
+      cursor: pointer;
+    }
+
+    .tool-button:hover,
+    .tool-button:focus-visible {
+      border-color: var(--focus);
+      outline: none;
+    }
+
+    aside {
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      min-width: 0;
+      min-height: 0;
+      background: var(--panel);
+    }
+
+    .side-header {
+      padding: 16px 16px 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      font-size: 17px;
+      line-height: 1.3;
+    }
+
+    .active-detail {
+      min-height: 50px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .active-detail strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .dihedral-list {
+      overflow: auto;
+      padding: 8px;
+    }
+
+    .dihedral-row {
+      display: grid;
+      width: 100%;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 6px 12px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .dihedral-row + .dihedral-row {
+      margin-top: 4px;
+    }
+
+    .dihedral-row:hover,
+    .dihedral-row:focus-visible,
+    .dihedral-row.is-active,
+    .dihedral-row.is-atom-hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      outline: none;
+    }
+
+    .dihedral-row.is-atom-hover {
+      border-color: var(--atom-hover);
+      background: var(--atom-hover-soft);
+    }
+
+    .dihedral-row.is-active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .quartet {
+      min-width: 0;
+      font-size: 13px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .value {
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .meta {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .kind {
+      color: var(--muted);
+    }
+
+    .warnings {
+      border-top: 1px solid var(--line);
+      padding: 10px 16px;
+      color: #8a4c00;
+      background: #fff8ef;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .warnings:empty {
+      display: none;
+    }
+
+    @media (max-width: 820px) {
+      .shell {
+        height: auto;
+        min-height: 100vh;
+      }
+
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .summary {
+        justify-content: flex-start;
+      }
+
+      main {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(360px, 56vh) minmax(320px, auto);
+      }
+
+      .viewer {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div>
+        <h1 id="viewerTitle"></h1>
+        <p class="source" id="viewerSource"></p>
+      </div>
+      <div class="summary">
+        <span id="atomCount"></span>
+        <span id="bondCount"></span>
+        <span id="dihedralCount"></span>
+      </div>
+    </header>
+    <main>
+      <section class="viewer" aria-label="Molecule visualization">
+        <canvas id="moleculeCanvas"></canvas>
+        <div class="canvas-actions">
+          <button class="tool-button" type="button" id="resetView">Reset</button>
+          <button class="tool-button" type="button" id="clearSelection">Clear</button>
+        </div>
+      </section>
+      <aside>
+        <div class="side-header">
+          <h2>Dihedral Angles</h2>
+        </div>
+        <div class="active-detail" id="activeDetail"></div>
+        <div class="dihedral-list" id="dihedralList"></div>
+        <div class="warnings" id="warnings"></div>
+      </aside>
+    </main>
+  </div>
+  <script type="application/json" id="moleculeData">{"title": "Axitinib exp_crys branch improper", "source_name": "/Users/zianzhan/Desktop/CSP_sandbox/CSPToolbox/TestCase/T3_zmatrix_generation/Axitinib/exp_crys_branch_improper.zmat", "atoms": [{"index": 1, "label": "C1", "element": "C", "x": 0.0, "y": 0.0, "z": 0.0, "color": "#30343b", "display_radius": 0.2}, {"index": 2, "label": "C2", "element": "C", "x": 1.3819616493, "y": 0.0, "z": 0.0, "color": "#30343b", "display_radius": 0.2}, {"index": 3, "label": "C3", "element": "C", "x": 2.122116776315071, "y": 0.0, "z": -1.2079355893758155, "color": "#30343b", "display_radius": 0.2}, {"index": 4, "label": "S1", "element": "S", "x": 3.897994566684221, "y": 0.08840555059690644, "z": -1.1939165873884798, "color": "#d8b52f", "display_radius": 0.24}, {"index": 5, "label": "C4", "element": "C", "x": 4.3616941203953665, "y": -1.5179133583443805, "z": -0.5723481786986063, "color": "#30343b", "display_radius": 0.2}, {"index": 6, "label": "C5", "element": "C", "x": 5.713790975607289, "y": -1.7916342000934047, "z": -0.24988113408080043, "color": "#30343b", "display_radius": 0.2}, {"index": 7, "label": "C6", "element": "C", "x": 6.7682305114740835, "y": -0.7534007064606878, "z": -0.4843027157787684, "color": "#30343b", "display_radius": 0.2}, {"index": 8, "label": "N1", "element": "N", "x": 7.852381436261013, "y": -0.7819618074919562, "z": 0.30629644683257706, "color": "#2f66d0", "display_radius": 0.19}, {"index": 9, "label": "C7", "element": "C", "x": 8.926039305707507, "y": 0.17225924715390084, "z": 0.12692543963581618, "color": "#30343b", "display_radius": 0.2}, {"index": 10, "label": "H1", "element": "H", "x": 9.61456347752935, "y": 0.005435619546802106, "z": 0.776354683022485, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 11, "label": "H2", "element": "H", "x": 8.587376506900922, "y": 1.0617800637355002, "z": 0.24327932006239783, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 12, "label": "H3", "element": "H", "x": 9.291343943686115, "y": 0.08093854184063023, "z": -0.7565280397191713, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 13, "label": "H4", "element": "H", "x": 7.995731289793832, "y": -1.4046474408884673, "z": 0.8743144232212482, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 14, "label": "O1", "element": "O", "x": 6.65309489965276, "y": 0.09730344803052271, "z": -1.3709702027137542, "color": "#d83b36", "display_radius": 0.18}, {"index": 15, "label": "C8", "element": "C", "x": 6.044703921173329, "y": -3.0501787178505753, "z": 0.2255001017458031, "color": "#30343b", "display_radius": 0.2}, {"index": 16, "label": "H5", "element": "H", "x": 6.9324094523963975, "y": -3.236932601396, "z": 0.43325687488437825, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 17, "label": "C9", "element": "C", "x": 3.420301136964632, "y": -2.5233059045237027, "z": -0.38494732820495614, "color": "#30343b", "display_radius": 0.2}, {"index": 18, "label": "C10", "element": "C", "x": 3.7914120142265406, "y": -3.752600343926395, "z": 0.08968610717212738, "color": "#30343b", "display_radius": 0.2}, {"index": 19, "label": "C11", "element": "C", "x": 5.099585798153782, "y": -4.026929993806168, "z": 0.39687594118450387, "color": "#30343b", "display_radius": 0.2}, {"index": 20, "label": "H6", "element": "H", "x": 5.342122919308602, "y": -4.864603856139033, "z": 0.7197756861596561, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 21, "label": "H7", "element": "H", "x": 3.1456553099828257, "y": -4.412915643998947, "z": 0.20421114128461826, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 22, "label": "H8", "element": "H", "x": 2.5277322291248066, "y": -2.3580457105269215, "z": -0.5849343601955844, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 23, "label": "C12", "element": "C", "x": 1.4954119755987958, "y": 0.03354639846522026, "z": -2.4208287140421927, "color": "#30343b", "display_radius": 0.2}, {"index": 24, "label": "H9", "element": "H", "x": 1.9736987647875315, "y": 0.029065231854718484, "z": -3.2190828505453513, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 25, "label": "H10", "element": "H", "x": 1.836896126180776, "y": 0.001453376848580711, "z": 0.8102916199492892, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 26, "label": "H11", "element": "H", "x": -0.47606169124896186, "y": -0.026952068046330203, "z": 0.7982805597733067, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 27, "label": "C13", "element": "C", "x": -0.6592447774977719, "y": 0.03950112019133287, "z": -1.228757903217086, "color": "#30343b", "display_radius": 0.2}, {"index": 28, "label": "C14", "element": "C", "x": -2.0209656334798662, "y": 0.08932977805798037, "z": -1.6738898107824272, "color": "#30343b", "display_radius": 0.2}, {"index": 29, "label": "C15", "element": "C", "x": -3.210220053756383, "y": 0.08455120184209274, "z": -0.8412367683160682, "color": "#30343b", "display_radius": 0.2}, {"index": 30, "label": "C16", "element": "C", "x": -4.47715535617653, "y": 0.12209993740488582, "z": -1.2449210905180965, "color": "#30343b", "display_radius": 0.2}, {"index": 31, "label": "C17", "element": "C", "x": -5.643550241967573, "y": 0.16473689131129546, "z": -0.39112072703597145, "color": "#30343b", "display_radius": 0.2}, {"index": 32, "label": "C18", "element": "C", "x": -6.924375220667407, "y": 0.17430448392136869, "z": -0.9322573410566025, "color": "#30343b", "display_radius": 0.2}, {"index": 33, "label": "C19", "element": "C", "x": -8.011182514314932, "y": 0.25670244337653225, "z": -0.08879514117856724, "color": "#30343b", "display_radius": 0.2}, {"index": 34, "label": "C20", "element": "C", "x": -7.803467632966876, "y": 0.32391311340477763, "z": 1.2533088987129597, "color": "#30343b", "display_radius": 0.2}, {"index": 35, "label": "C21", "element": "C", "x": -6.5029351609214245, "y": 0.28137113226500743, "z": 1.7057815154936309, "color": "#30343b", "display_radius": 0.2}, {"index": 36, "label": "H12", "element": "H", "x": -6.36517591115937, "y": 0.30799425931521157, "z": 2.626301802178707, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 37, "label": "H13", "element": "H", "x": -8.51634921008238, "y": 0.39579446186942124, "z": 1.8472776931873338, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 38, "label": "H14", "element": "H", "x": -8.875074794293756, "y": 0.2652502798414973, "z": -0.43201236554945943, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 39, "label": "H15", "element": "H", "x": -7.045838070300013, "y": 0.12411564360819183, "z": -1.853068318648977, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 40, "label": "N2", "element": "N", "x": -5.442701687199141, "y": 0.20787173397729403, "z": 0.9319515473870156, "color": "#2f66d0", "display_radius": 0.19}, {"index": 41, "label": "H16", "element": "H", "x": -4.627945358291309, "y": 0.12191568520768402, "z": -2.1633955547264203, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 42, "label": "H17", "element": "H", "x": -3.071181463131894, "y": 0.050817033579168065, "z": 0.07657055148554104, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 43, "label": "N3", "element": "N", "x": -2.0804484708240354, "y": 0.1820237461928704, "z": -2.997479860693305, "color": "#2f66d0", "display_radius": 0.19}, {"index": 44, "label": "C22", "element": "C", "x": 0.08535982174337664, "y": 0.07299791524463112, "z": -2.39838987761886, "color": "#30343b", "display_radius": 0.2}, {"index": 45, "label": "N4", "element": "N", "x": -0.7902382823215608, "y": 0.16968003506711632, "z": -3.4458260464513675, "color": "#2f66d0", "display_radius": 0.19}, {"index": 46, "label": "H18", "element": "H", "x": -0.6198131478132226, "y": 0.12295419868148666, "z": -4.352480318883283, "color": "#f7f7f2", "display_radius": 0.13}], "bonds": [{"left": 1, "right": 2, "kind": "construction"}, {"left": 1, "right": 26, "kind": "construction"}, {"left": 1, "right": 27, "kind": "construction"}, {"left": 2, "right": 3, "kind": "construction"}, {"left": 2, "right": 25, "kind": "construction"}, {"left": 3, "right": 4, "kind": "construction"}, {"left": 3, "right": 23, "kind": "construction"}, {"left": 4, "right": 5, "kind": "construction"}, {"left": 5, "right": 6, "kind": "construction"}, {"left": 5, "right": 17, "kind": "construction"}, {"left": 6, "right": 7, "kind": "construction"}, {"left": 6, "right": 15, "kind": "construction"}, {"left": 7, "right": 8, "kind": "construction"}, {"left": 7, "right": 14, "kind": "construction"}, {"left": 8, "right": 9, "kind": "construction"}, {"left": 8, "right": 13, "kind": "construction"}, {"left": 9, "right": 10, "kind": "construction"}, {"left": 9, "right": 11, "kind": "construction"}, {"left": 9, "right": 12, "kind": "construction"}, {"left": 15, "right": 16, "kind": "construction"}, {"left": 15, "right": 19, "kind": "inferred"}, {"left": 17, "right": 18, "kind": "construction"}, {"left": 17, "right": 22, "kind": "construction"}, {"left": 18, "right": 19, "kind": "construction"}, {"left": 18, "right": 21, "kind": "construction"}, {"left": 19, "right": 20, "kind": "construction"}, {"left": 23, "right": 24, "kind": "construction"}, {"left": 23, "right": 44, "kind": "inferred"}, {"left": 27, "right": 28, "kind": "construction"}, {"left": 27, "right": 44, "kind": "construction"}, {"left": 28, "right": 29, "kind": "construction"}, {"left": 28, "right": 43, "kind": "construction"}, {"left": 29, "right": 30, "kind": "construction"}, {"left": 29, "right": 42, "kind": "construction"}, {"left": 30, "right": 31, "kind": "construction"}, {"left": 30, "right": 41, "kind": "construction"}, {"left": 31, "right": 32, "kind": "construction"}, {"left": 31, "right": 40, "kind": "construction"}, {"left": 32, "right": 33, "kind": "construction"}, {"left": 32, "right": 39, "kind": "construction"}, {"left": 33, "right": 34, "kind": "construction"}, {"left": 33, "right": 38, "kind": "construction"}, {"left": 34, "right": 35, "kind": "construction"}, {"left": 34, "right": 37, "kind": "construction"}, {"left": 35, "right": 36, "kind": "construction"}, {"left": 35, "right": 40, "kind": "inferred"}, {"left": 43, "right": 45, "kind": "inferred"}, {"left": 44, "right": 45, "kind": "construction"}, {"left": 45, "right": 46, "kind": "construction"}], "dihedrals": [{"id": "row-4", "row_index": 4, "atom_indices": [4, 3, 2, 1], "atom_labels": ["S1", "C3", "C2", "C1"], "value_degrees": 176.6747167632, "kind": "proper", "links": [[3, 4], [2, 3], [1, 2]]}, {"id": "row-5", "row_index": 5, "atom_indices": [5, 4, 3, 2], "atom_labels": ["C4", "S1", "C3", "C2"], "value_degrees": 70.9261922962, "kind": "proper", "links": [[4, 5], [3, 4], [2, 3]]}, {"id": "row-6", "row_index": 6, "atom_indices": [6, 5, 4, 3], "atom_labels": ["C5", "C4", "S1", "C3"], "value_degrees": -172.00158478, "kind": "proper", "links": [[5, 6], [4, 5], [3, 4]]}, {"id": "row-7", "row_index": 7, "atom_indices": [7, 6, 5, 4], "atom_labels": ["C6", "C5", "C4", "S1"], "value_degrees": -2.6073509227, "kind": "proper", "links": [[6, 7], [5, 6], [4, 5]]}, {"id": "row-8", "row_index": 8, "atom_indices": [8, 7, 6, 5], "atom_labels": ["N1", "C6", "C5", "C4"], "value_degrees": 152.0025388066, "kind": "proper", "links": [[7, 8], [6, 7], [5, 6]]}, {"id": "row-9", "row_index": 9, "atom_indices": [9, 8, 7, 6], "atom_labels": ["C7", "N1", "C6", "C5"], "value_degrees": 178.8784281242, "kind": "proper", "links": [[8, 9], [7, 8], [6, 7]]}, {"id": "row-10", "row_index": 10, "atom_indices": [10, 9, 8, 7], "atom_labels": ["H1", "C7", "N1", "C6"], "value_degrees": 179.9312078996, "kind": "proper", "links": [[9, 10], [8, 9], [7, 8]]}, {"id": "row-11", "row_index": 11, "atom_indices": [11, 9, 8, 10], "atom_labels": ["H2", "C7", "N1", "H1"], "value_degrees": -119.943772134, "kind": "improper", "links": [[9, 11], [8, 9], [8, 10]]}, {"id": "row-12", "row_index": 12, "atom_indices": [12, 9, 10, 11], "atom_labels": ["H3", "C7", "H1", "H2"], "value_degrees": 119.9885541293, "kind": "improper", "links": [[9, 12], [9, 10], [10, 11]]}, {"id": "row-13", "row_index": 13, "atom_indices": [13, 8, 7, 9], "atom_labels": ["H4", "N1", "C6", "C7"], "value_degrees": -172.7139520538, "kind": "improper", "links": [[8, 13], [7, 8], [7, 9]]}, {"id": "row-14", "row_index": 14, "atom_indices": [14, 7, 6, 8], "atom_labels": ["O1", "C6", "C5", "N1"], "value_degrees": 179.8283160399, "kind": "improper", "links": [[7, 14], [6, 7], [6, 8]]}, {"id": "row-15", "row_index": 15, "atom_indices": [15, 6, 5, 7], "atom_labels": ["C8", "C5", "C4", "C6"], "value_degrees": -177.1231975717, "kind": "improper", "links": [[6, 15], [5, 6], [5, 7]]}, {"id": "row-16", "row_index": 16, "atom_indices": [16, 15, 6, 5], "atom_labels": ["H5", "C8", "C5", "C4"], "value_degrees": 179.5841445993, "kind": "proper", "links": [[15, 16], [6, 15], [5, 6]]}, {"id": "row-17", "row_index": 17, "atom_indices": [17, 5, 4, 6], "atom_labels": ["C9", "C4", "S1", "C5"], "value_degrees": 179.6446451179, "kind": "improper", "links": [[5, 17], [4, 5], [4, 6]]}, {"id": "row-18", "row_index": 18, "atom_indices": [18, 17, 5, 6], "atom_labels": ["C10", "C9", "C4", "C5"], "value_degrees": -0.5185514782, "kind": "proper", "links": [[17, 18], [5, 17], [5, 6]]}, {"id": "row-19", "row_index": 19, "atom_indices": [19, 18, 17, 5], "atom_labels": ["C11", "C10", "C9", "C4"], "value_degrees": 0.1662909614, "kind": "proper", "links": [[18, 19], [17, 18], [5, 17]]}, {"id": "row-20", "row_index": 20, "atom_indices": [20, 19, 15, 16], "atom_labels": ["H6", "C11", "C8", "H5"], "value_degrees": 0.2307123747, "kind": "proper", "links": [[19, 20], [15, 19], [15, 16]]}, {"id": "row-21", "row_index": 21, "atom_indices": [21, 18, 17, 19], "atom_labels": ["H7", "C10", "C9", "C11"], "value_degrees": -179.8932143322, "kind": "improper", "links": [[18, 21], [17, 18], [17, 19]]}, {"id": "row-22", "row_index": 22, "atom_indices": [22, 17, 5, 18], "atom_labels": ["H8", "C9", "C4", "C10"], "value_degrees": -179.9821195524, "kind": "improper", "links": [[17, 22], [5, 17], [5, 18]]}, {"id": "row-23", "row_index": 23, "atom_indices": [23, 3, 2, 4], "atom_labels": ["C12", "C3", "C2", "S1"], "value_degrees": -175.029647234, "kind": "improper", "links": [[3, 23], [2, 3], [2, 4]]}, {"id": "row-24", "row_index": 24, "atom_indices": [24, 23, 3, 4], "atom_labels": ["H9", "C12", "C3", "S1"], "value_degrees": 5.1527295447, "kind": "proper", "links": [[23, 24], [3, 23], [3, 4]]}, {"id": "row-25", "row_index": 25, "atom_indices": [25, 2, 1, 3], "atom_labels": ["H10", "C2", "C1", "C3"], "value_degrees": 179.8972317273, "kind": "improper", "links": [[2, 25], [1, 2], [1, 3]]}, {"id": "row-26", "row_index": 26, "atom_indices": [26, 1, 2, 25], "atom_labels": ["H11", "C1", "C2", "H10"], "value_degrees": -2.0364911501, "kind": "proper", "links": [[1, 26], [1, 2], [2, 25]]}, {"id": "row-27", "row_index": 27, "atom_indices": [27, 1, 2, 26], "atom_labels": ["C13", "C1", "C2", "H11"], "value_degrees": -179.9075416264, "kind": "improper", "links": [[1, 27], [1, 2], [2, 26]]}, {"id": "row-28", "row_index": 28, "atom_indices": [28, 27, 1, 2], "atom_labels": ["C14", "C13", "C1", "C2"], "value_degrees": -177.9443529264, "kind": "proper", "links": [[27, 28], [1, 27], [1, 2]]}, {"id": "row-29", "row_index": 29, "atom_indices": [29, 28, 27, 1], "atom_labels": ["C15", "C14", "C13", "C1"], "value_degrees": -1.4672895224, "kind": "proper", "links": [[28, 29], [27, 28], [1, 27]]}, {"id": "row-30", "row_index": 30, "atom_indices": [30, 29, 28, 27], "atom_labels": ["C16", "C15", "C14", "C13"], "value_degrees": -179.5457389328, "kind": "proper", "links": [[29, 30], [28, 29], [27, 28]]}, {"id": "row-31", "row_index": 31, "atom_indices": [31, 30, 29, 28], "atom_labels": ["C17", "C16", "C15", "C14"], "value_degrees": -177.6189041633, "kind": "proper", "links": [[30, 31], [29, 30], [28, 29]]}, {"id": "row-32", "row_index": 32, "atom_indices": [32, 31, 30, 29], "atom_labels": ["C18", "C17", "C16", "C15"], "value_degrees": -178.6792988862, "kind": "proper", "links": [[31, 32], [30, 31], [29, 30]]}, {"id": "row-33", "row_index": 33, "atom_indices": [33, 32, 31, 30], "atom_labels": ["C19", "C18", "C17", "C16"], "value_degrees": -178.024873409, "kind": "proper", "links": [[32, 33], [31, 32], [30, 31]]}, {"id": "row-34", "row_index": 34, "atom_indices": [34, 33, 32, 31], "atom_labels": ["C20", "C19", "C18", "C17"], "value_degrees": -0.1330400648, "kind": "proper", "links": [[33, 34], [32, 33], [31, 32]]}, {"id": "row-35", "row_index": 35, "atom_indices": [35, 34, 33, 32], "atom_labels": ["C21", "C20", "C19", "C18"], "value_degrees": -1.1550173551, "kind": "proper", "links": [[34, 35], [33, 34], [32, 33]]}, {"id": "row-36", "row_index": 36, "atom_indices": [36, 35, 34, 33], "atom_labels": ["H12", "C21", "C20", "C19"], "value_degrees": -178.6344088278, "kind": "proper", "links": [[35, 36], [34, 35], [33, 34]]}, {"id": "row-37", "row_index": 37, "atom_indices": [37, 34, 33, 35], "atom_labels": ["H13", "C20", "C19", "C21"], "value_degrees": -179.9635497822, "kind": "improper", "links": [[34, 37], [33, 34], [33, 35]]}, {"id": "row-38", "row_index": 38, "atom_indices": [38, 33, 32, 34], "atom_labels": ["H14", "C19", "C18", "C20"], "value_degrees": -179.9278664716, "kind": "improper", "links": [[33, 38], [32, 33], [32, 34]]}, {"id": "row-39", "row_index": 39, "atom_indices": [39, 32, 31, 33], "atom_labels": ["H15", "C18", "C17", "C19"], "value_degrees": -179.8920883899, "kind": "improper", "links": [[32, 39], [31, 32], [31, 33]]}, {"id": "row-40", "row_index": 40, "atom_indices": [40, 31, 30, 32], "atom_labels": ["N2", "C17", "C16", "C18"], "value_degrees": -179.3512251008, "kind": "improper", "links": [[31, 40], [30, 31], [30, 32]]}, {"id": "row-41", "row_index": 41, "atom_indices": [41, 30, 29, 31], "atom_labels": ["H16", "C16", "C15", "C17"], "value_degrees": 179.9256179671, "kind": "improper", "links": [[30, 41], [29, 30], [29, 31]]}, {"id": "row-42", "row_index": 42, "atom_indices": [42, 29, 28, 30], "atom_labels": ["H17", "C15", "C14", "C16"], "value_degrees": 179.9479245273, "kind": "improper", "links": [[29, 42], [28, 29], [28, 30]]}, {"id": "row-43", "row_index": 43, "atom_indices": [43, 28, 27, 29], "atom_labels": ["N3", "C14", "C13", "C15"], "value_degrees": 178.2047228879, "kind": "improper", "links": [[28, 43], [27, 28], [27, 29]]}, {"id": "row-44", "row_index": 44, "atom_indices": [44, 27, 1, 28], "atom_labels": ["C22", "C13", "C1", "C14"], "value_degrees": 178.1386967313, "kind": "improper", "links": [[27, 44], [1, 27], [1, 28]]}, {"id": "row-45", "row_index": 45, "atom_indices": [45, 44, 27, 28], "atom_labels": ["N4", "C22", "C13", "C14"], "value_degrees": 1.4009448165, "kind": "proper", "links": [[44, 45], [27, 44], [27, 28]]}, {"id": "row-46", "row_index": 46, "atom_indices": [46, 45, 43, 28], "atom_labels": ["H18", "N4", "N3", "C14"], "value_degrees": 172.6267169028, "kind": "proper", "links": [[45, 46], [43, 45], [28, 43]]}], "warnings": []}</script>
+  <script>
+    "use strict";
+
+    const molecule = JSON.parse(document.getElementById("moleculeData").textContent);
+    window.__viewerMolecule = molecule;
+
+    const canvas = document.getElementById("moleculeCanvas");
+    const ctx = canvas.getContext("2d");
+    const list = document.getElementById("dihedralList");
+    const activeDetail = document.getElementById("activeDetail");
+    const buttonsById = new Map();
+
+    const state = {
+      rotX: -0.45,
+      rotY: 0.72,
+      zoom: 1.0,
+      hovered: null,
+      hoveredAtom: null,
+      selected: null,
+      dragging: false,
+      lastX: 0,
+      lastY: 0
+    };
+
+    const atomsByIndex = new Map(molecule.atoms.map((atom) => [atom.index, atom]));
+    const bondKeys = new Set(molecule.bonds.map((bond) => linkKey(bond.left, bond.right)));
+    const center = moleculeCenter(molecule.atoms);
+    const radius = Math.max(1.0, moleculeRadius(molecule.atoms, center));
+
+    document.getElementById("viewerTitle").textContent = molecule.title || "Z-matrix viewer";
+    document.getElementById("viewerSource").textContent = molecule.source_name || "";
+    document.getElementById("atomCount").textContent = molecule.atoms.length + " atoms";
+    document.getElementById("bondCount").textContent = molecule.bonds.length + " bonds";
+    document.getElementById("dihedralCount").textContent = molecule.dihedrals.length + " dihedrals";
+    document.getElementById("warnings").textContent = molecule.warnings.join(" ");
+
+    buildDihedralList();
+    resizeCanvas();
+    draw();
+    window.__viewerReady = true;
+
+    window.addEventListener("resize", () => {
+      resizeCanvas();
+      draw();
+    });
+
+    document.getElementById("resetView").addEventListener("click", () => {
+      state.rotX = -0.45;
+      state.rotY = 0.72;
+      state.zoom = 1.0;
+      draw();
+    });
+
+    document.getElementById("clearSelection").addEventListener("click", () => {
+      state.selected = null;
+      state.hovered = null;
+      state.hoveredAtom = null;
+      canvas.classList.remove("is-atom-hover");
+      updateRows();
+      draw();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        state.selected = null;
+        state.hovered = null;
+        state.hoveredAtom = null;
+        canvas.classList.remove("is-atom-hover");
+        updateRows();
+        draw();
+      }
+    });
+
+    canvas.addEventListener("pointerdown", (event) => {
+      state.dragging = true;
+      state.lastX = event.clientX;
+      state.lastY = event.clientY;
+      state.hoveredAtom = null;
+      canvas.classList.add("is-dragging");
+      canvas.classList.remove("is-atom-hover");
+      canvas.setPointerCapture(event.pointerId);
+    });
+
+    canvas.addEventListener("pointermove", (event) => {
+      if (!state.dragging) {
+        const nextHoveredAtom = hitTestAtom(event);
+        if (state.hoveredAtom !== nextHoveredAtom) {
+          state.hoveredAtom = nextHoveredAtom;
+          canvas.classList.toggle("is-atom-hover", state.hoveredAtom !== null);
+          updateRows();
+          draw();
+        }
+        return;
+      }
+      const dx = event.clientX - state.lastX;
+      const dy = event.clientY - state.lastY;
+      state.lastX = event.clientX;
+      state.lastY = event.clientY;
+      state.rotY += dx * 0.010;
+      state.rotX += dy * 0.010;
+      state.rotX = Math.max(-Math.PI * 0.49, Math.min(Math.PI * 0.49, state.rotX));
+      draw();
+    });
+
+    canvas.addEventListener("pointerup", (event) => {
+      state.dragging = false;
+      canvas.classList.remove("is-dragging");
+      canvas.releasePointerCapture(event.pointerId);
+    });
+
+    canvas.addEventListener("pointercancel", () => {
+      state.dragging = false;
+      state.hoveredAtom = null;
+      canvas.classList.remove("is-dragging");
+      canvas.classList.remove("is-atom-hover");
+      updateRows();
+      draw();
+    });
+
+    canvas.addEventListener("pointerleave", () => {
+      if (state.dragging) {
+        return;
+      }
+      state.hoveredAtom = null;
+      canvas.classList.remove("is-atom-hover");
+      updateRows();
+      draw();
+    });
+
+    canvas.addEventListener("wheel", (event) => {
+      event.preventDefault();
+      const nextZoom = state.zoom * Math.exp(-event.deltaY * 0.001);
+      state.zoom = Math.max(0.35, Math.min(5.0, nextZoom));
+      draw();
+    }, { passive: false });
+
+    function buildDihedralList() {
+      if (molecule.dihedrals.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "active-detail";
+        empty.textContent = "No dihedral rows";
+        list.appendChild(empty);
+        activeDetail.textContent = "";
+        return;
+      }
+
+      for (const dihedral of molecule.dihedrals) {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "dihedral-row";
+        row.dataset.id = dihedral.id;
+
+        const quartet = document.createElement("span");
+        quartet.className = "quartet";
+        quartet.textContent = dihedral.atom_labels.join("-");
+        row.appendChild(quartet);
+
+        const value = document.createElement("span");
+        value.className = "value";
+        value.textContent = formatAngle(dihedral.value_degrees);
+        row.appendChild(value);
+
+        const meta = document.createElement("span");
+        meta.className = "meta";
+        meta.textContent = "row " + dihedral.row_index + " / " + dihedral.kind;
+        row.appendChild(meta);
+
+        row.addEventListener("mouseenter", () => {
+          state.hovered = dihedral.id;
+          updateRows();
+          draw();
+        });
+        row.addEventListener("mouseleave", () => {
+          state.hovered = null;
+          updateRows();
+          draw();
+        });
+        row.addEventListener("focus", () => {
+          state.hovered = dihedral.id;
+          updateRows();
+          draw();
+        });
+        row.addEventListener("blur", () => {
+          state.hovered = null;
+          updateRows();
+          draw();
+        });
+        row.addEventListener("click", () => {
+          state.selected = state.selected === dihedral.id ? null : dihedral.id;
+          updateRows();
+          draw();
+        });
+
+        buttonsById.set(dihedral.id, row);
+        list.appendChild(row);
+      }
+      updateRows();
+    }
+
+    function activeDihedral() {
+      const id = state.hovered || state.selected;
+      if (!id) {
+        return null;
+      }
+      return molecule.dihedrals.find((dihedral) => dihedral.id === id) || null;
+    }
+
+    function atomHoverDihedrals() {
+      if (state.hoveredAtom === null) {
+        return [];
+      }
+      return molecule.dihedrals.filter((dihedral) => dihedral.atom_indices[0] === state.hoveredAtom);
+    }
+
+    function updateRows() {
+      const active = activeDihedral();
+      const atomHoverIds = new Set(atomHoverDihedrals().map((dihedral) => dihedral.id));
+      for (const [id, row] of buttonsById) {
+        row.classList.toggle("is-active", active !== null && active.id === id);
+        row.classList.toggle("is-atom-hover", atomHoverIds.has(id) && !(active !== null && active.id === id));
+      }
+      if (!active) {
+        const atomDihedrals = atomHoverDihedrals();
+        if (atomDihedrals.length === 0) {
+          activeDetail.textContent = "";
+          return;
+        }
+        const atom = atomsByIndex.get(state.hoveredAtom);
+        activeDetail.innerHTML = "";
+        const strong = document.createElement("strong");
+        strong.textContent = atom ? atom.label : "Atom " + state.hoveredAtom;
+        activeDetail.appendChild(strong);
+        activeDetail.appendChild(document.createTextNode(
+          " starts " + atomDihedrals.length + " dihedral" + (atomDihedrals.length === 1 ? "" : "s")
+        ));
+        return;
+      }
+      activeDetail.innerHTML = "";
+      const strong = document.createElement("strong");
+      strong.textContent = active.atom_labels.join("-");
+      activeDetail.appendChild(strong);
+      activeDetail.appendChild(document.createTextNode(
+        "  " + formatAngle(active.value_degrees) + "  " + active.kind
+      ));
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+      canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function draw() {
+      updateRows();
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#eef2f6";
+      ctx.fillRect(0, 0, width, height);
+
+      const active = activeDihedral();
+      const atomHover = atomHoverDihedrals();
+      const activeAtoms = new Set(active ? active.atom_indices : []);
+      const activeLinks = new Set(active ? active.links.map((link) => linkKey(link[0], link[1])) : []);
+      const atomHoverAtoms = new Set(atomHover.flatMap((dihedral) => dihedral.atom_indices));
+      const atomHoverLinks = new Set(atomHover.flatMap((dihedral) => dihedral.links.map((link) => linkKey(link[0], link[1]))));
+      const projected = new Map();
+      for (const atom of molecule.atoms) {
+        projected.set(atom.index, projectAtom(atom, width, height));
+      }
+
+      const bonds = molecule.bonds.map((bond) => {
+        const left = projected.get(bond.left);
+        const right = projected.get(bond.right);
+        return {
+          bond,
+          left,
+          right,
+          z: (left.z + right.z) * 0.5
+        };
+      }).sort((a, b) => a.z - b.z);
+
+      for (const item of bonds) {
+        const key = linkKey(item.bond.left, item.bond.right);
+        drawBond(item.left, item.right, {
+          active: activeLinks.has(key),
+          atomHover: atomHoverLinks.has(key) && !activeLinks.has(key),
+          inferred: item.bond.kind === "inferred"
+        });
+      }
+
+      if (atomHover.length > 0) {
+        for (const dihedral of atomHover) {
+          for (const link of dihedral.links) {
+            const key = linkKey(link[0], link[1]);
+            if (activeLinks.has(key)) {
+              continue;
+            }
+            const left = projected.get(link[0]);
+            const right = projected.get(link[1]);
+            drawReferenceLink(left, right, !bondKeys.has(key), "#0077c8", 2.5);
+          }
+        }
+      }
+
+      if (active) {
+        for (const link of active.links) {
+          const left = projected.get(link[0]);
+          const right = projected.get(link[1]);
+          drawReferenceLink(left, right, !bondKeys.has(linkKey(link[0], link[1])), "#d76b00", 3);
+        }
+      }
+
+      const atoms = molecule.atoms.map((atom) => ({
+        atom,
+        point: projected.get(atom.index)
+      })).sort((a, b) => a.point.z - b.point.z);
+      for (const item of atoms) {
+        drawAtom(
+          item.atom,
+          item.point,
+          activeAtoms.has(item.atom.index),
+          atomHoverAtoms.has(item.atom.index) && !activeAtoms.has(item.atom.index)
+        );
+      }
+    }
+
+    function drawBond(left, right, options) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(left.x, left.y);
+      ctx.lineTo(right.x, right.y);
+      ctx.lineCap = "round";
+      ctx.lineWidth = options.active ? 8 : options.atomHover ? 7 : 5;
+      ctx.strokeStyle = options.active ? "#d76b00" : options.atomHover ? "#0077c8" : options.inferred ? "#b9c3cf" : "#8995a3";
+      if (options.inferred && !options.active && !options.atomHover) {
+        ctx.setLineDash([6, 6]);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawReferenceLink(left, right, dashed, color, width) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(left.x, left.y);
+      ctx.lineTo(right.x, right.y);
+      ctx.lineCap = "round";
+      ctx.lineWidth = width;
+      ctx.strokeStyle = color;
+      if (dashed) {
+        ctx.setLineDash([7, 5]);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawAtom(atom, point, highlighted, atomHoverHighlighted) {
+      const scale = projectionScale(canvas.clientWidth, canvas.clientHeight);
+      const radiusPx = Math.max(5, atom.display_radius * scale);
+      if (highlighted || atomHoverHighlighted) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, radiusPx + 6, 0, Math.PI * 2);
+        ctx.strokeStyle = highlighted ? "#d76b00" : "#0077c8";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      const gradient = ctx.createRadialGradient(
+        point.x - radiusPx * 0.35,
+        point.y - radiusPx * 0.45,
+        Math.max(1, radiusPx * 0.08),
+        point.x,
+        point.y,
+        radiusPx
+      );
+      gradient.addColorStop(0, "#ffffff");
+      gradient.addColorStop(0.25, atom.color);
+      gradient.addColorStop(1, adjustHex(atom.color, -38));
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, radiusPx, 0, Math.PI * 2);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = "#26303a";
+      ctx.stroke();
+      ctx.restore();
+
+      drawLabel(atom.label, point.x + radiusPx + 4, point.y - radiusPx - 2, highlighted, atomHoverHighlighted);
+    }
+
+    function drawLabel(text, x, y, highlighted, atomHoverHighlighted) {
+      ctx.save();
+      ctx.font = (highlighted || atomHoverHighlighted ? "700 " : "600 ") + "12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "rgba(255,255,255,0.90)";
+      ctx.strokeText(text, x, y);
+      ctx.fillStyle = highlighted ? "#a34400" : atomHoverHighlighted ? "#005b99" : "#1d2430";
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+
+    function hitTestAtom(event) {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      const scale = projectionScale(width, height);
+      let best = null;
+      let bestDistance = Infinity;
+
+      for (const atom of molecule.atoms) {
+        const point = projectAtom(atom, width, height);
+        const radiusPx = Math.max(5, atom.display_radius * scale) + 8;
+        const dx = x - point.x;
+        const dy = y - point.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance <= radiusPx && distance < bestDistance) {
+          best = atom.index;
+          bestDistance = distance;
+        }
+      }
+
+      return best;
+    }
+
+    function projectAtom(atom, width, height) {
+      const x0 = atom.x - center.x;
+      const y0 = atom.y - center.y;
+      const z0 = atom.z - center.z;
+      const cy = Math.cos(state.rotY);
+      const sy = Math.sin(state.rotY);
+      const cx = Math.cos(state.rotX);
+      const sx = Math.sin(state.rotX);
+
+      const x1 = x0 * cy + z0 * sy;
+      const z1 = -x0 * sy + z0 * cy;
+      const y1 = y0 * cx - z1 * sx;
+      const z2 = y0 * sx + z1 * cx;
+      const scale = projectionScale(width, height);
+      return {
+        x: width * 0.5 + x1 * scale,
+        y: height * 0.5 - y1 * scale,
+        z: z2
+      };
+    }
+
+    function projectionScale(width, height) {
+      return Math.min(width, height) / (radius * 2.7) * state.zoom;
+    }
+
+    function moleculeCenter(atoms) {
+      if (atoms.length === 0) {
+        return { x: 0, y: 0, z: 0 };
+      }
+      const total = atoms.reduce((acc, atom) => ({
+        x: acc.x + atom.x,
+        y: acc.y + atom.y,
+        z: acc.z + atom.z
+      }), { x: 0, y: 0, z: 0 });
+      return {
+        x: total.x / atoms.length,
+        y: total.y / atoms.length,
+        z: total.z / atoms.length
+      };
+    }
+
+    function moleculeRadius(atoms, centerPoint) {
+      let maxRadius = 0;
+      for (const atom of atoms) {
+        const dx = atom.x - centerPoint.x;
+        const dy = atom.y - centerPoint.y;
+        const dz = atom.z - centerPoint.z;
+        maxRadius = Math.max(maxRadius, Math.sqrt(dx * dx + dy * dy + dz * dz));
+      }
+      return maxRadius;
+    }
+
+    function linkKey(left, right) {
+      return left < right ? left + "-" + right : right + "-" + left;
+    }
+
+    function formatAngle(value) {
+      return Number(value).toFixed(2) + " deg";
+    }
+
+    function adjustHex(hex, amount) {
+      const clean = hex.replace("#", "");
+      if (clean.length !== 6) {
+        return hex;
+      }
+      const parts = [0, 2, 4].map((index) => {
+        const next = Math.max(0, Math.min(255, parseInt(clean.slice(index, index + 2), 16) + amount));
+        return next.toString(16).padStart(2, "0");
+      });
+      return "#" + parts.join("");
+    }
+  </script>
+</body>
+</html>

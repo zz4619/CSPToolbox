@@ -62,10 +62,22 @@ Installed console commands defined in `pyproject.toml`:
 - `csp-vasp-pbe0-inputs`
 - `csp-vasp-summary`
 - `csp-vasp-manifest`
+- `csp-zmat-viewer`
 
 The CLI directory also contains plotting, rendering, CSORM/CSOFM generation,
 Gaussian generation, and VASP summary scripts that were moved out of the top
 level of `Source/` during cleanup.
+
+## Z-Matrix Viewer
+
+`csp-zmat-viewer` writes a standalone interactive HTML file from a numeric
+`# ZMAT v1` file. The output has no Python server or external JavaScript
+runtime requirement, so it can be produced on an HPC filesystem and opened
+locally.
+
+```bash
+csp-zmat-viewer molecule.zmat --output molecule_viewer.html
+```
 
 ## Cleanup Notes
 

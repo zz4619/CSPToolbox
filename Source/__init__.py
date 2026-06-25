@@ -69,6 +69,9 @@ _EXPORTS = {
     "calculate_pdd": ("Source.pdd_descriptor", "calculate_pdd"),
     "pdd_distance": ("Source.pdd_descriptor", "pdd_distance"),
     "pdd_distance_breakdown": ("Source.pdd_descriptor", "pdd_distance_breakdown"),
+    "build_zmatrix_viewer_document": ("Source.zmatrix_viewer", "build_zmatrix_viewer_document"),
+    "render_zmatrix_viewer_html": ("Source.zmatrix_viewer", "render_zmatrix_viewer_html"),
+    "write_zmatrix_viewer_html": ("Source.zmatrix_viewer", "write_zmatrix_viewer_html"),
 }
 
 __all__ = sorted(_EXPORTS)

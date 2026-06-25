@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import csv
 import os
 from pathlib import Path
@@ -68,6 +69,17 @@ def contcar_paths(input_root: Path) -> list[Path]:
     return sorted(input_root.glob("*/CONTCAR"))
 
 
+def is_water_molecule(molecule) -> bool:
+    return Counter(atom.element for atom in molecule) == Counter({"H": 2, "O": 1})
+
+
+def clear_pngs(directory: Path) -> None:
+    if not directory.exists():
+        return
+    for path in directory.glob("*.png"):
+        path.unlink()
+
+
 def export_diagrams(
     *,
     input_root: Path,
@@ -82,6 +94,7 @@ def export_diagrams(
     unit_cell_dir.mkdir(parents=True, exist_ok=True)
     full_diagram_dir.mkdir(parents=True, exist_ok=True)
     molecule_diagram_dir.mkdir(parents=True, exist_ok=True)
+    clear_pngs(molecule_diagram_dir)
 
     paths = contcar_paths(input_root)
     if limit is not None:
@@ -97,6 +110,11 @@ def export_diagrams(
             "atom_count": "",
             "molecule_count": "",
             "molecule_sizes": "",
+            "unique_molecule_count": "",
+            "unique_non_water_molecule_count": "",
+            "unique_non_water_molecule_sizes": "",
+            "unique_non_water_duplicate_counts": "",
+            "water_unique_molecule_count": "",
             "unit_cell_cif": "",
             "unit_cell_diagram": "",
             "molecule_diagrams": "",
@@ -106,6 +124,13 @@ def export_diagrams(
         try:
             structure = read_contcar_as_crystal(contcar_path, name=system_name)
             molecules = structure.detect_molecules()
+            molecule_groups = structure.deduplicate_molecules()
+            non_water_groups = [
+                group
+                for group in molecule_groups
+                if not is_water_molecule(group.representative_molecule)
+            ]
+            water_group_count = len(molecule_groups) - len(non_water_groups)
 
             unit_cell_cif = unit_cell_dir / f"{system_name}_unit_cell.cif"
             unit_cell_diagram = full_diagram_dir / f"{system_name}_unit_cell_labelled.png"
@@ -117,7 +142,9 @@ def export_diagrams(
             )
 
             molecule_paths: list[str] = []
-            for molecule_index, molecule in enumerate(molecules, start=1):
+            duplicate_counts: list[str] = []
+            for molecule_index, group in enumerate(non_water_groups, start=1):
+                molecule = group.representative_molecule
                 gas_structure = structure.generate_gas_phase_vasp_structure(
                     molecule,
                     name=f"{system_name}_molecule_{molecule_index:02d}",
@@ -132,12 +159,21 @@ def export_diagrams(
                     draw_box=False,
                 )
                 molecule_paths.append(str(molecule_path))
+                duplicate_counts.append(str(len(group.duplicate_molecules)))
 
             row.update(
                 {
                     "atom_count": len(structure.atoms),
                     "molecule_count": len(molecules),
                     "molecule_sizes": ";".join(str(len(molecule)) for molecule in molecules),
+                    "unique_molecule_count": len(molecule_groups),
+                    "unique_non_water_molecule_count": len(non_water_groups),
+                    "unique_non_water_molecule_sizes": ";".join(
+                        str(len(group.representative_molecule))
+                        for group in non_water_groups
+                    ),
+                    "unique_non_water_duplicate_counts": ";".join(duplicate_counts),
+                    "water_unique_molecule_count": water_group_count,
                     "unit_cell_cif": str(unit_cell_cif),
                     "unit_cell_diagram": str(unit_cell_diagram),
                     "molecule_diagrams": ";".join(molecule_paths),
@@ -189,4 +225,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
