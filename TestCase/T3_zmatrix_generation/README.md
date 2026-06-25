@@ -3,9 +3,9 @@
 This test case exercises CSPToolbox Z-matrix generation on small synthetic
 molecules with known bonding patterns.
 
-The goal is to test both the current generator and the classification logic
-needed for the planned user-guided method where selected dihedrals remain
-proper torsions and all other torsions should be improper torsions.
+The goal is to test the default branch-improper generator: normal chains remain
+proper torsions, while extra branches are converted to improper torsions where
+valid references are available.
 
 ## Test Data
 
@@ -16,8 +16,8 @@ Current synthetic cases:
 
 - `butane_chain`: four carbon atoms in a non-linear bonded chain. This should
   produce at least one proper heavy-atom torsion over `C1-C2-C3-C4`.
-- `methanol`: one methyl group attached to oxygen. This checks the current
-  special improper handling for methyl hydrogens.
+- `methanol`: one methyl group attached to oxygen. This checks automatic
+  branch-improper handling for methyl hydrogens.
 
 ## What Is Checked
 
@@ -31,8 +31,6 @@ The test suite validates that:
   using the molecule bonding graph,
 - methanol methyl hydrogens after the first hydrogen use improper references,
 - the butane heavy-atom chain produces a proper torsion.
-- the automatic `branch_improper` mode generates valid Z-matrices and converts
-  methyl branch hydrogens to improper references.
 
 ## Run Tests
 
@@ -61,7 +59,7 @@ Generated output:
 
 ## Branch-Improper API Z-Matrices
 
-The `branch_improper` mode implements the automatic branch rule:
+The default generator implements the automatic branch rule:
 
 1. Build a proper-first Z-matrix tree.
 2. At each branch center, keep one branch as the proper branch.

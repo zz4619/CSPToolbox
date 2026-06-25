@@ -52,16 +52,9 @@ class ZMatrixGenerationTests(unittest.TestCase):
                 for expected in case.expected_proper_label_sets:
                     self.assertIn(expected, proper_label_sets)
 
-    def test_branch_improper_mode_generates_valid_zmatrices(self) -> None:
-        for case in sample_cases():
-            with self.subTest(case=case.name):
-                zmatrix = first_zmatrix(case.structure, zmatrix_mode="branch_improper")
-                errors = validate_zmatrix(case.structure, zmatrix)
-                self.assertEqual([], errors)
-
-    def test_branch_improper_mode_converts_methanol_methyl_hydrogens(self) -> None:
+    def test_default_generation_converts_methanol_methyl_hydrogens(self) -> None:
         case = next(item for item in sample_cases() if item.name == "methanol")
-        zmatrix = first_zmatrix(case.structure, zmatrix_mode="branch_improper")
+        zmatrix = first_zmatrix(case.structure)
         classifications = classify_dihedral_references(case.structure, zmatrix)
         by_label = {item.atom_label: item.kind for item in classifications}
         methyl_hydrogen_kinds = {

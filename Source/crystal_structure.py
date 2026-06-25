@@ -546,11 +546,9 @@ class CrystalStructure:
         self,
         covalent_scale: float = DEFAULT_COVALENT_SCALE,
         linear_threshold: float = DEFAULT_LINEAR_THRESHOLD,
-        zmatrix_mode: str = "special_improper",
     ) -> list[ZMatrixRepresentation]:
         """Generate one Z-matrix representation for each detected molecule."""
 
-        normalized_mode = _normalize_zmatrix_mode(zmatrix_mode)
         adjacency = self._build_connectivity(covalent_scale)
         components = self._connected_components(adjacency)
         component_data = []
@@ -578,7 +576,6 @@ class CrystalStructure:
                     molecule=molecule,
                     graph=graph,
                     linear_threshold=linear_threshold,
-                    zmatrix_mode=normalized_mode,
                 )
                 template_cache[signature] = {
                     "template": template,
@@ -1461,23 +1458,15 @@ class CrystalStructure:
         molecule: list[AtomRecord],
         graph: dict[int, set[int]],
         linear_threshold: float,
-        zmatrix_mode: str = "special_improper",
     ) -> tuple[list[_ZMatrixTemplateRow], list[str]]:
         coords = np.array([atom.coordinates for atom in molecule], dtype=float)
         symbols = [atom.element for atom in molecule]
         order, parent = self._atom_order(symbols, coords, graph)
-        branch_kept_child: dict[int, int] = {}
-        if zmatrix_mode == "branch_improper":
-            order, branch_kept_child = self._branch_improper_atom_order(
-                order,
-                parent,
-                symbols,
-            )
-        special_improper_metadata: dict[int, dict[str, object]] = {}
-        if zmatrix_mode == "special_improper":
-            special_improper_metadata = self._methyl_hydrogen_metadata(symbols, graph)
-            special_improper_metadata.update(self._amine_hydrogen_metadata(symbols, graph))
-            special_improper_metadata.update(self._carboxyl_oxygen_metadata(symbols, graph))
+        order, branch_kept_child = self._branch_improper_atom_order(
+            order,
+            parent,
+            symbols,
+        )
         defined: set[int] = set()
         template: list[_ZMatrixTemplateRow] = []
         warnings: list[str] = []
@@ -1497,16 +1486,8 @@ class CrystalStructure:
                 continue
 
             defined_refs = defined - {atom_i}
-            special_improper = None
             branch_improper = None
-            if zmatrix_mode == "special_improper":
-                special_improper = self._choose_special_improper_reference(
-                    atom_i,
-                    defined_refs,
-                    coords,
-                    special_improper_metadata,
-                )
-            elif zmatrix_mode == "branch_improper" and step >= 3:
+            if step >= 3:
                 branch_improper = self._choose_branch_improper_reference(
                     atom_i,
                     atom_b,
@@ -1519,9 +1500,7 @@ class CrystalStructure:
                 )
             used_fallback_angle = False
             used_fallback_dihedral = False
-            if special_improper is not None:
-                atom_a, angle_deg, atom_d, dihedral_deg = special_improper
-            elif branch_improper is not None:
+            if branch_improper is not None:
                 atom_a, atom_d = branch_improper
                 angle_deg = self._angle_value(coords, atom_i, atom_b, atom_a)
                 dihedral_deg = self._dihedral_value(coords, atom_i, atom_b, atom_a, atom_d)
@@ -1547,7 +1526,7 @@ class CrystalStructure:
                 template.append(_ZMatrixTemplateRow(atom_i, atom_b, atom_a, None, used_fallback_angle, False))
                 continue
 
-            if special_improper is None and branch_improper is None:
+            if branch_improper is None:
                 atom_d, dihedral_deg, dihedral_is_bonded_path = self._choose_dihedral_reference(
                     atom_i,
                     atom_b,
@@ -1558,7 +1537,6 @@ class CrystalStructure:
                     coords,
                     graph,
                     linear_threshold,
-                    allow_center_bonded_fallback=(zmatrix_mode == "special_improper"),
                 )
                 if not dihedral_is_bonded_path:
                     used_fallback_dihedral = True
@@ -1989,78 +1967,6 @@ class CrystalStructure:
             -candidate,
         )
 
-    def _methyl_hydrogen_metadata(
-        self,
-        symbols: list[str],
-        graph: dict[int, set[int]],
-    ) -> dict[int, dict[str, object]]:
-        metadata: dict[int, dict[str, object]] = {}
-        for atom_index, symbol in enumerate(symbols):
-            if symbol != "C":
-                continue
-            hydrogens = sorted(neighbor for neighbor in graph[atom_index] if symbols[neighbor] == "H")
-            heavy_neighbors = [neighbor for neighbor in graph[atom_index] if symbols[neighbor] != "H"]
-            if len(hydrogens) == 3 and len(heavy_neighbors) == 1 and len(graph[atom_index]) == 4:
-                heavy_neighbor = heavy_neighbors[0]
-                for hydrogen_index in hydrogens:
-                    metadata[hydrogen_index] = {
-                        "center": atom_index,
-                        "heavy": heavy_neighbor,
-                        "siblings": hydrogens,
-                    }
-        return metadata
-
-    def _amine_hydrogen_metadata(
-        self,
-        symbols: list[str],
-        graph: dict[int, set[int]],
-    ) -> dict[int, dict[str, object]]:
-        metadata: dict[int, dict[str, object]] = {}
-        for atom_index, symbol in enumerate(symbols):
-            if symbol != "N":
-                continue
-            hydrogens = sorted(neighbor for neighbor in graph[atom_index] if symbols[neighbor] == "H")
-            heavy_neighbors = [neighbor for neighbor in graph[atom_index] if symbols[neighbor] != "H"]
-            if len(hydrogens) == 2 and len(heavy_neighbors) == 1 and len(graph[atom_index]) == 3:
-                heavy_neighbor = heavy_neighbors[0]
-                for hydrogen_index in hydrogens:
-                    metadata[hydrogen_index] = {
-                        "center": atom_index,
-                        "heavy": heavy_neighbor,
-                        "siblings": hydrogens,
-                    }
-        return metadata
-
-    def _carboxyl_oxygen_metadata(
-        self,
-        symbols: list[str],
-        graph: dict[int, set[int]],
-    ) -> dict[int, dict[str, object]]:
-        metadata: dict[int, dict[str, object]] = {}
-        for atom_index, symbol in enumerate(symbols):
-            if symbol != "C":
-                continue
-            oxygens = sorted(neighbor for neighbor in graph[atom_index] if symbols[neighbor] == "O")
-            heavy_neighbors = [
-                neighbor
-                for neighbor in graph[atom_index]
-                if symbols[neighbor] not in {"H", "O"}
-            ]
-            if len(oxygens) != 2 or len(heavy_neighbors) != 1 or len(graph[atom_index]) != 3:
-                continue
-
-            terminal_oxygens = [oxygen for oxygen in oxygens if len(graph[oxygen]) == 1]
-            if len(terminal_oxygens) != 1:
-                continue
-
-            terminal_oxygen = terminal_oxygens[0]
-            metadata[terminal_oxygen] = {
-                "center": atom_index,
-                "heavy": heavy_neighbors[0],
-                "siblings": oxygens,
-            }
-        return metadata
-
     def _choose_angle_reference(
         self,
         atom_i: int,
@@ -2113,30 +2019,6 @@ class CrystalStructure:
         if best_candidate is None:
             raise ValueError(f"Failed to choose an angle reference for atom {atom_i}.")
         return best_candidate, self._angle_value(coords, atom_i, atom_b, best_candidate), False
-
-    def _choose_special_improper_reference(
-        self,
-        atom_i: int,
-        defined: set[int],
-        coords: np.ndarray,
-        metadata: dict[int, dict[str, object]],
-    ) -> tuple[int, float, int, float] | None:
-        info = metadata.get(atom_i)
-        if info is None:
-            return None
-
-        center = int(info["center"])
-        heavy = int(info["heavy"])
-        siblings = [int(value) for value in info["siblings"]]
-        defined_siblings = [value for value in siblings if value != atom_i and value in defined]
-        if not defined_siblings:
-            return None
-
-        angle_atom = defined_siblings[0]
-        dihedral_atom = heavy if len(defined_siblings) == 1 else defined_siblings[1]
-        angle_deg = self._angle_value(coords, atom_i, center, angle_atom)
-        dihedral_deg = self._dihedral_value(coords, atom_i, center, angle_atom, dihedral_atom)
-        return angle_atom, angle_deg, dihedral_atom, dihedral_deg
 
     def _choose_branch_improper_reference(
         self,
@@ -2225,7 +2107,6 @@ class CrystalStructure:
         coords: np.ndarray,
         graph: dict[int, set[int]],
         threshold: float,
-        allow_center_bonded_fallback: bool = True,
     ) -> tuple[int, float, bool]:
         bonded_candidates: list[int] = []
         parent_a = parent.get(atom_a)
@@ -2238,18 +2119,8 @@ class CrystalStructure:
                 reverse=True,
             )
         )
-        center_bonded_exclusions: set[int] = set()
-        if not allow_center_bonded_fallback:
-            center_bonded_exclusions = (graph[atom_b] & defined) - {atom_i, atom_b, atom_a}
+        center_bonded_exclusions = (graph[atom_b] & defined) - {atom_i, atom_b, atom_a}
         fallback_candidates: list[int] = []
-        if allow_center_bonded_fallback:
-            fallback_candidates.extend(
-                sorted(
-                    (graph[atom_b] & defined) - {atom_i, atom_b, atom_a},
-                    key=lambda index: self._candidate_priority(index, atom_a, symbols, graph, coords),
-                    reverse=True,
-                )
-            )
         fallback_candidates.extend(
             sorted(
                 defined
@@ -2286,25 +2157,6 @@ class CrystalStructure:
         if best_candidate is None:
             raise ValueError(f"Failed to choose a dihedral reference for atom {atom_i}.")
         return best_candidate, self._dihedral_value(coords, atom_i, atom_b, atom_a, best_candidate), False
-
-
-def _normalize_zmatrix_mode(zmatrix_mode: str) -> str:
-    normalized = zmatrix_mode.strip().lower().replace("-", "_")
-    aliases = {
-        "default": "special_improper",
-        "special": "special_improper",
-        "special_improper": "special_improper",
-        "legacy": "special_improper",
-        "proper": "proper",
-        "proper_only": "proper",
-        "branch": "branch_improper",
-        "branch_improper": "branch_improper",
-    }
-    try:
-        return aliases[normalized]
-    except KeyError as error:
-        valid = ", ".join(sorted(set(aliases.values())))
-        raise ValueError(f"Unsupported Z-matrix mode {zmatrix_mode!r}. Valid modes: {valid}.") from error
 
 
 def _normalize_format(path: Path, fmt: str | None) -> str:

@@ -175,7 +175,7 @@ def run_report(
                 molecule,
                 name=f"{system_name}_api",
             )
-            zmatrices = gas_structure.generate_zmatrices(zmatrix_mode="branch_improper")
+            zmatrices = gas_structure.generate_zmatrices()
             if len(zmatrices) != 1:
                 raise ValueError(f"Expected 1 API Z-matrix, generated {len(zmatrices)}.")
 

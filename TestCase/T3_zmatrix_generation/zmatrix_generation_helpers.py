@@ -120,12 +120,8 @@ def _gas_phase_structure(name: str, atoms: list[AtomRecord]) -> CrystalStructure
     )
 
 
-def first_zmatrix(
-    structure: CrystalStructure,
-    *,
-    zmatrix_mode: str = "special_improper",
-) -> ZMatrixRepresentation:
-    zmatrices = structure.generate_zmatrices(zmatrix_mode=zmatrix_mode)
+def first_zmatrix(structure: CrystalStructure) -> ZMatrixRepresentation:
+    zmatrices = structure.generate_zmatrices()
     if len(zmatrices) != 1:
         raise AssertionError(f"{structure.name} generated {len(zmatrices)} Z-matrices, expected 1.")
     return zmatrices[0]
