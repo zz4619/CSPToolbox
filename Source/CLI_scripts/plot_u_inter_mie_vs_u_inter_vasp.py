@@ -117,7 +117,7 @@ def plot_u_inter_mie_vs_u_inter_vasp(
         alpha=0.65,
         edgecolors="none",
         color="dimgray",
-        label="DB-455",
+        label="DB-455 - Hydrate",
         marker="o",
         zorder=1,
     )
@@ -128,6 +128,7 @@ def plot_u_inter_mie_vs_u_inter_vasp(
         alpha=0.65,
         edgecolors="none",
         color="dimgray",
+        label="DB-455 - Anhydrate",
         marker="s",
         zorder=1,
     )
@@ -139,7 +140,7 @@ def plot_u_inter_mie_vs_u_inter_vasp(
         edgecolors="white",
         linewidths=0.25,
         color="blue",
-        label="CE-755 - Hydrate",
+        label="BIT-755 - Hydrate",
         marker="o",
         zorder=3,
     )
@@ -151,12 +152,12 @@ def plot_u_inter_mie_vs_u_inter_vasp(
         edgecolors="white",
         linewidths=0.25,
         color="gold",
-        label="CE-755 - Anhydrate",
+        label="BIT-755 - Anhydrate",
         marker="s",
         zorder=3,
     )
-    ax.set_xlabel(r"$U^{\mathrm{inter}}_{\mathrm{DFT}}$", fontsize=16, fontweight="semibold")
-    ax.set_ylabel(r"$U^{\mathrm{inter}}_{\mathrm{HAIEFF}}$", fontsize=16, fontweight="semibold")
+    ax.set_xlabel(r"$U^{\mathrm{inter}}_{\mathrm{DFT}}\;(\mathrm{kJ}\,\mathrm{mol}^{-1})$", fontsize=16, fontweight="semibold")
+    ax.set_ylabel(r"$U^{\mathrm{inter}}_{\mathrm{HAIEFF}}\;(\mathrm{kJ}\,\mathrm{mol}^{-1})$", fontsize=16, fontweight="semibold")
     ax.tick_params(axis="both", labelsize=11)
     ax.set_xlim(-350, 0)
     ax.set_ylim(-350, 0)
