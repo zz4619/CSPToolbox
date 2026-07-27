@@ -15,6 +15,7 @@ dependencies = [
   "numpy",
   "pandas",
   "pymatgen",
+  "rdkit",
   "scipy",
   "spglib",
 ]
@@ -29,6 +30,7 @@ csp-vasp-pbe0-inputs = "Source.CLI_scripts.generate_pbe0_vasp_inputs_from_latest
 csp-vasp-summary = "Source.CLI_scripts.summarize_vasp_results:main"
 csp-vasp-manifest = "Source.CLI_scripts.vasp_file_manifest:main"
 csp-zmat-viewer = "Source.CLI_scripts.zmatrix_viewer:main"
+csp-rdkit-conformers = "Source.CLI_scripts.generate_rdkit_conformers:main"
 
 [tool.setuptools.packages.find]
 include = ["Source", "Source.*", "csptoolbox", "csptoolbox.*"]
