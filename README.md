@@ -23,6 +23,8 @@ The importable modules live under `Source/`:
   calculation health/status classification, and system summaries.
 - `vasp_file_manifest.py`: reusable file manifest and tarball helpers for
   collecting selected VASP output files.
+- `cp2_local_min.py`: prepares experimental-structure local-minimisation jobs
+  for CrystalPredictor2 and collects their machine-readable result status.
 
 `Source/__init__.py` lazily exports the main classes and functions so lightweight
 tools can import CSPToolbox without immediately importing the full scientific
@@ -63,10 +65,56 @@ Installed console commands defined in `pyproject.toml`:
 - `csp-vasp-summary`
 - `csp-vasp-manifest`
 - `csp-zmat-viewer`
+- `csp-cp2-local-min`
 
 The CLI directory also contains plotting, rendering, CSORM/CSOFM generation,
 Gaussian generation, and VASP summary scripts that were moved out of the top
 level of `Source/` during cleanup.
+
+## CrystalPredictor2 Local Minimisation
+
+`csp-cp2-local-min prepare` reorders an experimental structure into native CP2
+order, writes fixed-column `expcrys.pdb`, and stages `input.in`, the unchanged
+`potential.in`, and the native LAM database from the system's `5_Globalsearch`
+directory (with `5_GlobSrch` accepted as a legacy name). The LAM supplies site
+order/types, charges, and indexed references; unique labels and a second
+connectivity check come from the system `Zmatrix`. A landscape structure whose
+labels/order already match CP2 should be supplied as the mapping reference,
+normally the closest RMSD_1/COMPACK match.
+
+```bash
+csp-cp2-local-min prepare SYSTEM EXPERIMENTAL.res Local_Min_CP2/REFCODE \
+  --reference 1=LANDSCAPE_REFERENCE.res --space-group P21/C \
+  --cp2-executable /path/to/Minimise --stage-mode copy
+# PBS_O_WORKDIR is the bundle contract: submit from inside the prepared folder.
+cd Local_Min_CP2/REFCODE && qsub run_cp2_local_min.pbs
+csp-cp2-local-min status Local_Min_CP2/REFCODE
+```
+
+Each prepared job contains a JSON provenance manifest, a TSV atom-mapping
+table, and—when an executable is supplied—a self-contained, single-core CX3 PBS
+bundle. The executable is copied byte-for-byte into the bundle; the runner uses
+job-ID-keyed node-local scratch and copies results back. The supplied branch
+binary needs only the CX3 production-tools and MKL runtime modules plus the
+central NAG Kusari licence path; a custom NAG setup remains available for
+differently installed builds. The library does not submit jobs. The status
+command reads the structured
+`CP2_LOCAL_MIN_RESULT_V1` record, optimizer information, final energies, and
+output structure.
+
+Runnable-job validation is conservative: truncated, ambiguous, assumed-order,
+grossly mismatched, or globally inverted mappings are rejected unless the user
+explicitly requests an unvalidated mapping after a stereochemical audit. The
+single-core runner also fixes OpenMP and MKL to one thread.
+
+The supported pilot scope is single-component Z'=1 with an explicit landscape
+reference and nonambiguous, nontruncated mapping. Z'>1 and multicomponent inputs
+are gated behind `--allow-unvalidated` because no validation result set is
+available. Optimizer convergence is reported separately and is not called a
+confirmed local minimum without Hessian or perturbation evidence. TODOs are to
+validate Z'>1/multicomponent cases, add a flexible-torsion-bound precheck, make
+absolute LAM references portable, and determine whether every experimental
+structure reaches a genuine local minimum on the CP2 PES.
 
 ## Z-Matrix Viewer
 
