@@ -65,7 +65,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Allow experimental Z'>1 or multicomponent preparation.",
     )
-    prepare.add_argument("--allow-unvalidated-mapping", action="store_true")
+    prepare.add_argument(
+        "--allow-unvalidated-mapping",
+        action="store_true",
+        help=(
+            "Allow a runnable job for other explicitly unvalidated mappings. "
+            "This never waives a globally inverted mapping because no automatic "
+            "achirality or symmetry-equivalence proof is implemented."
+        ),
+    )
     prepare.add_argument(
         "--cp2-executable",
         type=Path,
@@ -80,11 +88,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     prepare.add_argument("--pbs-queue")
     prepare.add_argument(
-        "--nagvars-command",
-        default=(
-            "export NAG_KUSARI_FILE=/sw-eb/software/NAGlib/license/license.dat"
+        "--nag-license-file",
+        default="$HOME/.nag/license.dat",
+        help=(
+            "NAG Kusari licence path on the execution host; use an absolute path "
+            "or a path beginning with '$HOME/'. Licence contents are never staged."
         ),
-        help="NAG licence/runtime setup command; override for another installation.",
     )
 
     status = subparsers.add_parser(
@@ -138,7 +147,7 @@ def main(argv: list[str] | None = None) -> int:
             walltime=args.pbs_walltime,
             memory_gb=args.pbs_memory_gb,
             modules=tuple(args.pbs_module or DEFAULT_CX3_MODULES),
-            nagvars_command=args.nagvars_command,
+            nag_license_file=args.nag_license_file,
             queue=args.pbs_queue,
         ),
     )

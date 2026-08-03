@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -17,6 +18,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from Source.cp2_local_min import (  # noqa: E402
     CP2_SUPPORTED_SPACE_GROUPS,
+    ComponentMapping,
     MappingMetrics,
     collect_cp2_local_min_status,
     discover_global_search_dir,
@@ -222,6 +224,81 @@ END
                 torsion_orientation="globally_inverted", **common
             ).validation_safe
         )
+        self.assertEqual(
+            ("torsion_orientation_not_same",),
+            MappingMetrics(
+                torsion_orientation="globally_inverted", **common
+            ).validation_failures,
+        )
+
+    def test_globally_inverted_mapping_cannot_be_waived_for_runnable_job(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            system = root / "SyntheticSystem"
+            global_search = system / "5_GlobSrch"
+            global_search.mkdir(parents=True)
+            (global_search / "input.in").write_text(
+                SINGLE_TYPE_INPUT, encoding="utf-8"
+            )
+            (global_search / "flexible_lam_intra").write_text(
+                SYNTHETIC_LAM, encoding="utf-8"
+            )
+            (global_search / "potential.in").write_text(
+                "authoritative potential\n", encoding="utf-8"
+            )
+            (system / "Zmatrix").write_text(
+                CANONICAL_ZMATRIX, encoding="utf-8"
+            )
+            reference = root / "reference.res"
+            experimental = root / "experimental.res"
+            reference.write_text(REFERENCE_RES, encoding="utf-8")
+            experimental.write_text(EXPERIMENTAL_RES, encoding="utf-8")
+            executable = root / "Minimise"
+            executable.write_text("#!/bin/bash\nexit 0\n", encoding="utf-8")
+            executable.chmod(0o750)
+            inverted_metrics = MappingMetrics(
+                method="reference_graph_zmatrix_internal_rmsd",
+                heavy_mapping_count=1,
+                candidates_truncated=False,
+                gross_bond_angle_mismatches=0,
+                internal_coordinate_score=0.1,
+                heavy_kabsch_rmsd_angstrom=0.01,
+                second_best_score_gap=None,
+                torsion_orientation="globally_inverted",
+                mapping_ambiguous=False,
+                reference_order_assumed=False,
+            )
+            inverted_mapping = ComponentMapping(
+                molecular_type_index=1,
+                occurrence_index=1,
+                experimental_component_index=1,
+                canonical_to_experimental=(
+                    ("C1", 2),
+                    ("N1", 3),
+                    ("O1", 1),
+                    ("H1", 0),
+                ),
+                metrics=inverted_metrics,
+            )
+
+            with patch(
+                "Source.cp2_local_min.match_experimental_to_cp2",
+                return_value=(inverted_mapping,),
+            ):
+                with self.assertRaisesRegex(
+                    ValueError, "globally inverted.*cannot waive"
+                ):
+                    prepare_cp2_local_min_inputs(
+                        system,
+                        experimental,
+                        system / "Local_Min_CP2" / "INVERTED",
+                        reference_paths={1: reference},
+                        stage_mode="copy",
+                        cp2_executable=executable,
+                        allow_unvalidated_mapping=True,
+                    )
 
     def test_centrosymmetric_primitive_res_is_not_silently_p1(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -322,7 +399,20 @@ END
             self.assertIn("module --ignore_cache load", script)
             self.assertNotIn("impi/", script)
             self.assertNotIn("$EBROOTNAGLIB/scripts/nagvars.sh", script)
-            self.assertIn("NAG_KUSARI_FILE", script)
+            self.assertIn(
+                'export NAG_KUSARI_FILE="${HOME}"/.nag/license.dat', script
+            )
+            self.assertIn('! -f "$NAG_KUSARI_FILE"', script)
+            self.assertIn('! -r "$NAG_KUSARI_FILE"', script)
+            self.assertNotIn("/sw-eb/software/NAGlib/license", script)
+            self.assertNotIn("NAG key begin", script)
+            self.assertEqual(
+                "$HOME/.nag/license.dat",
+                manifest["execution"]["pbs_settings"]["nag_license_file"],
+            )
+            self.assertNotIn(
+                "nagvars_command", manifest["execution"]["pbs_settings"]
+            )
             self.assertIn("OMP_NUM_THREADS=1", script)
             self.assertIn("MKL_NUM_THREADS=1", script)
             self.assertIn("MKL_DYNAMIC=FALSE", script)
@@ -335,7 +425,8 @@ END
         with tempfile.TemporaryDirectory() as temporary_directory:
             job = Path(temporary_directory)
             (job / "Minimisation_log.out").write_text(
-                """IFAIL 1 0
+                """VOLUME_PML_MAX: 1500. Consider increasing it if you get ifail=-4 errors.
+IFAIL 1 0
 Utot = -120.0 -110.0 10.0
 energy failed at a recoverable trial point
 CP2_LOCAL_MIN_RESULT_V1 status=OPTIMIZER_CONVERGED info=0 utot_kj_mol_entity=-1.0125D+02 uvdw_kj_mol_entity=-8.0D+01 uelec_kj_mol_entity=-2.3D+01 uintra_kj_mol_entity=7.5D-01 volume_per_asu_a3=2.5D+02 density_kg_m3=1.2D+03
@@ -359,6 +450,7 @@ END
             self.assertEqual("CP2_LOCAL_MIN_RESULT_V1", status.result_schema)
             self.assertEqual("OPTIMIZER_CONVERGED", status.optimizer_status)
             self.assertEqual(0, status.optimizer_info)
+            self.assertEqual((0,), status.ifail_history)
             self.assertAlmostEqual(-101.25, status.energies_kj_mol["Utot"]["final"])
             self.assertAlmostEqual(-120.0, status.energies_kj_mol["Utot"]["initial"])
             self.assertAlmostEqual(1200.0, status.result_values["density_kg_m3"])

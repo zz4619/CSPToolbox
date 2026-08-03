@@ -96,16 +96,26 @@ table, and—when an executable is supplied—a self-contained, single-core CX3 
 bundle. The executable is copied byte-for-byte into the bundle; the runner uses
 job-ID-keyed node-local scratch and copies results back. The supplied branch
 binary needs only the CX3 production-tools and MKL runtime modules plus the
-central NAG Kusari licence path; a custom NAG setup remains available for
-differently installed builds. The library does not submit jobs. The status
+private NAG Kusari licence file at `$HOME/.nag/license.dat`. Keep `$HOME/.nag`
+readable only by its owner (mode `700`) and the licence file at mode `600`;
+create or update that file directly on CX3, outside this repository. The
+generated runner exports `NAG_KUSARI_FILE` and stops before CP2 if the file is
+missing or unreadable. For a permitted short licence preflight such as
+`klcheck`, export `NAG_KUSARI_FILE="$HOME/.nag/license.dat"` first. Run the
+actual minimisation through the cluster scheduler. A different execution-host
+path can be supplied with `--nag-license-file`, but licence contents are never
+staged or written to provenance. The library does not submit jobs. The status
 command reads the structured
 `CP2_LOCAL_MIN_RESULT_V1` record, optimizer information, final energies, and
 output structure.
 
 Runnable-job validation is conservative: truncated, ambiguous, assumed-order,
-grossly mismatched, or globally inverted mappings are rejected unless the user
-explicitly requests an unvalidated mapping after a stereochemical audit. The
-single-core runner also fixes OpenMP and MKL to one thread.
+grossly mismatched, and globally inverted mappings do not pass automatic
+validation. Globally inverted mappings remain inspectable in a preparation-only
+bundle, but cannot be made runnable even with `--allow-unvalidated-mapping`:
+CSPToolbox does not yet prove that inversion is achiral or symmetry-equivalent.
+The override remains available for the other explicitly audited mapping
+failures. The single-core runner also fixes OpenMP and MKL to one thread.
 
 The supported pilot scope is single-component Z'=1 with an explicit landscape
 reference and nonambiguous, nontruncated mapping. Z'>1 and multicomponent inputs

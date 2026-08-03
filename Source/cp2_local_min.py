@@ -241,16 +241,27 @@ class MappingMetrics:
     reference_order_assumed: bool
 
     @property
+    def validation_failures(self) -> tuple[str, ...]:
+        """Reasons this mapping cannot be accepted automatically."""
+
+        failures: list[str] = []
+        if self.candidates_truncated:
+            failures.append("candidates_truncated")
+        if self.mapping_ambiguous:
+            failures.append("mapping_ambiguous")
+        if self.reference_order_assumed:
+            failures.append("reference_order_assumed")
+        if self.gross_bond_angle_mismatches != 0:
+            failures.append("gross_bond_angle_mismatches")
+        if self.torsion_orientation != "same":
+            failures.append("torsion_orientation_not_same")
+        return tuple(failures)
+
+    @property
     def validation_safe(self) -> bool:
         """Whether automatic runnable-job validation may accept this mapping."""
 
-        return (
-            not self.candidates_truncated
-            and not self.mapping_ambiguous
-            and not self.reference_order_assumed
-            and self.gross_bond_angle_mismatches == 0
-            and self.torsion_orientation == "same"
-        )
+        return not self.validation_failures
 
 
 @dataclass(frozen=True)
@@ -286,10 +297,8 @@ class CP2PBSSettings:
     modules: tuple[str, ...] = DEFAULT_CX3_MODULES
     # The branch binary links NAG statically and has no dynamic MPI dependency;
     # only the Kusari licence location is needed in addition to MKL at runtime.
-    # Keep this command configurable for differently installed CP2 builds.
-    nagvars_command: str = (
-        "export NAG_KUSARI_FILE=/sw-eb/software/NAGlib/license/license.dat"
-    )
+    # Store a path only: licence contents are never read, copied, or recorded.
+    nag_license_file: str = "$HOME/.nag/license.dat"
     queue: str | None = None
 
 
@@ -871,6 +880,20 @@ def prepare_cp2_local_min_inputs(
         and all(not topology.labels_generated for topology in topologies.values())
         and all(item.metrics.validation_safe for item in mappings)
     )
+    globally_inverted_slots = [
+        f"TYPE {item.molecular_type_index} occurrence {item.occurrence_index}"
+        for item in mappings
+        if item.metrics.torsion_orientation == "globally_inverted"
+    ]
+    if executable_source is not None and globally_inverted_slots:
+        raise ValueError(
+            "Refusing to generate a runnable PBS job from a globally inverted atom "
+            "mapping ("
+            + ", ".join(globally_inverted_slots)
+            + "). CSPToolbox does not currently prove that an inverted mapping is "
+            "achiral or symmetry-equivalent, so --allow-unvalidated-mapping cannot "
+            "waive this check. Prepare without --cp2-executable to inspect the mapping."
+        )
     if (
         executable_source is not None
         and not mapping_validated
@@ -1033,6 +1056,8 @@ def prepare_cp2_local_min_inputs(
                 "occurrence_index": item.occurrence_index,
                 "experimental_component_index": item.experimental_component_index,
                 "metrics": asdict(item.metrics),
+                "validation_safe": item.metrics.validation_safe,
+                "validation_failures": list(item.metrics.validation_failures),
             }
             for item in mappings
         ],
@@ -1102,11 +1127,18 @@ def collect_cp2_local_min_status(
 
     ifail_history: list[int] = []
     for line in text.splitlines():
-        if "IFAIL" not in line.upper():
-            continue
-        integers = re.findall(r"[-+]?\d+", line)
-        if integers:
-            ifail_history.append(int(integers[-1]))
+        driver_ifail = re.match(
+            r"^\s*(?:CARE!!!\s+)?IFAIL\b(?P<body>.*)$", line, flags=re.IGNORECASE
+        )
+        nag_ifail = re.search(
+            r"\bIFAIL\s*=\s*(?P<value>[-+]?\d+)\s*$", line, flags=re.IGNORECASE
+        )
+        if driver_ifail is not None:
+            integers = re.findall(r"[-+]?\d+", driver_ifail.group("body"))
+            if integers:
+                ifail_history.append(int(integers[-1]))
+        elif nag_ifail is not None:
+            ifail_history.append(int(nag_ifail.group("value")))
     final_ifail = ifail_history[-1] if ifail_history else None
     (
         result_schema,
@@ -2155,9 +2187,27 @@ def build_cp2_pbs_script(
         raise ValueError("PBS memory_gb must be positive")
     if not re.fullmatch(r"\d+:[0-5]\d:[0-5]\d", effective.walltime):
         raise ValueError(f"Invalid PBS walltime: {effective.walltime!r}")
-    for value in (*effective.modules, effective.nagvars_command, effective.queue or ""):
-        if "\n" in value or "\r" in value:
-            raise ValueError("PBS settings may not contain newlines")
+    for value in (
+        *effective.modules,
+        effective.nag_license_file,
+        effective.queue or "",
+    ):
+        if "\n" in value or "\r" in value or "\x00" in value:
+            raise ValueError("PBS settings may not contain control characters")
+    nag_license_file = effective.nag_license_file.strip()
+    if not nag_license_file:
+        raise ValueError("NAG licence file path may not be empty")
+    if nag_license_file.startswith("$HOME/"):
+        home_relative_license = nag_license_file[len("$HOME/") :]
+        if not home_relative_license:
+            raise ValueError("NAG licence path below $HOME may not be empty")
+        rendered_nag_license = '"${HOME}"/' + shlex.quote(home_relative_license)
+    elif Path(nag_license_file).is_absolute():
+        rendered_nag_license = shlex.quote(nag_license_file)
+    else:
+        raise ValueError(
+            "NAG licence file must be an absolute path or begin with '$HOME/'"
+        )
 
     relative_paths: list[Path] = []
     for raw_path in runtime_paths:
@@ -2194,8 +2244,15 @@ def build_cp2_pbs_script(
         f"module --ignore_cache load {shlex.quote(module)}"
         for module in effective.modules
     )
-    if effective.nagvars_command.strip():
-        module_lines.append(effective.nagvars_command.strip())
+    module_lines.extend(
+        (
+            f"export NAG_KUSARI_FILE={rendered_nag_license}",
+            'if [[ ! -f "$NAG_KUSARI_FILE" || ! -r "$NAG_KUSARI_FILE" ]]; then',
+            '  echo "NAG licence file is missing or unreadable: $NAG_KUSARI_FILE" >&2',
+            "  exit 2",
+            "fi",
+        )
+    )
     module_lines.extend(
         (
             "export OMP_NUM_THREADS=1",
