@@ -82,9 +82,17 @@ connectivity check come from the system `Zmatrix`. A landscape structure whose
 labels/order already match CP2 should be supplied as the mapping reference,
 normally the closest RMSD_1/COMPACK match.
 
+For a one-TYPE system, `--auto-single-type-occurrences` detects repeated
+molecular components in the experimental asymmetric unit and changes only the
+occurrence-count record in the case-local `input.in`. The manifest records both
+input hashes and the old/new counts. This is required to prepare experimental
+Z'>1 cases from a Z'=1 global-search input; `potential.in` and the LAM database
+remain byte-identical to their sources.
+
 ```bash
 csp-cp2-local-min prepare SYSTEM EXPERIMENTAL.res Local_Min_CP2/REFCODE \
   --reference 1=LANDSCAPE_REFERENCE.res --space-group P21/C \
+  --auto-single-type-occurrences --allow-unvalidated \
   --cp2-executable /path/to/Minimise --stage-mode copy
 # PBS_O_WORKDIR is the bundle contract: submit from inside the prepared folder.
 cd Local_Min_CP2/REFCODE && qsub run_cp2_local_min.pbs
@@ -114,8 +122,32 @@ grossly mismatched, and globally inverted mappings do not pass automatic
 validation. Globally inverted mappings remain inspectable in a preparation-only
 bundle, but cannot be made runnable even with `--allow-unvalidated-mapping`:
 CSPToolbox does not yet prove that inversion is achiral or symmetry-equivalent.
+When the heavy-atom torsion anchors are planar within 0.05 A, the matcher uses
+one canonical same-handed convention because the torsion sign is not a useful
+orientation discriminator. Otherwise, an inverted torsion sign is accepted as
+`planar_inversion_equivalent` only when both complete mapped molecules are
+planar within 0.05 A; inversion within that molecular plane is then equivalent
+to a proper 180-degree rotation.
 The override remains available for the other explicitly audited mapping
 failures. The single-core runner also fixes OpenMP and MKL to one thread.
+
+Prepared runnable cases can be combined into one sequential, single-core PBS
+job. Each case remains isolated and receives a unique node-local scratch
+directory. The parent runner records failures and timeouts but continues to the
+next experimental structure; rerunning the batch skips cases that already have
+a successful structured CP2 result.
+
+```bash
+csp-cp2-local-min assemble-batch Local_Min_CP2_All \
+  --case-dir Local_Min_CP2_All/cases/SystemA/FORM01 \
+  --case-dir Local_Min_CP2_All/cases/SystemA/FORM02 \
+  --pbs-walltime 24:00:00 --per-case-timeout 15m
+cd Local_Min_CP2_All && qsub run_all_cp2_local_min.pbs
+```
+
+The batch assembly step does not submit the job. It requires every listed case
+to have the same executable checksum and PBS runtime settings, and writes a TSV
+case manifest plus per-case and aggregate status files.
 
 The supported pilot scope is single-component Z'=1 with an explicit landscape
 reference and nonambiguous, nontruncated mapping. Z'>1 and multicomponent inputs

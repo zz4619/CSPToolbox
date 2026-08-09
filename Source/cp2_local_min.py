@@ -4,8 +4,10 @@ The CP2 molecular-information (LAM) database is authoritative for site order,
 site types, charges, and indexed Z-matrix references.  Its site names are not
 unique, so canonical atom labels come from the system-level ``Zmatrix`` file.
 This module maps an experimental SHELX structure into that order, writes the
-fixed-column ``expcrys.pdb`` read by CP2, stages unchanged CP2 inputs, and
-records complete provenance.
+fixed-column ``expcrys.pdb`` read by CP2, stages CP2 inputs, and records
+complete provenance.  For a single chemical type, an experimental Z'>1
+asymmetric unit can explicitly request a case-local occurrence-count update in
+``input.in``; ``potential.in`` and the LAM database remain unchanged.
 
 The adapter's supported pilot scope is single-component Z'=1.  That is not a
 claim that a mapping or an optimizer-converged structure is scientifically
@@ -16,8 +18,9 @@ remain explicit validation tasks.
 from __future__ import annotations
 
 from collections import Counter
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 import csv
+from fractions import Fraction
 import hashlib
 import itertools
 import json
@@ -30,6 +33,7 @@ from typing import Iterable, Mapping, Sequence
 
 import networkx as nx
 import numpy as np
+import spglib
 from ase.cell import Cell
 from ase.data import atomic_numbers, covalent_radii
 from networkx.algorithms import isomorphism as nx_isomorphism
@@ -43,6 +47,10 @@ STATUS_FILENAME = "cp2_local_min_status.json"
 MANIFEST_FILENAME = "cp2_local_min_manifest.json"
 MAPPING_FILENAME = "cp2_atom_mapping.tsv"
 PBS_SCRIPT_FILENAME = "run_cp2_local_min.pbs"
+BATCH_CASES_FILENAME = "cp2_local_min_batch_cases.tsv"
+BATCH_STATUS_FILENAME = "cp2_local_min_batch_status.tsv"
+BATCH_SUMMARY_FILENAME = "cp2_local_min_batch_summary.txt"
+BATCH_PBS_SCRIPT_FILENAME = "run_all_cp2_local_min.pbs"
 DEFAULT_CX3_MODULES = (
     "tools/prod",
     "imkl/2022.1.0",
@@ -253,7 +261,7 @@ class MappingMetrics:
             failures.append("reference_order_assumed")
         if self.gross_bond_angle_mismatches != 0:
             failures.append("gross_bond_angle_mismatches")
-        if self.torsion_orientation != "same":
+        if self.torsion_orientation not in {"same", "planar_inversion_equivalent"}:
             failures.append("torsion_orientation_not_same")
         return tuple(failures)
 
@@ -288,6 +296,13 @@ class CP2LocalMinArtifacts:
     staged_zmatrix_paths: tuple[Path, ...]
     executable_path: Path | None
     pbs_script_path: Path | None
+
+
+@dataclass(frozen=True)
+class CP2LocalMinBatchArtifacts:
+    batch_dir: Path
+    cases_manifest_path: Path
+    pbs_script_path: Path
 
 
 @dataclass(frozen=True)
@@ -469,6 +484,35 @@ def parse_cp2_input(path: str | Path) -> CP2InputDefinition:
             raw.strip().upper().startswith("NON_UNIFORM") for raw in lines
         ),
     )
+
+
+def _rewrite_single_type_occurrences(text: str, occurrences: int) -> str:
+    """Change only the occurrence-count record in a one-TYPE CP2 input."""
+
+    if occurrences < 1:
+        raise ValueError("CP2 molecular occurrence count must be positive")
+    lines = text.splitlines(keepends=True)
+    type_indices = [
+        index
+        for index, raw in enumerate(lines)
+        if raw.strip().upper().startswith("TYPE ")
+    ]
+    if len(type_indices) != 1:
+        raise ValueError(
+            "Case-local occurrence rewriting requires exactly one TYPE block"
+        )
+    cursor = type_indices[0] + 1
+    while cursor < len(lines):
+        stripped = lines[cursor].strip()
+        if stripped and set(stripped) != {"-"} and not stripped.startswith(("!", "#")):
+            break
+        cursor += 1
+    if cursor >= len(lines) or not re.fullmatch(r"[+-]?\d+", lines[cursor].strip()):
+        raise ValueError("Could not locate the CP2 molecular occurrence-count record")
+    ending = "\r\n" if lines[cursor].endswith("\r\n") else "\n" if lines[cursor].endswith("\n") else ""
+    leading = lines[cursor][: len(lines[cursor]) - len(lines[cursor].lstrip())]
+    lines[cursor] = f"{leading}{occurrences}{ending}"
+    return "".join(lines)
 
 
 def parse_cp2_canonical_zmatrix(
@@ -782,6 +826,8 @@ def prepare_cp2_local_min_inputs(
     allow_generated_labels: bool = False,
     allow_unvalidated: bool = False,
     allow_unvalidated_mapping: bool = False,
+    auto_single_type_occurrences: bool = False,
+    trust_experimental_labels: bool = False,
     cp2_executable: str | Path | None = None,
     pbs_settings: CP2PBSSettings | None = None,
 ) -> CP2LocalMinArtifacts:
@@ -801,7 +847,32 @@ def prepare_cp2_local_min_inputs(
         if not required.is_file():
             raise FileNotFoundError(f"Missing required CP2 input: {required}")
 
-    input_definition = parse_cp2_input(input_source)
+    input_definition_source = parse_cp2_input(input_source)
+    experimental = read_structure(experimental_structure, space_group=space_group)
+    experimental_connectivity = _build_connectivity(experimental)
+    input_definition = input_definition_source
+    occurrence_update: dict[str, int] | None = None
+    if auto_single_type_occurrences:
+        if input_definition.molecular_type_count != 1:
+            raise ValueError(
+                "Automatic occurrence detection is only defined for one CP2 "
+                "molecular TYPE; multicomponent systems require explicit TYPE assignments"
+            )
+        detected_occurrences = len(experimental_connectivity.components)
+        source_occurrences = input_definition.molecular_types[0].occurrences
+        if detected_occurrences != source_occurrences:
+            updated_type = replace(
+                input_definition.molecular_types[0],
+                occurrences=detected_occurrences,
+            )
+            input_definition = replace(
+                input_definition,
+                molecular_types=(updated_type,),
+            )
+            occurrence_update = {
+                "source_occurrences": source_occurrences,
+                "experimental_occurrences": detected_occurrences,
+            }
     if not input_definition.structurally_supported and not allow_unvalidated:
         raise ValueError(
             f"CP2 input scope is {input_definition.supported_scope}; Z'>1 and "
@@ -864,12 +935,16 @@ def prepare_cp2_local_min_inputs(
     else:
         non_uniform_source = None
 
-    experimental = read_structure(experimental_structure, space_group=space_group)
+    if trust_experimental_labels and not input_definition.structurally_supported:
+        raise ValueError(
+            "Trusted experimental labels are only supported for a single-component "
+            "Z'=1 structure"
+        )
     mappings = match_experimental_to_cp2(
         experimental,
         input_definition,
         topologies,
-        reference_paths,
+        None if trust_experimental_labels else reference_paths,
         max_heavy_mappings=max_heavy_mappings,
     )
     supplied_reference_indices = {int(index) for index in (reference_paths or {})}
@@ -904,7 +979,7 @@ def prepare_cp2_local_min_inputs(
             "inspect a preparation without --cp2-executable or explicitly use "
             "allow_unvalidated_mapping=True"
         )
-    connectivity = _build_connectivity(experimental)
+    connectivity = experimental_connectivity
 
     destination = Path(output_dir)
     if destination.exists() and not destination.is_dir():
@@ -919,7 +994,16 @@ def prepare_cp2_local_min_inputs(
 
     staged_input = destination / "input.in"
     staged_potential = destination / "potential.in"
-    _stage_file(input_source, staged_input, stage_mode)
+    if occurrence_update is None:
+        _stage_file(input_source, staged_input, stage_mode)
+    else:
+        staged_input.write_text(
+            _rewrite_single_type_occurrences(
+                input_source.read_text(encoding="utf-8", errors="replace"),
+                occurrence_update["experimental_occurrences"],
+            ),
+            encoding="utf-8",
+        )
     _stage_file(potential_source, staged_potential, stage_mode)
     if _sha256(potential_source) != _sha256(staged_potential):
         raise AssertionError(
@@ -1021,7 +1105,17 @@ def prepare_cp2_local_min_inputs(
         "reference_structures": reference_manifest,
         "experimental_space_group_input": experimental.space_group,
         "cp2_space_group": cp2_space_group,
-        "input": _file_provenance(input_source, staged_input),
+        "input": {
+            "source_path": str(input_source.resolve()),
+            "staged_path": str(staged_input.absolute()),
+            "staged_is_symlink": staged_input.is_symlink(),
+            "source_sha256": _sha256(input_source),
+            "staged_sha256": _sha256(staged_input),
+            "source_size_bytes": input_source.stat().st_size,
+            "staged_size_bytes": staged_input.stat().st_size,
+            "byte_identical": _sha256(input_source) == _sha256(staged_input),
+            "single_type_occurrence_update": occurrence_update,
+        },
         "potential": {
             **_file_provenance(potential_source, staged_potential),
             "byte_identical": True,
@@ -1067,6 +1161,8 @@ def prepare_cp2_local_min_inputs(
         "stage_mode": stage_mode,
         "allow_unvalidated": allow_unvalidated,
         "allow_unvalidated_mapping": allow_unvalidated_mapping,
+        "auto_single_type_occurrences": auto_single_type_occurrences,
+        "trusted_experimental_labels": trust_experimental_labels,
         "allow_generated_labels": allow_generated_labels,
         "compack_metadata": dict(compack_metadata or {}),
         "execution": (
@@ -1275,6 +1371,143 @@ def collect_cp2_local_min_status(
     return result
 
 
+def _infer_shelx_space_group(
+    lines: Sequence[str],
+    cell_parameters: Sequence[float],
+) -> str:
+    """Resolve a SHELX LATT/SYMM operator set to an international symbol."""
+
+    latt_rows = [
+        raw.split()[1]
+        for raw in lines
+        if len(raw.split()) >= 2 and raw.split()[0].upper() == "LATT"
+    ]
+    if len(latt_rows) != 1:
+        raise ValueError("Expected exactly one SHELX LATT record")
+    try:
+        latt = int(latt_rows[0])
+    except ValueError as error:
+        raise ValueError(f"Invalid SHELX LATT value {latt_rows[0]!r}") from error
+    centering = {
+        1: ((Fraction(0), Fraction(0), Fraction(0)),),
+        2: (
+            (Fraction(0), Fraction(0), Fraction(0)),
+            (Fraction(1, 2), Fraction(1, 2), Fraction(1, 2)),
+        ),
+        3: (
+            (Fraction(0), Fraction(0), Fraction(0)),
+            (Fraction(2, 3), Fraction(1, 3), Fraction(1, 3)),
+            (Fraction(1, 3), Fraction(2, 3), Fraction(2, 3)),
+        ),
+        4: (
+            (Fraction(0), Fraction(0), Fraction(0)),
+            (Fraction(0), Fraction(1, 2), Fraction(1, 2)),
+            (Fraction(1, 2), Fraction(0), Fraction(1, 2)),
+            (Fraction(1, 2), Fraction(1, 2), Fraction(0)),
+        ),
+        5: (
+            (Fraction(0), Fraction(0), Fraction(0)),
+            (Fraction(0), Fraction(1, 2), Fraction(1, 2)),
+        ),
+        6: (
+            (Fraction(0), Fraction(0), Fraction(0)),
+            (Fraction(1, 2), Fraction(0), Fraction(1, 2)),
+        ),
+        7: (
+            (Fraction(0), Fraction(0), Fraction(0)),
+            (Fraction(1, 2), Fraction(1, 2), Fraction(0)),
+        ),
+    }.get(abs(latt))
+    if centering is None:
+        raise ValueError(f"Unsupported SHELX LATT value {latt}")
+
+    operator_text = [("x", "y", "z")]
+    for raw in lines:
+        tokens = raw.split(maxsplit=1)
+        if not tokens or tokens[0].upper() != "SYMM":
+            continue
+        if len(tokens) != 2:
+            raise ValueError(f"Invalid SHELX SYMM record {raw!r}")
+        fields = tuple(value.strip() for value in tokens[1].split(","))
+        if len(fields) != 3:
+            raise ValueError(f"Invalid SHELX SYMM record {raw!r}")
+        operator_text.append(fields)
+
+    primitive: list[
+        tuple[tuple[tuple[int, int, int], ...], tuple[Fraction, Fraction, Fraction]]
+    ] = []
+    for fields in operator_text:
+        parsed = [_parse_shelx_symmetry_coordinate(value) for value in fields]
+        rotation = tuple(item[0] for item in parsed)
+        translation = tuple(item[1] for item in parsed)
+        primitive.append((rotation, translation))
+    if latt > 0:
+        primitive.extend(
+            (
+                tuple(tuple(-value for value in row) for row in rotation),
+                tuple(-value for value in translation),
+            )
+            for rotation, translation in tuple(primitive)
+        )
+
+    unique: dict[
+        tuple[tuple[tuple[int, int, int], ...], tuple[Fraction, Fraction, Fraction]],
+        None,
+    ] = {}
+    for rotation, translation in primitive:
+        for shift in centering:
+            adjusted = tuple((value + delta) % 1 for value, delta in zip(translation, shift))
+            unique[(rotation, adjusted)] = None
+    rotations = np.asarray([item[0] for item in unique], dtype=np.intc)
+    translations = np.asarray(
+        [[float(value) for value in item[1]] for item in unique], dtype=float
+    )
+    lattice = Cell.fromcellpar(cell_parameters).array
+    space_group_type = spglib.get_spacegroup_type_from_symmetry(
+        rotations,
+        translations,
+        lattice=lattice,
+        symprec=1.0e-6,
+    )
+    if space_group_type is None:
+        raise ValueError("SHELX LATT/SYMM operators do not identify a space group")
+    return str(space_group_type.international_short).replace("_", "")
+
+
+def _parse_shelx_symmetry_coordinate(
+    expression: str,
+) -> tuple[tuple[int, int, int], Fraction]:
+    compact = expression.lower().replace(" ", "").replace("*", "")
+    compact = compact.replace("-", "+-")
+    if compact.startswith("+-"):
+        compact = compact[1:]
+    rotation = [0, 0, 0]
+    translation = Fraction(0)
+    for term in compact.split("+"):
+        if not term:
+            continue
+        variables = [index for index, name in enumerate("xyz") if name in term]
+        if not variables:
+            translation += Fraction(term)
+            continue
+        if len(variables) != 1:
+            raise ValueError(f"Invalid SHELX symmetry term {term!r}")
+        index = variables[0]
+        coefficient_text = term.replace("xyz"[index], "")
+        if coefficient_text in {"", "+"}:
+            coefficient = Fraction(1)
+        elif coefficient_text == "-":
+            coefficient = Fraction(-1)
+        else:
+            coefficient = Fraction(coefficient_text)
+        if coefficient.denominator != 1:
+            raise ValueError(f"Non-integral SHELX rotation coefficient {term!r}")
+        rotation[index] += int(coefficient)
+    if not any(rotation):
+        raise ValueError(f"SHELX symmetry coordinate has no axis: {expression!r}")
+    return tuple(rotation), translation
+
+
 def _read_res_structure(
     path: Path, *, space_group: str | None, require_space_group: bool,
 ) -> StructureData:
@@ -1357,25 +1590,14 @@ def _read_res_structure(
     if not atoms_raw:
         raise ValueError(f"No SHELX atom records found in {path}")
     if parsed_space_group is None:
-        has_symmetry = any(
-            raw.split() and raw.split()[0].upper() == "SYMM" for raw in lines
-        )
-        latt_values = [
-            raw.split()[1]
-            for raw in lines
-            if len(raw.split()) >= 2 and raw.split()[0].upper() == "LATT"
-        ]
-        latt = latt_values[0] if len(latt_values) == 1 else None
-        if not has_symmetry and latt == "-1":
-            parsed_space_group = "P 1"
-        elif not has_symmetry and latt == "1":
-            parsed_space_group = "P -1"
-        elif require_space_group:
-            raise ValueError(
-                f"Could not determine a unique space-group symbol from SHELX LATT/SYMM records "
-                f"in {path}; pass space_group explicitly"
-            )
-        else:
+        try:
+            parsed_space_group = _infer_shelx_space_group(lines, cell_parameters)
+        except ValueError:
+            if require_space_group:
+                raise ValueError(
+                    f"Could not determine a unique space-group symbol from SHELX "
+                    f"LATT/SYMM records in {path}; pass space_group explicitly"
+                ) from None
             parsed_space_group = "UNKNOWN"
 
     cell = Cell.fromcellpar(cell_parameters)
@@ -1680,30 +1902,35 @@ def _match_component(
             truncated = True
             break
         try:
-            full_reference_mapping, heavy_rmsd = _assign_hydrogens(
+            full_reference_mappings, heavy_rmsd = _enumerate_hydrogen_assignments(
                 reference, experimental, experimental_connectivity, heavy_mapping,
             )
         except ValueError:
             continue
-        canonical_mapping = {
-            canonical_label: full_reference_mapping[reference_index]
-            for canonical_label, reference_index in reference.canonical_to_reference.items()
-        }
-        score = _score_zmatrix_mapping(
-            reference, experimental, experimental_connectivity, canonical_mapping,
-        )
-        deterministic = tuple(
-            canonical_mapping[site.label] for site in reference.topology.sites
-        )
-        rank = (
-            score["gross_bond_angle_mismatches"],
-            score["internal_coordinate_score"],
-            heavy_rmsd,
-            deterministic,
-        )
-        candidates.append(
-            (rank, canonical_mapping, {**score, "heavy_rmsd": heavy_rmsd})
-        )
+        for full_reference_mapping in full_reference_mappings:
+            canonical_mapping = {
+                canonical_label: full_reference_mapping[reference_index]
+                for canonical_label, reference_index in reference.canonical_to_reference.items()
+            }
+            score = _score_zmatrix_mapping(
+                reference, experimental, experimental_connectivity, canonical_mapping,
+            )
+            deterministic = tuple(
+                canonical_mapping[site.label] for site in reference.topology.sites
+            )
+            rank = (
+                score["gross_bond_angle_mismatches"],
+                0
+                if score["torsion_orientation"]
+                in {"same", "planar_inversion_equivalent"}
+                else 1,
+                score["internal_coordinate_score"],
+                heavy_rmsd,
+                deterministic,
+            )
+            candidates.append(
+                (rank, canonical_mapping, {**score, "heavy_rmsd": heavy_rmsd})
+            )
     if not candidates:
         raise ValueError("No complete graph-preserving atom mapping was generated")
     candidates.sort(key=lambda item: item[0])
@@ -1741,12 +1968,12 @@ def _match_component(
     return best_mapping, metrics
 
 
-def _assign_hydrogens(
+def _enumerate_hydrogen_assignments(
     reference: _ReferenceContext,
     experimental: StructureData,
     experimental_connectivity: _Connectivity,
     heavy_mapping: Mapping[int, int],
-) -> tuple[dict[int, int], float]:
+) -> tuple[tuple[dict[int, int], ...], float]:
     reference_order = sorted(heavy_mapping)
     experimental_order = [heavy_mapping[index] for index in reference_order]
     reference_coords = np.asarray(
@@ -1760,7 +1987,7 @@ def _assign_hydrogens(
         experimental_coords, reference_coords,
     )
 
-    result = dict(heavy_mapping)
+    assignment_groups: list[tuple[tuple[tuple[int, int], ...], ...]] = []
     for reference_heavy_atom, experimental_heavy_atom in heavy_mapping.items():
         reference_hydrogens = sorted(
             node
@@ -1778,7 +2005,7 @@ def _assign_hydrogens(
             raise ValueError("Hydrogen count differs for mapped heavy atoms")
         if not reference_hydrogens:
             continue
-        best_permutation = min(
+        permutations = sorted(
             itertools.permutations(experimental_hydrogens),
             key=lambda permutation: (
                 sum(
@@ -1801,12 +2028,26 @@ def _assign_hydrogens(
                 permutation,
             ),
         )
-        result.update(zip(reference_hydrogens, best_permutation))
-    if len(result) != len(reference.component) or len(set(result.values())) != len(
-        result
-    ):
-        raise ValueError("Incomplete or non-bijective full-atom mapping")
-    return result, heavy_rmsd
+        assignment_groups.append(
+            tuple(
+                tuple(zip(reference_hydrogens, permutation))
+                for permutation in permutations
+            )
+        )
+    combinations = itertools.product(*assignment_groups) if assignment_groups else [()]
+    results: list[dict[int, int]] = []
+    for combination in combinations:
+        result = dict(heavy_mapping)
+        for assignments in combination:
+            result.update(assignments)
+        if len(result) != len(reference.component) or len(set(result.values())) != len(
+            result
+        ):
+            raise ValueError("Incomplete or non-bijective full-atom mapping")
+        results.append(result)
+    if not results:
+        raise ValueError("No complete hydrogen assignment was generated")
+    return tuple(results), heavy_rmsd
 
 
 def _score_zmatrix_mapping(
@@ -1821,9 +2062,70 @@ def _score_zmatrix_mapping(
     experimental_values = _internal_values(
         reference.topology, mapping, experimental_connectivity.unwrapped,
     )
-    same_cost = _torsion_cost(reference_values, experimental_values, 1)
-    inverted_cost = _torsion_cost(reference_values, experimental_values, -1)
-    orientation = -1 if inverted_cost + 1.0e-10 < same_cost else 1
+    orientation_indices = _heavy_torsion_orientation_indices(reference)
+    orientation_anchor_sites = _torsion_site_indices(
+        reference.topology, orientation_indices
+    )
+    reference_anchor_coordinates = np.asarray(
+        [
+            reference.unwrapped[
+                reference.canonical_to_reference[
+                    reference.topology.sites[index - 1].label
+                ]
+            ]
+            for index in orientation_anchor_sites
+        ],
+        dtype=float,
+    )
+    experimental_anchor_coordinates = np.asarray(
+        [
+            experimental_connectivity.unwrapped[
+                mapping[reference.topology.sites[index - 1].label]
+            ]
+            for index in orientation_anchor_sites
+        ],
+        dtype=float,
+    )
+    orientation_anchor_planar = (
+        len(orientation_anchor_sites) >= 4
+        and _maximum_planarity_deviation(reference_anchor_coordinates) <= 0.05
+        and _maximum_planarity_deviation(experimental_anchor_coordinates) <= 0.05
+    )
+    if orientation_anchor_planar:
+        orientation = 1
+    elif orientation_indices:
+        same_cost = _torsion_cost(
+            reference_values, experimental_values, 1, orientation_indices
+        )
+        inverted_cost = _torsion_cost(
+            reference_values, experimental_values, -1, orientation_indices
+        )
+        orientation = -1 if inverted_cost + 1.0e-10 < same_cost else 1
+    else:
+        orientation = 1
+    orientation_label = "same"
+    if orientation == -1:
+        reference_coordinates = np.asarray(
+            [
+                reference.unwrapped[reference.canonical_to_reference[site.label]]
+                for site in reference.topology.sites
+            ],
+            dtype=float,
+        )
+        experimental_coordinates = np.asarray(
+            [
+                experimental_connectivity.unwrapped[mapping[site.label]]
+                for site in reference.topology.sites
+            ],
+            dtype=float,
+        )
+        if (
+            _maximum_planarity_deviation(reference_coordinates) <= 0.05
+            and _maximum_planarity_deviation(experimental_coordinates) <= 0.05
+        ):
+            orientation_label = "planar_inversion_equivalent"
+        else:
+            orientation_label = "globally_inverted"
 
     weighted: list[float] = []
     bond_deltas: list[float] = []
@@ -1849,8 +2151,69 @@ def _score_zmatrix_mapping(
     return {
         "gross_bond_angle_mismatches": gross,
         "internal_coordinate_score": math.sqrt(sum(weighted) / max(1, len(weighted))),
-        "torsion_orientation": "same" if orientation == 1 else "globally_inverted",
+        "torsion_orientation": orientation_label,
     }
+
+
+def _maximum_planarity_deviation(coordinates: np.ndarray) -> float:
+    if coordinates.ndim != 2 or coordinates.shape[1] != 3:
+        raise ValueError("Planarity coordinates must have shape (n, 3)")
+    if len(coordinates) <= 3:
+        return 0.0
+    centered = coordinates - coordinates.mean(axis=0)
+    _left, _singular, right = np.linalg.svd(centered, full_matrices=False)
+    normal = right[-1]
+    return float(np.max(np.abs(centered @ normal)))
+
+
+def _heavy_torsion_orientation_indices(
+    reference: _ReferenceContext,
+) -> tuple[int, ...]:
+    anchor_indices: list[int] = []
+    fallback_indices: list[int] = []
+    for index, site in enumerate(reference.topology.sites):
+        if (
+            site.bond_to is None
+            or site.angle_to is None
+            or site.dihedral_to is None
+        ):
+            continue
+        site_indices = (
+            site.index,
+            site.bond_to,
+            site.angle_to,
+            site.dihedral_to,
+        )
+        sites = [reference.topology.sites[value - 1] for value in site_indices]
+        if any(item.element == "H" for item in sites):
+            continue
+        fallback_indices.append(index)
+        heavy_degrees = []
+        for item in sites:
+            atom_index = reference.canonical_to_reference[item.label]
+            heavy_degrees.append(
+                sum(
+                    reference.structure.atoms[neighbor].element != "H"
+                    for neighbor in reference.graph.neighbors(atom_index)
+                )
+            )
+        if all(value >= 2 for value in heavy_degrees):
+            anchor_indices.append(index)
+    return tuple(anchor_indices or fallback_indices)
+
+
+def _torsion_site_indices(
+    topology: CP2LamTopology,
+    torsion_indices: Sequence[int],
+) -> tuple[int, ...]:
+    result: set[int] = set()
+    for index in torsion_indices:
+        site = topology.sites[index]
+        result.add(site.index)
+        for reference_index in (site.bond_to, site.angle_to, site.dihedral_to):
+            if reference_index is not None:
+                result.add(reference_index)
+    return tuple(sorted(result))
 
 
 def _internal_values(
@@ -2324,6 +2687,217 @@ def build_cp2_pbs_script(
     return destination
 
 
+def build_cp2_local_min_batch(
+    batch_dir: str | Path,
+    case_dirs: Sequence[str | Path],
+    *,
+    settings: CP2PBSSettings | None = None,
+    job_name: str = "cp2lm_all_exp",
+    per_case_timeout: str = "15m",
+) -> CP2LocalMinBatchArtifacts:
+    """Assemble one sequential PBS job from independently prepared CP2 cases.
+
+    Every case must already be a runnable bundle produced by
+    :func:`prepare_cp2_local_min_inputs`.  The parent job runs the case PBS
+    wrappers as ordinary shell scripts, overriding ``PBS_O_WORKDIR`` and
+    ``PBS_JOBID`` in a subshell so that each case receives a unique node-local
+    scratch directory.  A failed or timed-out case is recorded and the batch
+    continues.
+    """
+
+    root = Path(batch_dir).absolute()
+    if not root.is_dir():
+        raise FileNotFoundError(f"CP2 batch directory not found: {root}")
+    if not case_dirs:
+        raise ValueError("At least one prepared CP2 case is required")
+    if not re.fullmatch(r"[1-9]\d*[smhd]", per_case_timeout):
+        raise ValueError(
+            "per_case_timeout must be a positive integer followed by s, m, h, or d"
+        )
+
+    effective = settings or CP2PBSSettings()
+    if effective.memory_gb < 1:
+        raise ValueError("PBS memory_gb must be positive")
+    if not re.fullmatch(r"\d+:[0-5]\d:[0-5]\d", effective.walltime):
+        raise ValueError(f"Invalid PBS walltime: {effective.walltime!r}")
+    for value in (effective.queue or "", job_name):
+        if "\n" in value or "\r" in value or "\x00" in value:
+            raise ValueError("PBS batch settings may not contain control characters")
+
+    rows: list[dict[str, object]] = []
+    seen_case_ids: set[str] = set()
+    executable_hashes: set[str] = set()
+    case_pbs_settings: list[dict[str, object]] = []
+    for raw_case_dir in case_dirs:
+        case_dir = Path(raw_case_dir).absolute()
+        try:
+            relative = case_dir.relative_to(root)
+        except ValueError as error:
+            raise ValueError(
+                f"Prepared case is outside the batch directory: {case_dir}"
+            ) from error
+        if relative == Path(".") or ".." in relative.parts:
+            raise ValueError(f"Unsafe prepared case path: {relative}")
+        manifest_path = case_dir / MANIFEST_FILENAME
+        runner_path = case_dir / PBS_SCRIPT_FILENAME
+        executable_path = case_dir / "cp2_Minimise"
+        for required in (manifest_path, runner_path, executable_path):
+            if not required.is_file():
+                raise FileNotFoundError(
+                    f"Prepared CP2 case is not runnable; missing {required}"
+                )
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        execution = manifest.get("execution")
+        if not isinstance(execution, dict):
+            raise ValueError(f"Prepared CP2 case has no execution record: {case_dir}")
+        staged_executable = execution.get("staged_cp2_executable")
+        if not isinstance(staged_executable, dict) or not staged_executable.get(
+            "sha256"
+        ):
+            raise ValueError(
+                f"Prepared CP2 case lacks executable provenance: {case_dir}"
+            )
+        executable_hash = str(staged_executable["sha256"])
+        if _sha256(executable_path) != executable_hash:
+            raise ValueError(f"Staged CP2 executable checksum changed: {case_dir}")
+        executable_hashes.add(executable_hash)
+        raw_case_settings = execution.get("pbs_settings")
+        if not isinstance(raw_case_settings, dict):
+            raise ValueError(f"Prepared CP2 case lacks PBS settings: {case_dir}")
+        case_pbs_settings.append(raw_case_settings)
+
+        system_name = str(manifest.get("system_name") or relative.parts[-2])
+        refcode = str(manifest.get("refcode") or relative.name)
+        case_id = re.sub(
+            r"[^A-Za-z0-9_.-]+", "_", f"{system_name}__{refcode}"
+        ).strip("_.-")
+        if not case_id or case_id in seen_case_ids:
+            raise ValueError(f"Duplicate or invalid CP2 batch case id: {case_id!r}")
+        seen_case_ids.add(case_id)
+        rows.append(
+            {
+                "case_id": case_id,
+                "relative_case_dir": str(relative),
+                "system_name": system_name,
+                "refcode": refcode,
+                "supported_scope": manifest.get("supported_scope", ""),
+                "structurally_supported": bool(
+                    manifest.get("structurally_supported", False)
+                ),
+                "mapping_validated": bool(manifest.get("mapping_validated", False)),
+                "cp2_executable_sha256": executable_hash,
+            }
+        )
+
+    if len(executable_hashes) != 1:
+        raise ValueError(
+            "All CP2 batch cases must use the same Minimise executable checksum"
+        )
+    first_case_settings = case_pbs_settings[0]
+    if any(value != first_case_settings for value in case_pbs_settings[1:]):
+        raise ValueError("All CP2 batch cases must use identical PBS runtime settings")
+
+    cases_manifest_path = root / BATCH_CASES_FILENAME
+    pbs_script_path = root / BATCH_PBS_SCRIPT_FILENAME
+    for destination in (cases_manifest_path, pbs_script_path):
+        if destination.exists() or destination.is_symlink():
+            raise FileExistsError(f"Refusing to overwrite CP2 batch file {destination}")
+    _write_tsv(cases_manifest_path, rows)
+
+    safe_job_name = re.sub(r"[^A-Za-z0-9_.-]+", "_", job_name).strip("_.-")
+    safe_job_name = (safe_job_name or "cp2lm_all_exp")[:50]
+    directives = [
+        "#!/bin/bash",
+        f"#PBS -N {safe_job_name}",
+        f"#PBS -l walltime={effective.walltime}",
+        f"#PBS -l select=1:ncpus=1:mem={effective.memory_gb}gb",
+        "#PBS -j oe",
+    ]
+    if effective.queue:
+        directives.append(f"#PBS -q {effective.queue}")
+
+    lines = [
+        *directives,
+        "",
+        "set -euo pipefail",
+        "umask 077",
+        'BATCH_ROOT="${PBS_O_WORKDIR:?Submit qsub from the CP2 batch directory}"',
+        f'CASE_MANIFEST="$BATCH_ROOT/{BATCH_CASES_FILENAME}"',
+        f'STATUS_FILE="$BATCH_ROOT/{BATCH_STATUS_FILENAME}"',
+        f'SUMMARY_FILE="$BATCH_ROOT/{BATCH_SUMMARY_FILENAME}"',
+        'BATCH_JOB_ID="${PBS_JOBID:?PBS_JOBID is not set}"',
+        'RUN_PARENT="${TMPDIR:-/tmp/${USER}}"',
+        'if [[ ! -f "$CASE_MANIFEST" ]]; then',
+        '  echo "Missing CP2 batch case manifest: $CASE_MANIFEST" >&2',
+        "  exit 2",
+        "fi",
+        "printf 'case_id\\tsystem_name\\trefcode\\trunner_exit_code\\tbatch_status\\telapsed_seconds\\n' > \"$STATUS_FILE\"",
+        "total=0",
+        "converged=0",
+        "failed=0",
+        "timed_out=0",
+        "while IFS=$'\\t' read -r case_id relative_case_dir system_name refcode supported_scope structurally_supported mapping_validated executable_sha256; do",
+        '  if [[ "$case_id" == "case_id" ]]; then continue; fi',
+        '  total=$((total + 1))',
+        '  case_dir="$BATCH_ROOT/$relative_case_dir"',
+        '  case_runner="$case_dir/run_cp2_local_min.pbs"',
+        '  if [[ ! -f "$case_dir/cp2_local_min_manifest.json" || ! -x "$case_runner" ]]; then',
+        '    printf "%s\\t%s\\t%s\\t%s\\t%s\\t%s\\n" "$case_id" "$system_name" "$refcode" 2 invalid_bundle 0 >> "$STATUS_FILE"',
+        '    failed=$((failed + 1))',
+        "    continue",
+        "  fi",
+        '  if [[ -f "$case_dir/exit_status.txt" && "$(tr -d "[:space:]" < "$case_dir/exit_status.txt")" == "0" ]] && grep -q "^CP2_LOCAL_MIN_RESULT_V1 status=OPTIMIZER_CONVERGED info=0" "$case_dir/Minimisation_log.out" 2>/dev/null; then',
+        '    printf "%s\\t%s\\t%s\\t%s\\t%s\\t%s\\n" "$case_id" "$system_name" "$refcode" 0 already_converged 0 >> "$STATUS_FILE"',
+        '    converged=$((converged + 1))',
+        "    continue",
+        "  fi",
+        '  started=$(date +%s)',
+        '  case_job_id="${BATCH_JOB_ID}_${case_id}"',
+        '  case_run_dir="$RUN_PARENT/cp2_local_min_${case_job_id}"',
+        '  printf "[%s/%s] starting %s/%s\\n" "$total" "$(($(wc -l < "$CASE_MANIFEST") - 1))" "$system_name" "$refcode"',
+        "  set +e",
+        "  (",
+        '    export PBS_O_WORKDIR="$case_dir"',
+        '    export PBS_JOBID="$case_job_id"',
+        f'    timeout --signal=TERM --kill-after=30s {shlex.quote(per_case_timeout)} bash "$case_runner"',
+        '  ) > "$case_dir/batch_case_runner.stdout" 2>&1',
+        "  runner_status=$?",
+        "  set -e",
+        '  if [[ -d "$case_run_dir" ]]; then',
+        '    cp -a "$case_run_dir"/. "$case_dir"/ || true',
+        '    rm -f -- "$case_dir/Minimise"',
+        '    case "$case_run_dir" in "$RUN_PARENT"/cp2_local_min_"$BATCH_JOB_ID"_*) rm -rf -- "$case_run_dir" ;; *) echo "Refusing unsafe scratch cleanup: $case_run_dir" >&2 ;; esac',
+        "  fi",
+        '  finished=$(date +%s)',
+        '  elapsed=$((finished - started))',
+        '  if [[ "$runner_status" -eq 124 || "$runner_status" -eq 137 ]]; then',
+        '    batch_status="timed_out"',
+        '    timed_out=$((timed_out + 1))',
+        '  elif [[ "$runner_status" -eq 0 ]] && grep -q "^CP2_LOCAL_MIN_RESULT_V1 status=OPTIMIZER_CONVERGED info=0" "$case_dir/Minimisation_log.out" 2>/dev/null; then',
+        '    batch_status="optimizer_converged"',
+        '    converged=$((converged + 1))',
+        "  else",
+        '    batch_status="failed"',
+        '    failed=$((failed + 1))',
+        "  fi",
+        '  printf "%s\\t%s\\t%s\\t%s\\t%s\\t%s\\n" "$case_id" "$system_name" "$refcode" "$runner_status" "$batch_status" "$elapsed" >> "$STATUS_FILE"',
+        '  printf "completed %s/%s: %s\\n" "$system_name" "$refcode" "$batch_status"',
+        f'done < "$CASE_MANIFEST"',
+        'printf "total=%s\\nconverged=%s\\nfailed=%s\\ntimed_out=%s\\n" "$total" "$converged" "$failed" "$timed_out" > "$SUMMARY_FILE"',
+        'cat "$SUMMARY_FILE"',
+        'if [[ "$failed" -ne 0 || "$timed_out" -ne 0 ]]; then exit 1; fi',
+        "exit 0",
+        "",
+    ]
+    pbs_script_path.write_text("\n".join(lines), encoding="utf-8")
+    pbs_script_path.chmod(0o750)
+    return CP2LocalMinBatchArtifacts(
+        batch_dir=root,
+        cases_manifest_path=cases_manifest_path,
+        pbs_script_path=pbs_script_path,
+    )
+
+
 def _stage_file(source: Path, destination: Path, mode: str) -> None:
     if destination.exists() or destination.is_symlink():
         raise FileExistsError(f"Refusing to overwrite staged file {destination}")
@@ -2493,11 +3067,16 @@ def _torsion_cost(
     reference: Sequence[tuple[float | None, float | None, float | None]],
     experimental: Sequence[tuple[float | None, float | None, float | None]],
     sign: int,
+    indices: Sequence[int],
 ) -> float:
     return sum(
-        _circular_difference(float(exp[2]), sign * float(ref[2])) ** 2
-        for ref, exp in zip(reference, experimental)
-        if ref[2] is not None and exp[2] is not None
+        _circular_difference(
+            float(experimental[index][2]),
+            sign * float(reference[index][2]),
+        )
+        ** 2
+        for index in indices
+        if reference[index][2] is not None and experimental[index][2] is not None
     )
 
 
@@ -2509,6 +3088,7 @@ __all__ = [
     "CP2LamSite",
     "CP2LamTopology",
     "CP2LocalMinArtifacts",
+    "CP2LocalMinBatchArtifacts",
     "CP2LocalMinStatus",
     "CP2MolecularType",
     "CP2PBSSettings",
@@ -2517,6 +3097,7 @@ __all__ = [
     "MappingMetrics",
     "StructureAtom",
     "StructureData",
+    "build_cp2_local_min_batch",
     "build_cp2_pbs_script",
     "collect_cp2_local_min_status",
     "discover_global_search_dir",

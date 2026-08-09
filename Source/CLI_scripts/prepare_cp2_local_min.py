@@ -10,6 +10,7 @@ from pathlib import Path
 from Source.cp2_local_min import (
     CP2PBSSettings,
     DEFAULT_CX3_MODULES,
+    build_cp2_local_min_batch,
     collect_cp2_local_min_status,
     prepare_cp2_local_min_inputs,
 )
@@ -75,6 +76,24 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         ),
     )
     prepare.add_argument(
+        "--auto-single-type-occurrences",
+        action="store_true",
+        help=(
+            "For a one-TYPE CP2 input, make a case-local input.in whose "
+            "occurrence count equals the connected molecular components in "
+            "the experimental asymmetric unit."
+        ),
+    )
+    prepare.add_argument(
+        "--trust-experimental-labels",
+        action="store_true",
+        help=(
+            "Use the experimental labels as the authoritative CP2/Zmatrix "
+            "mapping. This is intended only for an already-audited, reordered "
+            "single-component Z'=1 RES file."
+        ),
+    )
+    prepare.add_argument(
         "--cp2-executable",
         type=Path,
         help="Generate a runnable CX3 PBS bundle using this Minimise executable.",
@@ -107,6 +126,28 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Print status without writing cp2_local_min_status.json.",
     )
+
+    batch = subparsers.add_parser(
+        "assemble-batch",
+        help="Assemble prepared runnable cases into one sequential PBS job.",
+    )
+    batch.add_argument("batch_dir", type=Path)
+    batch.add_argument(
+        "--case-dir",
+        type=Path,
+        action="append",
+        required=True,
+        help="Prepared runnable CP2 case below BATCH_DIR; repeat for every case.",
+    )
+    batch.add_argument("--pbs-walltime", default="24:00:00")
+    batch.add_argument("--pbs-memory-gb", type=int, default=8)
+    batch.add_argument("--pbs-queue")
+    batch.add_argument("--job-name", default="cp2lm_all_exp")
+    batch.add_argument(
+        "--per-case-timeout",
+        default="15m",
+        help="Coreutils timeout duration for each case, for example 15m or 1h.",
+    )
     return parser.parse_args(argv)
 
 
@@ -118,6 +159,23 @@ def main(argv: list[str] | None = None) -> int:
         )
         print(json.dumps(asdict(result), indent=2, sort_keys=True))
         return 0 if result.status == "optimizer_converged" else 1
+
+    if args.command == "assemble-batch":
+        artifacts = build_cp2_local_min_batch(
+            args.batch_dir,
+            args.case_dir,
+            settings=CP2PBSSettings(
+                walltime=args.pbs_walltime,
+                memory_gb=args.pbs_memory_gb,
+                queue=args.pbs_queue,
+            ),
+            job_name=args.job_name,
+            per_case_timeout=args.per_case_timeout,
+        )
+        print(f"batch_dir={artifacts.batch_dir}")
+        print(f"cases_manifest={artifacts.cases_manifest_path}")
+        print(f"pbs_script={artifacts.pbs_script_path}")
+        return 0
 
     references = _parse_indexed_paths(args.reference, option_name="--reference")
     zmatrices = _parse_indexed_paths(args.zmatrix, option_name="--zmatrix")
@@ -142,6 +200,8 @@ def main(argv: list[str] | None = None) -> int:
         allow_generated_labels=args.allow_generated_labels,
         allow_unvalidated=args.allow_unvalidated,
         allow_unvalidated_mapping=args.allow_unvalidated_mapping,
+        auto_single_type_occurrences=args.auto_single_type_occurrences,
+        trust_experimental_labels=args.trust_experimental_labels,
         cp2_executable=args.cp2_executable,
         pbs_settings=CP2PBSSettings(
             walltime=args.pbs_walltime,
