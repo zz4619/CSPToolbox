@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+from dataclasses import replace
 import hashlib
 import json
 from pathlib import Path
@@ -21,7 +22,10 @@ from Source.cp2_local_min import (  # noqa: E402
     CP2_SUPPORTED_SPACE_GROUPS,
     ComponentMapping,
     MappingMetrics,
+    _minimum_intermolecular_contact,
+    _symmetry_from_hall,
     build_cp2_local_min_batch,
+    canonicalize_structure_for_cp2,
     collect_cp2_local_min_status,
     discover_global_search_dir,
     parse_cp2_input,
@@ -227,6 +231,54 @@ END
         self.assertEqual("P1", resolve_cp2_space_group("P 1"))
         self.assertEqual("P21/c", resolve_cp2_space_group("P 21/c"))
 
+    def test_nonstandard_p21n_setting_is_transformed_without_changing_packing(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            path = Path(temporary_directory) / "p21n.res"
+            path.write_text(
+                """TITL P21/n operator setting reported generically
+CELL 1.0 10.0 11.0 12.0 90.0 105.0 90.0
+LATT 1
+SYMM 1/2-x,1/2+y,1/2-z
+SFAC C N
+C1 1 0.100 0.100 0.100 11.0 0.03
+N1 2 0.910 0.600 0.400 11.0 0.03
+END
+""",
+                encoding="utf-8",
+            )
+            source = read_structure(path)
+            source_contact = _minimum_intermolecular_contact(source)
+
+            # This reproduces the old adapter: unchanged coordinates/cell but
+            # CP2's P21/c operators.  It creates an artificial 0.1 A contact.
+            wrong_setting = replace(
+                source,
+                space_group="P21/c",
+                symmetry=_symmetry_from_hall(81),
+            )
+            wrong_contact = _minimum_intermolecular_contact(wrong_setting)
+
+            transformed, provenance = canonicalize_structure_for_cp2(
+                source, "P21/c"
+            )
+            transformed_contact = _minimum_intermolecular_contact(transformed)
+
+            self.assertEqual(82, source.symmetry.hall_number)
+            self.assertEqual(81, transformed.symmetry.hall_number)
+            self.assertEqual(82, provenance.source_hall_number)
+            self.assertEqual(81, provenance.target_hall_number)
+            self.assertTrue(provenance.changed)
+            self.assertLess(wrong_contact.distance_angstrom, 0.11)
+            self.assertGreater(source_contact.distance_angstrom, 3.0)
+            self.assertAlmostEqual(
+                source_contact.distance_angstrom,
+                transformed_contact.distance_angstrom,
+                places=8,
+            )
+            self.assertNotEqual(source.cell_parameters, transformed.cell_parameters)
+
     def test_globally_inverted_mapping_is_not_automatically_validated(self) -> None:
         common = dict(
             method="reference_graph_zmatrix_internal_rmsd",
@@ -404,6 +456,7 @@ END
                 ["CX", "NX", "OX", "HX"], [row["experimental_label"] for row in rows]
             )
             manifest = json.loads(artifacts.manifest_path.read_text(encoding="utf-8"))
+            self.assertEqual(2, manifest["schema_version"])
             self.assertFalse(manifest["scientifically_validated"])
             self.assertTrue(manifest["mapping_validated"])
             self.assertTrue(manifest["potential"]["byte_identical"])
@@ -411,6 +464,14 @@ END
             self.assertEqual(
                 ["C1", "N1", "O1", "H1"],
                 manifest["molecular_types"][0]["canonical_atom_order"],
+            )
+            setting = manifest["crystal_setting_transformation"]
+            self.assertEqual(1, setting["source_hall_number"])
+            self.assertEqual(1, setting["target_hall_number"])
+            self.assertTrue(setting["packing_distance_preserved"])
+            self.assertGreater(
+                setting["cp2_minimum_intermolecular_contact"]["distance_angstrom"],
+                setting["minimum_allowed_intermolecular_distance_angstrom"],
             )
             self.assertIsNotNone(artifacts.pbs_script_path)
             self.assertIsNotNone(artifacts.executable_path)

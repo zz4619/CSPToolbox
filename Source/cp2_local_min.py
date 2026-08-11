@@ -21,6 +21,7 @@ from collections import Counter
 from dataclasses import asdict, dataclass, replace
 import csv
 from fractions import Fraction
+from functools import lru_cache
 import hashlib
 import itertools
 import json
@@ -43,6 +44,7 @@ GLOBAL_SEARCH_DIRECTORY_NAMES = ("5_Globalsearch", "5_GlobSrch")
 DEFAULT_COVALENT_SCALE = 1.20
 HYDROGEN_COVALENT_SCALE = 1.30
 DEFAULT_MAX_HEAVY_MAPPINGS = 100_000
+DEFAULT_MIN_INTERMOLECULAR_DISTANCE_ANGSTROM = 0.80
 STATUS_FILENAME = "cp2_local_min_status.json"
 MANIFEST_FILENAME = "cp2_local_min_manifest.json"
 MAPPING_FILENAME = "cp2_atom_mapping.tsv"
@@ -224,15 +226,52 @@ class StructureAtom:
 
 
 @dataclass(frozen=True)
+class CrystallographicSymmetry:
+    """Exact symmetry operations in the coordinate setting of a structure."""
+
+    rotations: tuple[tuple[tuple[int, int, int], ...], ...]
+    translations: tuple[tuple[float, float, float], ...]
+    hall_number: int
+    international_short: str
+    choice: str
+
+
+@dataclass(frozen=True)
 class StructureData:
     path: Path
     atoms: tuple[StructureAtom, ...]
     cell_parameters: tuple[float, float, float, float, float, float]
     space_group: str
+    symmetry: CrystallographicSymmetry | None = None
 
     @property
     def cell(self) -> Cell:
         return Cell.fromcellpar(self.cell_parameters)
+
+
+@dataclass(frozen=True)
+class CrystalSettingTransformation:
+    """Affine fractional-coordinate transformation into a CP2 setting."""
+
+    source_hall_number: int | None
+    target_hall_number: int
+    target_space_group: str
+    transformation_matrix: tuple[tuple[float, float, float], ...]
+    origin_shift: tuple[float, float, float]
+    standard_rotation_matrix: tuple[tuple[float, float, float], ...]
+    changed: bool
+
+
+@dataclass(frozen=True)
+class IntermolecularContact:
+    distance_angstrom: float
+    left_atom_index: int
+    right_atom_index: int
+    left_component_index: int
+    right_component_index: int
+    left_symmetry_index: int
+    right_symmetry_index: int
+    lattice_translation: tuple[int, int, int]
 
 
 @dataclass(frozen=True)
@@ -848,8 +887,10 @@ def prepare_cp2_local_min_inputs(
             raise FileNotFoundError(f"Missing required CP2 input: {required}")
 
     input_definition_source = parse_cp2_input(input_source)
-    experimental = read_structure(experimental_structure, space_group=space_group)
-    experimental_connectivity = _build_connectivity(experimental)
+    experimental_source = read_structure(
+        experimental_structure, space_group=space_group
+    )
+    experimental_connectivity = _build_connectivity(experimental_source)
     input_definition = input_definition_source
     occurrence_update: dict[str, int] | None = None
     if auto_single_type_occurrences:
@@ -941,7 +982,7 @@ def prepare_cp2_local_min_inputs(
             "Z'=1 structure"
         )
     mappings = match_experimental_to_cp2(
-        experimental,
+        experimental_source,
         input_definition,
         topologies,
         None if trust_experimental_labels else reference_paths,
@@ -979,7 +1020,36 @@ def prepare_cp2_local_min_inputs(
             "inspect a preparation without --cp2-executable or explicitly use "
             "allow_unvalidated_mapping=True"
         )
-    connectivity = experimental_connectivity
+    cp2_space_group = resolve_cp2_space_group(experimental_source.space_group)
+    experimental, setting_transformation = canonicalize_structure_for_cp2(
+        experimental_source, cp2_space_group
+    )
+    connectivity = _build_connectivity(experimental)
+    source_contact = (
+        _minimum_intermolecular_contact(experimental_source)
+        if experimental_source.symmetry is not None
+        else None
+    )
+    cp2_contact = _minimum_intermolecular_contact(experimental)
+    if (
+        source_contact is not None
+        and abs(source_contact.distance_angstrom - cp2_contact.distance_angstrom)
+        > 1.0e-4
+    ):
+        raise ValueError(
+            "CP2 setting transformation did not preserve the periodic packing: "
+            f"source minimum contact {source_contact.distance_angstrom:.6f} A, "
+            f"transformed {cp2_contact.distance_angstrom:.6f} A"
+        )
+    if cp2_contact.distance_angstrom < DEFAULT_MIN_INTERMOLECULAR_DISTANCE_ANGSTROM:
+        left_atom = experimental.atoms[cp2_contact.left_atom_index]
+        right_atom = experimental.atoms[cp2_contact.right_atom_index]
+        raise ValueError(
+            "Refusing CP2 input with a symmetry-generated intermolecular clash: "
+            f"{cp2_contact.distance_angstrom:.6f} A between "
+            f"{left_atom.label} and {right_atom.label}; minimum allowed is "
+            f"{DEFAULT_MIN_INTERMOLECULAR_DISTANCE_ANGSTROM:.2f} A"
+        )
 
     destination = Path(output_dir)
     if destination.exists() and not destination.is_dir():
@@ -1048,7 +1118,6 @@ def prepare_cp2_local_min_inputs(
         optional_assets.append(_file_provenance(non_uniform_source, staged_non_uniform))
 
     expcrys_path = destination / "expcrys.pdb"
-    cp2_space_group = resolve_cp2_space_group(experimental.space_group)
     mapping_rows = _write_expcrys_pdb(
         expcrys_path,
         experimental,
@@ -1057,6 +1126,7 @@ def prepare_cp2_local_min_inputs(
         mappings,
         connectivity,
         cp2_space_group=cp2_space_group,
+        source_experimental=experimental_source,
     )
     mapping_path = destination / MAPPING_FILENAME
     _write_tsv(mapping_path, mapping_rows)
@@ -1091,7 +1161,7 @@ def prepare_cp2_local_min_inputs(
         )
 
     manifest = {
-        "schema_version": 1,
+        "schema_version": 2,
         "system_name": system_name or system_root.name,
         "refcode": refcode or Path(experimental_structure).stem,
         "supported_scope": input_definition.supported_scope,
@@ -1103,8 +1173,27 @@ def prepare_cp2_local_min_inputs(
         "global_search_dir": str(global_root.resolve()),
         "experimental_structure": _path_provenance(Path(experimental_structure)),
         "reference_structures": reference_manifest,
-        "experimental_space_group_input": experimental.space_group,
+        "experimental_space_group_input": experimental_source.space_group,
         "cp2_space_group": cp2_space_group,
+        "crystal_setting_transformation": {
+            **asdict(setting_transformation),
+            "source_exact_symmetry_available": experimental_source.symmetry is not None,
+            "source_minimum_intermolecular_contact": (
+                asdict(source_contact) if source_contact is not None else None
+            ),
+            "cp2_minimum_intermolecular_contact": asdict(cp2_contact),
+            "minimum_allowed_intermolecular_distance_angstrom": (
+                DEFAULT_MIN_INTERMOLECULAR_DISTANCE_ANGSTROM
+            ),
+            "packing_distance_preserved": (
+                source_contact is None
+                or abs(
+                    source_contact.distance_angstrom
+                    - cp2_contact.distance_angstrom
+                )
+                <= 1.0e-4
+            ),
+        },
         "input": {
             "source_path": str(input_source.resolve()),
             "staged_path": str(staged_input.absolute()),
@@ -1184,6 +1273,16 @@ def prepare_cp2_local_min_inputs(
             "atom_elements_match": True,
             "potential_bytes_preserved": True,
             "pdb_atom_count": len(mapping_rows),
+            "crystal_setting_matches_cp2": True,
+            "periodic_packing_preserved": (
+                source_contact is None
+                or abs(
+                    source_contact.distance_angstrom
+                    - cp2_contact.distance_angstrom
+                )
+                <= 1.0e-4
+            ),
+            "no_inter_molecular_contact_below_threshold": True,
         },
     }
     manifest_path = destination / MANIFEST_FILENAME
@@ -1377,6 +1476,15 @@ def _infer_shelx_space_group(
 ) -> str:
     """Resolve a SHELX LATT/SYMM operator set to an international symbol."""
 
+    return _parse_shelx_symmetry(lines, cell_parameters).international_short
+
+
+def _parse_shelx_symmetry(
+    lines: Sequence[str],
+    cell_parameters: Sequence[float],
+) -> CrystallographicSymmetry:
+    """Parse and retain the exact SHELX setting, including centering/inversion."""
+
     latt_rows = [
         raw.split()[1]
         for raw in lines
@@ -1471,7 +1579,52 @@ def _infer_shelx_space_group(
     )
     if space_group_type is None:
         raise ValueError("SHELX LATT/SYMM operators do not identify a space group")
-    return str(space_group_type.international_short).replace("_", "")
+    operation_keys = {
+        _symmetry_operation_key(rotation, translation)
+        for rotation, translation in zip(rotations, translations)
+    }
+    exact_hall_number = int(space_group_type.hall_number)
+    for hall_number in range(1, 531):
+        candidate_type = spglib.get_spacegroup_type(hall_number)
+        if candidate_type is None or int(candidate_type.number) != int(
+            space_group_type.number
+        ):
+            continue
+        candidate = spglib.get_symmetry_from_database(hall_number)
+        if candidate is None or len(candidate["rotations"]) != len(rotations):
+            continue
+        candidate_keys = {
+            _symmetry_operation_key(rotation, translation)
+            for rotation, translation in zip(
+                candidate["rotations"], candidate["translations"]
+            )
+        }
+        if candidate_keys == operation_keys:
+            exact_hall_number = hall_number
+            space_group_type = candidate_type
+            break
+    return CrystallographicSymmetry(
+        rotations=tuple(
+            tuple(tuple(int(value) for value in row) for row in rotation)
+            for rotation in rotations
+        ),
+        translations=tuple(
+            tuple(float(value % 1.0) for value in translation)
+            for translation in translations
+        ),
+        hall_number=exact_hall_number,
+        international_short=str(space_group_type.international_short).replace("_", ""),
+        choice=str(space_group_type.choice),
+    )
+
+
+def _symmetry_operation_key(
+    rotation: Sequence[Sequence[int]], translation: Sequence[float],
+) -> tuple[tuple[tuple[int, int, int], ...], tuple[float, float, float]]:
+    return (
+        tuple(tuple(int(value) for value in row) for row in rotation),
+        tuple(round(float(value) % 1.0, 10) for value in translation),
+    )
 
 
 def _parse_shelx_symmetry_coordinate(
@@ -1589,16 +1742,21 @@ def _read_res_structure(
         raise ValueError(f"No CELL record found in {path}")
     if not atoms_raw:
         raise ValueError(f"No SHELX atom records found in {path}")
+    parsed_symmetry = None
+    try:
+        parsed_symmetry = _parse_shelx_symmetry(lines, cell_parameters)
+    except ValueError:
+        if parsed_space_group is None and require_space_group:
+            raise ValueError(
+                f"Could not determine a unique space-group symbol from SHELX "
+                f"LATT/SYMM records in {path}; pass space_group explicitly"
+            ) from None
     if parsed_space_group is None:
-        try:
-            parsed_space_group = _infer_shelx_space_group(lines, cell_parameters)
-        except ValueError:
-            if require_space_group:
-                raise ValueError(
-                    f"Could not determine a unique space-group symbol from SHELX "
-                    f"LATT/SYMM records in {path}; pass space_group explicitly"
-                ) from None
-            parsed_space_group = "UNKNOWN"
+        parsed_space_group = (
+            parsed_symmetry.international_short
+            if parsed_symmetry is not None
+            else "UNKNOWN"
+        )
 
     cell = Cell.fromcellpar(cell_parameters)
     atoms = tuple(
@@ -1621,6 +1779,7 @@ def _read_res_structure(
         atoms=atoms,
         cell_parameters=tuple(float(value) for value in cell_parameters),
         space_group=parsed_space_group,
+        symmetry=parsed_symmetry,
     )
 
 
@@ -2300,6 +2459,7 @@ def _write_expcrys_pdb(
     connectivity: _Connectivity,
     *,
     cp2_space_group: str,
+    source_experimental: StructureData | None = None,
 ) -> list[dict[str, object]]:
     a, b, c, alpha, beta, gamma = experimental.cell_parameters
     if any(value >= 1000.0 for value in (a, b, c)):
@@ -2335,6 +2495,11 @@ def _write_expcrys_pdb(
                     raise ValueError("Experimental atom mapping is not bijective")
                 seen_experimental.add(experimental_index)
                 source_atom = experimental.atoms[experimental_index]
+                original_atom = (
+                    source_experimental.atoms[experimental_index]
+                    if source_experimental is not None
+                    else source_atom
+                )
                 if source_atom.element != site.element:
                     raise ValueError(
                         f"Element mismatch for CP2 site {site.label}: {site.element} vs {source_atom.element}"
@@ -2362,9 +2527,12 @@ def _write_expcrys_pdb(
                         "element": site.element,
                         "experimental_atom_index_0based": experimental_index,
                         "experimental_label": source_atom.label,
-                        "original_fractional_x": f"{source_atom.fractional[0]:.10f}",
-                        "original_fractional_y": f"{source_atom.fractional[1]:.10f}",
-                        "original_fractional_z": f"{source_atom.fractional[2]:.10f}",
+                        "original_fractional_x": f"{original_atom.fractional[0]:.10f}",
+                        "original_fractional_y": f"{original_atom.fractional[1]:.10f}",
+                        "original_fractional_z": f"{original_atom.fractional[2]:.10f}",
+                        "cp2_fractional_x": f"{source_atom.fractional[0]:.10f}",
+                        "cp2_fractional_y": f"{source_atom.fractional[1]:.10f}",
+                        "cp2_fractional_z": f"{source_atom.fractional[2]:.10f}",
                         "pdb_serial": serial,
                         "pdb_x_angstrom": f"{x:.3f}",
                         "pdb_y_angstrom": f"{y:.3f}",
@@ -2413,6 +2581,312 @@ def resolve_cp2_space_group(experimental_symbol: str) -> str:
             "to CrystalPredictor2 SpaceSupported spelling"
         )
     return matches[0]
+
+
+def _normalized_full_space_group_key(symbol: str) -> str:
+    """Collapse the explicit identity axes in spglib's full setting symbol."""
+
+    tokens = str(symbol).replace("_", "").split()
+    return _normalize_space_group_key("".join(token for token in tokens if token != "1"))
+
+
+@lru_cache(maxsize=None)
+def _cp2_target_hall_number(cp2_space_group: str) -> int:
+    """Return the Hall setting whose operators match CP2's SpaceSupported entry.
+
+    Most CP2 entries use the first spglib setting for their short symbol.  The
+    four overrides are historical CP2 spellings/operators retained in
+    ``space_group_module.f90``.
+    """
+
+    key = _normalize_space_group_key(cp2_space_group)
+    overrides = {
+        # CP2's P2/n record currently carries the P2/c operator set.
+        "P2/N": 72,
+        # CP2's Pn21a record currently carries its Pna21 operator set.
+        "PN21A": 164,
+        # Historical symbols renamed in current International Tables/spglib.
+        "ABA2": 203,
+        "CMCA": 304,
+    }
+    if key in overrides:
+        return overrides[key]
+
+    short_matches: list[int] = []
+    full_matches: list[int] = []
+    for hall_number in range(1, 531):
+        space_group_type = spglib.get_spacegroup_type(hall_number)
+        if space_group_type is None:
+            continue
+        if _normalize_space_group_key(space_group_type.international_short) == key:
+            short_matches.append(hall_number)
+        if _normalized_full_space_group_key(space_group_type.international_full) == key:
+            full_matches.append(hall_number)
+    candidates = short_matches or full_matches
+    if not candidates:
+        raise ValueError(
+            f"No spglib Hall setting corresponds to CP2 space group {cp2_space_group!r}"
+        )
+    # CP2 uses the conventional b setting, hexagonal R setting, and origin
+    # choice 1; these are the lowest Hall serials among otherwise equal names.
+    return min(candidates)
+
+
+@lru_cache(maxsize=None)
+def _symmetry_from_hall(hall_number: int) -> CrystallographicSymmetry:
+    database = spglib.get_symmetry_from_database(hall_number)
+    space_group_type = spglib.get_spacegroup_type(hall_number)
+    if database is None or space_group_type is None:
+        raise ValueError(f"Invalid spglib Hall number {hall_number}")
+    return CrystallographicSymmetry(
+        rotations=tuple(
+            tuple(tuple(int(value) for value in row) for row in rotation)
+            for rotation in database["rotations"]
+        ),
+        translations=tuple(
+            tuple(float(value % 1.0) for value in translation)
+            for translation in database["translations"]
+        ),
+        hall_number=hall_number,
+        international_short=str(space_group_type.international_short).replace("_", ""),
+        choice=str(space_group_type.choice),
+    )
+
+
+def canonicalize_structure_for_cp2(
+    structure: StructureData,
+    cp2_space_group: str,
+    *,
+    symprec: float = 1.0e-5,
+) -> tuple[StructureData, CrystalSettingTransformation]:
+    """Transform a structure into the exact crystallographic setting used by CP2.
+
+    SHELX ``LATT``/``SYMM`` operations are expanded first.  Requesting CP2's
+    target Hall setting from spglib then supplies the full cell-basis and
+    origin transformation; applying only an origin shift is insufficient for
+    settings such as P21/n to P21/c.
+    """
+
+    target_hall_number = _cp2_target_hall_number(cp2_space_group)
+    target_type = spglib.get_spacegroup_type(target_hall_number)
+    if target_type is None:
+        raise ValueError(f"Invalid target Hall setting {target_hall_number}")
+    target_symmetry = _symmetry_from_hall(target_hall_number)
+
+    if structure.symmetry is None:
+        identity = np.eye(3, dtype=float)
+        transformation = CrystalSettingTransformation(
+            source_hall_number=None,
+            target_hall_number=target_hall_number,
+            target_space_group=cp2_space_group,
+            transformation_matrix=tuple(tuple(float(value) for value in row) for row in identity),
+            origin_shift=(0.0, 0.0, 0.0),
+            standard_rotation_matrix=tuple(
+                tuple(float(value) for value in row) for row in identity
+            ),
+            changed=False,
+        )
+        return (
+            replace(
+                structure, space_group=cp2_space_group, symmetry=target_symmetry
+            ),
+            transformation,
+        )
+
+    source_type = spglib.get_spacegroup_type(structure.symmetry.hall_number)
+    if source_type is None or int(source_type.number) != int(target_type.number):
+        raise ValueError(
+            f"SHELX operators identify space-group number "
+            f"{getattr(source_type, 'number', 'unknown')}, but CP2 symbol "
+            f"{cp2_space_group!r} is number {target_type.number}"
+        )
+
+    full_positions: list[np.ndarray] = []
+    full_types: list[int] = []
+    # Use a deterministic general-position marker motif to encode the supplied
+    # operator set.  Real molecular coordinates can accidentally sit on an
+    # exact special plane (all z equal in a planar test molecule), causing
+    # spglib to promote the structure to a supergroup and reject a requested
+    # lower Hall setting.
+    marker_positions = (
+        (0.123457, 0.234569, 0.345679),
+        (0.271829, 0.314159, 0.161803),
+        (0.414214, 0.173205, 0.223607),
+        (0.109739, 0.398942, 0.577216),
+    )
+    for marker_type, marker in enumerate(marker_positions, start=1):
+        fractional = np.asarray(marker, dtype=float)
+        orbit: list[np.ndarray] = []
+        for rotation, translation in zip(
+            structure.symmetry.rotations, structure.symmetry.translations
+        ):
+            position = (
+                np.dot(np.asarray(rotation, dtype=int), fractional)
+                + np.asarray(translation, dtype=float)
+            ) % 1.0
+            if any(
+                np.max(np.abs(((position - existing + 0.5) % 1.0) - 0.5)) < symprec
+                for existing in orbit
+            ):
+                continue
+            orbit.append(position)
+            full_positions.append(position)
+            full_types.append(marker_type)
+
+    dataset = spglib.get_symmetry_dataset(
+        (
+            np.asarray(structure.cell.array, dtype=float),
+            np.asarray(full_positions, dtype=float),
+            np.asarray(full_types, dtype=np.intc),
+        ),
+        hall_number=target_hall_number,
+        symprec=symprec,
+    )
+    if dataset is None:
+        raise ValueError(
+            f"spglib could not transform {structure.path} into CP2 setting {cp2_space_group}"
+        )
+    if int(dataset.hall_number) != target_hall_number:
+        raise ValueError(
+            f"spglib returned Hall {dataset.hall_number}, expected {target_hall_number}"
+        )
+
+    matrix = np.asarray(dataset.transformation_matrix, dtype=float)
+    origin_shift = np.asarray(dataset.origin_shift, dtype=float)
+    standard_lattice = np.asarray(dataset.std_lattice, dtype=float)
+    standard_rotation = np.asarray(dataset.std_rotation_matrix, dtype=float)
+    transformed_atoms: list[StructureAtom] = []
+    for atom in structure.atoms:
+        fractional = (
+            np.dot(matrix, np.asarray(atom.fractional, dtype=float)) + origin_shift
+        ) % 1.0
+        cartesian = np.dot(fractional, standard_lattice)
+        transformed_atoms.append(
+            StructureAtom(
+                source_index=atom.source_index,
+                label=atom.label,
+                element=atom.element,
+                fractional=tuple(float(value) for value in fractional),
+                cartesian=tuple(float(value) for value in cartesian),
+            )
+        )
+    standard_cell_parameters = tuple(
+        float(value) for value in Cell(standard_lattice).cellpar()
+    )
+    transformed = StructureData(
+        path=structure.path,
+        atoms=tuple(transformed_atoms),
+        cell_parameters=standard_cell_parameters,
+        space_group=cp2_space_group,
+        symmetry=target_symmetry,
+    )
+    changed = not (
+        np.allclose(matrix, np.eye(3), atol=1.0e-10)
+        and np.allclose(origin_shift % 1.0, 0.0, atol=1.0e-10)
+        and np.allclose(
+            np.asarray(structure.cell.array, dtype=float),
+            standard_lattice,
+            atol=1.0e-8,
+        )
+    )
+    transformation = CrystalSettingTransformation(
+        source_hall_number=structure.symmetry.hall_number,
+        target_hall_number=target_hall_number,
+        target_space_group=cp2_space_group,
+        transformation_matrix=tuple(
+            tuple(float(value) for value in row) for row in matrix
+        ),
+        origin_shift=tuple(float(value) for value in origin_shift),
+        standard_rotation_matrix=tuple(
+            tuple(float(value) for value in row) for row in standard_rotation
+        ),
+        changed=changed,
+    )
+    return transformed, transformation
+
+
+def _minimum_intermolecular_contact(
+    structure: StructureData,
+) -> IntermolecularContact:
+    """Find the shortest contact between distinct periodic molecule instances."""
+
+    if structure.symmetry is None:
+        raise ValueError("Exact symmetry operations are required for crystal preflight")
+    connectivity = _build_connectivity(structure)
+    cell = np.asarray(structure.cell.array, dtype=float)
+    reciprocal = np.linalg.inv(cell)
+    atom_to_component = {
+        atom_index: component_index
+        for component_index, component in enumerate(connectivity.components, start=1)
+        for atom_index in component
+    }
+    instances: list[tuple[int, int, tuple[int, ...], np.ndarray]] = []
+    for component_index, component in enumerate(connectivity.components, start=1):
+        atom_indices = tuple(component)
+        unwrapped_fractional = np.asarray(
+            [np.dot(connectivity.unwrapped[index], reciprocal) for index in atom_indices],
+            dtype=float,
+        )
+        for symmetry_index, (rotation, translation) in enumerate(
+            zip(structure.symmetry.rotations, structure.symmetry.translations), start=1
+        ):
+            fractional = (
+                np.dot(unwrapped_fractional, np.asarray(rotation, dtype=float).T)
+                + np.asarray(translation, dtype=float)
+            )
+            instances.append(
+                (
+                    component_index,
+                    symmetry_index,
+                    atom_indices,
+                    np.dot(fractional, cell),
+                )
+            )
+
+    best: IntermolecularContact | None = None
+    translations = tuple(itertools.product(range(-2, 3), repeat=3))
+    for left_instance_index, left in enumerate(instances):
+        left_component, left_symmetry, left_atoms, left_coordinates = left
+        for right_instance_index in range(left_instance_index, len(instances)):
+            right_component, right_symmetry, right_atoms, right_coordinates = instances[
+                right_instance_index
+            ]
+            same_instance = right_instance_index == left_instance_index
+            for lattice_translation in translations:
+                if same_instance and lattice_translation == (0, 0, 0):
+                    continue
+                shift = np.dot(np.asarray(lattice_translation, dtype=float), cell)
+                displacements = (
+                    right_coordinates[np.newaxis, :, :]
+                    + shift
+                    - left_coordinates[:, np.newaxis, :]
+                )
+                distances = np.linalg.norm(displacements, axis=2)
+                flat_index = int(np.argmin(distances))
+                left_offset, right_offset = np.unravel_index(
+                    flat_index, distances.shape
+                )
+                distance = float(distances[left_offset, right_offset])
+                if best is None or distance < best.distance_angstrom:
+                    best = IntermolecularContact(
+                        distance_angstrom=distance,
+                        left_atom_index=left_atoms[left_offset],
+                        right_atom_index=right_atoms[right_offset],
+                        left_component_index=left_component,
+                        right_component_index=right_component,
+                        left_symmetry_index=left_symmetry,
+                        right_symmetry_index=right_symmetry,
+                        lattice_translation=tuple(int(value) for value in lattice_translation),
+                    )
+    if best is None:
+        raise ValueError("Could not evaluate periodic intermolecular contacts")
+    # Silence a subtle class of bookkeeping mistakes where a component index
+    # is lost while the symmetry-expanded instances are assembled.
+    if atom_to_component[best.left_atom_index] != best.left_component_index:
+        raise AssertionError("Left contact component bookkeeping is inconsistent")
+    if atom_to_component[best.right_atom_index] != best.right_component_index:
+        raise AssertionError("Right contact component bookkeeping is inconsistent")
+    return best
 
 
 def _is_parseable_cp2_pdb(path: Path) -> bool:
