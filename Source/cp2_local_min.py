@@ -1,13 +1,15 @@
 """Prepare and audit CrystalPredictor2 experimental local-minimisation jobs.
 
-The CP2 molecular-information (LAM) database is authoritative for site order,
-site types, charges, and indexed Z-matrix references.  Its site names are not
-unique, so canonical atom labels come from the system-level ``Zmatrix`` file.
-This module maps an experimental SHELX structure into that order, writes the
-fixed-column ``expcrys.pdb`` read by CP2, stages CP2 inputs, and records
-complete provenance.  For a single chemical type, an experimental Z'>1
-asymmetric unit can explicitly request a case-local occurrence-count update in
-``input.in``; ``potential.in`` and the LAM database remain unchanged.
+The CP2 molecular-information (LAM) database is authoritative for site types,
+charges, and indexed Z-matrix references, while canonical atom labels and
+topology come from the system-level ``Zmatrix`` file.  The engine-neutral
+matcher in :mod:`Source.zmatrix_mapping` maps an experimental structure against
+a CP2 global-search template once; this module consumes that result, writes the
+fixed-column ``expcrys.pdb`` read by CP2, and records a reusable mapping
+artifact for a later CSO-FM adapter.  For a single chemical type, an
+experimental Z'>1 asymmetric unit can explicitly request a case-local
+occurrence-count update in ``input.in``; ``potential.in`` and the LAM database
+remain unchanged.
 
 The adapter's supported pilot scope is single-component Z'=1.  That is not a
 claim that a mapping or an optimizer-converged structure is scientifically
@@ -37,17 +39,30 @@ import numpy as np
 import spglib
 from ase.cell import Cell
 from ase.data import atomic_numbers, covalent_radii
-from networkx.algorithms import isomorphism as nx_isomorphism
+
+from .zmatrix_mapping import (
+    DEFAULT_MAX_FULL_MAPPINGS,
+    DEFAULT_MAX_HEAVY_MAPPINGS,
+    MAPPING_METHOD_VERSION,
+    InternalCoordinateKey,
+    InternalCoordinateValues,
+    ZMatrixSite,
+    angle_degrees as _shared_angle_degrees,
+    circular_difference_degrees as _shared_circular_difference_degrees,
+    dihedral_degrees as _shared_dihedral_degrees,
+    match_zmatrix_atoms,
+    read_mapping_artifact,
+)
 
 
 GLOBAL_SEARCH_DIRECTORY_NAMES = ("5_Globalsearch", "5_GlobSrch")
 DEFAULT_COVALENT_SCALE = 1.20
 HYDROGEN_COVALENT_SCALE = 1.30
-DEFAULT_MAX_HEAVY_MAPPINGS = 100_000
 DEFAULT_MIN_INTERMOLECULAR_DISTANCE_ANGSTROM = 0.80
 STATUS_FILENAME = "cp2_local_min_status.json"
 MANIFEST_FILENAME = "cp2_local_min_manifest.json"
 MAPPING_FILENAME = "cp2_atom_mapping.tsv"
+MAPPING_ARTIFACT_FILENAME = "zmatrix_mapping.json"
 PBS_SCRIPT_FILENAME = "run_cp2_local_min.pbs"
 BATCH_CASES_FILENAME = "cp2_local_min_batch_cases.tsv"
 BATCH_STATUS_FILENAME = "cp2_local_min_batch_status.tsv"
@@ -286,12 +301,31 @@ class MappingMetrics:
     torsion_orientation: str
     mapping_ambiguous: bool
     reference_order_assumed: bool
+    rigid_torsion_rms_delta_degrees: float = 0.0
+    rigid_torsion_max_abs_delta_degrees: float = 0.0
+    independent_torsion_domain_rms_distance_degrees: float = 0.0
+    independent_torsion_domain_max_distance_degrees: float = 0.0
+    independent_torsions_outside_domain: int = 0
+    reflection_allowed: bool = False
+    mapping_method_version: str = MAPPING_METHOD_VERSION
+    full_mapping_count: int = 0
+    fixed_pair_all_atom_rmsd_angstrom: float = 0.0
+    primary_tie_count: int = 1
+    final_tie_count: int = 1
+    fixed_pair_rmsd_gap_angstrom: float | None = None
+    selection_reason: str = "legacy_selection"
+    primary_score_atol: float = 1.0e-8
+    fixed_pair_rmsd_atol_angstrom: float = 1.0e-6
+    template_internal_coordinates: tuple[InternalCoordinateValues, ...] = ()
+    experimental_internal_coordinates: tuple[InternalCoordinateValues, ...] = ()
 
     @property
     def validation_failures(self) -> tuple[str, ...]:
         """Reasons this mapping cannot be accepted automatically."""
 
         failures: list[str] = []
+        if self.mapping_method_version != MAPPING_METHOD_VERSION:
+            failures.append("stale_mapping_method")
         if self.candidates_truncated:
             failures.append("candidates_truncated")
         if self.mapping_ambiguous:
@@ -300,8 +334,12 @@ class MappingMetrics:
             failures.append("reference_order_assumed")
         if self.gross_bond_angle_mismatches != 0:
             failures.append("gross_bond_angle_mismatches")
-        if self.torsion_orientation not in {"same", "planar_inversion_equivalent"}:
+        if self.torsion_orientation != "same":
             failures.append("torsion_orientation_not_same")
+        if self.reflection_allowed:
+            failures.append("reflection_not_allowed")
+        if self.independent_torsions_outside_domain:
+            failures.append("independent_torsions_outside_lam_domain")
         return tuple(failures)
 
     @property
@@ -329,6 +367,7 @@ class CP2LocalMinArtifacts:
     expcrys_pdb_path: Path
     manifest_path: Path
     mapping_tsv_path: Path
+    mapping_artifact_path: Path
     input_path: Path
     potential_path: Path
     staged_lam_paths: tuple[Path, ...]
@@ -628,61 +667,68 @@ def parse_cp2_lam_topology(
     """Read CP2 LAM site order and combine it with unique canonical labels."""
 
     source = Path(path)
-    lines = source.read_text(encoding="utf-8", errors="replace").splitlines()
-    from_index = next(
-        (index for index, raw in enumerate(lines) if raw.lstrip().startswith("From")),
-        None,
-    )
-    if from_index is None:
-        raise ValueError(f"No 'From' Z-matrix section in CP2 LAM database {source}")
-
     raw_sites: list[dict[str, object]] = []
-    cursor = from_index + 1
-    while len(raw_sites) < atom_count:
-        if cursor >= len(lines):
+    found_zmatrix = False
+    with source.open(encoding="utf-8", errors="replace") as handle:
+        for raw in handle:
+            if raw.lstrip().startswith("From"):
+                found_zmatrix = True
+                break
+        if not found_zmatrix:
             raise ValueError(
-                f"LAM database {source} ended before {atom_count} sites were read"
+                f"No 'From' Z-matrix section in CP2 LAM database {source}"
             )
-        raw = lines[cursor].strip()
-        cursor += 1
-        if not raw:
-            continue
-        tokens = raw.split()
-        row_index = len(raw_sites) + 1
-        required = 3 + 2 * min(row_index - 1, 3)
-        if len(tokens) < required:
-            raise ValueError(
-                f"Invalid CP2 LAM Z-matrix row {row_index} in {source}: {raw!r}"
-            )
-        site_type = tokens[0]
-        element = _element_from_site_label(site_type)
-        try:
-            symmetry_type = int(tokens[1])
-            charge = _fortran_float(tokens[2])
-            references = [
-                int(tokens[offset]) for offset in (3, 5, 7) if offset < required
-            ]
-        except ValueError as error:
-            raise ValueError(
-                f"Invalid numeric field in CP2 LAM Z-matrix row {row_index}: {raw!r}"
-            ) from error
-        for reference in references:
-            if not 1 <= reference < row_index:
+
+        for raw_line in handle:
+            raw = raw_line.strip()
+            if not raw:
+                continue
+            tokens = raw.split()
+            row_index = len(raw_sites) + 1
+            required = 3 + 2 * min(row_index - 1, 3)
+            if len(tokens) < required:
                 raise ValueError(
-                    f"CP2 LAM row {row_index} has forward/invalid reference {reference}"
+                    f"Invalid CP2 LAM Z-matrix row {row_index} in {source}: {raw!r}"
                 )
-        padded = references + [None] * (3 - len(references))
-        raw_sites.append(
-            {
-                "index": row_index,
-                "element": element,
-                "site_type": site_type,
-                "symmetry_type": symmetry_type,
-                "charge": charge,
-                "bond_to": padded[0],
-                "angle_to": padded[1],
-                "dihedral_to": padded[2],
-            }
+            site_type = tokens[0]
+            element = _element_from_site_label(site_type)
+            try:
+                symmetry_type = int(tokens[1])
+                charge = _fortran_float(tokens[2])
+                references = [
+                    int(tokens[offset])
+                    for offset in (3, 5, 7)
+                    if offset < required
+                ]
+            except ValueError as error:
+                raise ValueError(
+                    f"Invalid numeric field in CP2 LAM Z-matrix row "
+                    f"{row_index}: {raw!r}"
+                ) from error
+            for reference in references:
+                if not 1 <= reference < row_index:
+                    raise ValueError(
+                        f"CP2 LAM row {row_index} has forward/invalid "
+                        f"reference {reference}"
+                    )
+            padded = references + [None] * (3 - len(references))
+            raw_sites.append(
+                {
+                    "index": row_index,
+                    "element": element,
+                    "site_type": site_type,
+                    "symmetry_type": symmetry_type,
+                    "charge": charge,
+                    "bond_to": padded[0],
+                    "angle_to": padded[1],
+                    "dihedral_to": padded[2],
+                }
+            )
+            if len(raw_sites) == atom_count:
+                break
+    if len(raw_sites) != atom_count:
+        raise ValueError(
+            f"LAM database {source} ended before {atom_count} sites were read"
         )
 
     canonical = None
@@ -981,6 +1027,14 @@ def prepare_cp2_local_min_inputs(
             "Trusted experimental labels are only supported for a single-component "
             "Z'=1 structure"
         )
+    supplied_reference_indices = {int(index) for index in (reference_paths or {})}
+    missing_reference_indices = valid_type_indices - supplied_reference_indices
+    if missing_reference_indices and not trust_experimental_labels:
+        raise ValueError(
+            "A CP2 global-search reference structure is required for every "
+            "molecular TYPE; missing TYPE indices: "
+            + ", ".join(str(value) for value in sorted(missing_reference_indices))
+        )
     mappings = match_experimental_to_cp2(
         experimental_source,
         input_definition,
@@ -988,7 +1042,6 @@ def prepare_cp2_local_min_inputs(
         None if trust_experimental_labels else reference_paths,
         max_heavy_mappings=max_heavy_mappings,
     )
-    supplied_reference_indices = {int(index) for index in (reference_paths or {})}
     all_types_referenced = valid_type_indices.issubset(supplied_reference_indices)
     mapping_validated = (
         input_definition.structurally_supported
@@ -1131,6 +1184,18 @@ def prepare_cp2_local_min_inputs(
     mapping_path = destination / MAPPING_FILENAME
     _write_tsv(mapping_path, mapping_rows)
 
+    mapping_artifact_path = destination / MAPPING_ARTIFACT_FILENAME
+    _write_zmatrix_mapping_artifact(
+        mapping_artifact_path,
+        experimental=experimental_source,
+        reference_paths=reference_paths or {},
+        zmatrix_paths=resolved_zmatrix_paths,
+        mappings=mappings,
+        mapping_rows=mapping_rows,
+        compack_metadata=compack_metadata or {},
+        trusted_experimental_labels=trust_experimental_labels,
+    )
+
     reference_manifest = {
         str(index): _path_provenance(Path(path))
         for index, path in sorted((reference_paths or {}).items())
@@ -1161,7 +1226,8 @@ def prepare_cp2_local_min_inputs(
         )
 
     manifest = {
-        "schema_version": 2,
+        "schema_version": 3,
+        "mapping_method_version": MAPPING_METHOD_VERSION,
         "system_name": system_name or system_root.name,
         "refcode": refcode or Path(experimental_structure).stem,
         "supported_scope": input_definition.supported_scope,
@@ -1245,6 +1311,7 @@ def prepare_cp2_local_min_inputs(
             for item in mappings
         ],
         "atom_mapping_tsv": str(mapping_path.resolve()),
+        "zmatrix_mapping_artifact": _path_provenance(mapping_artifact_path),
         "expcrys_pdb": _path_provenance(expcrys_path),
         "optional_assets": optional_assets,
         "stage_mode": stage_mode,
@@ -1271,6 +1338,7 @@ def prepare_cp2_local_min_inputs(
             "component_count_matches_cp2": True,
             "atom_mapping_bijective": True,
             "atom_elements_match": True,
+            "mapping_artifact_hashes_verified": True,
             "potential_bytes_preserved": True,
             "pdb_atom_count": len(mapping_rows),
             "crystal_setting_matches_cp2": True,
@@ -1295,6 +1363,7 @@ def prepare_cp2_local_min_inputs(
         expcrys_pdb_path=expcrys_path,
         manifest_path=manifest_path,
         mapping_tsv_path=mapping_path,
+        mapping_artifact_path=mapping_artifact_path,
         input_path=staged_input,
         potential_path=staged_potential,
         staged_lam_paths=tuple(staged_lam_paths),
@@ -2034,345 +2103,185 @@ def _match_component(
     max_heavy_mappings: int,
 ) -> tuple[dict[str, int], MappingMetrics]:
     experimental_graph = experimental_connectivity.graph.subgraph(component).copy()
-    reference_heavy = reference.graph.subgraph(
-        [
-            node
-            for node in reference.graph
-            if reference.structure.atoms[node].element != "H"
-        ]
-    ).copy()
-    experimental_heavy = experimental_graph.subgraph(
-        [node for node in experimental_graph if experimental.atoms[node].element != "H"]
-    ).copy()
-    matcher = nx_isomorphism.GraphMatcher(
-        reference_heavy,
-        experimental_heavy,
-        node_match=lambda left, right: left["element"] == right["element"],
+    shared_sites = _as_shared_zmatrix_sites(reference.topology)
+    decision = match_zmatrix_atoms(
+        sites=shared_sites,
+        reference_graph=reference.graph,
+        reference_coordinates=reference.unwrapped,
+        canonical_to_reference=reference.canonical_to_reference,
+        experimental_graph=experimental_graph,
+        experimental_coordinates=experimental_connectivity.unwrapped,
+        flexible_coordinates=_flexible_coordinate_keys(
+            reference.molecular_type, reference.topology
+        ),
+        max_heavy_mappings=max_heavy_mappings,
+        max_full_mappings=DEFAULT_MAX_FULL_MAPPINGS,
     )
-    if not matcher.is_isomorphic():
-        raise ValueError("Heavy-atom graphs are not isomorphic")
-
-    candidates: list[tuple[tuple[object, ...], dict[str, int], dict[str, object]]] = []
-    mapping_count = 0
-    truncated = False
-    for heavy_mapping in matcher.isomorphisms_iter():
-        mapping_count += 1
-        if mapping_count > max_heavy_mappings:
-            truncated = True
-            break
-        try:
-            full_reference_mappings, heavy_rmsd = _enumerate_hydrogen_assignments(
-                reference, experimental, experimental_connectivity, heavy_mapping,
-            )
-        except ValueError:
-            continue
-        for full_reference_mapping in full_reference_mappings:
-            canonical_mapping = {
-                canonical_label: full_reference_mapping[reference_index]
-                for canonical_label, reference_index in reference.canonical_to_reference.items()
-            }
-            score = _score_zmatrix_mapping(
-                reference, experimental, experimental_connectivity, canonical_mapping,
-            )
-            deterministic = tuple(
-                canonical_mapping[site.label] for site in reference.topology.sites
-            )
-            rank = (
-                score["gross_bond_angle_mismatches"],
-                0
-                if score["torsion_orientation"]
-                in {"same", "planar_inversion_equivalent"}
-                else 1,
-                score["internal_coordinate_score"],
-                heavy_rmsd,
-                deterministic,
-            )
-            candidates.append(
-                (rank, canonical_mapping, {**score, "heavy_rmsd": heavy_rmsd})
-            )
-    if not candidates:
-        raise ValueError("No complete graph-preserving atom mapping was generated")
-    candidates.sort(key=lambda item: item[0])
-    best_rank, best_mapping, best_score = candidates[0]
-    second_gap = None
-    mapping_ambiguous = False
-    if len(candidates) > 1:
-        second_gap = float(candidates[1][2]["internal_coordinate_score"]) - float(
-            best_score["internal_coordinate_score"]
-        )
-        second_score = candidates[1][2]
-        mapping_ambiguous = (
-            int(second_score["gross_bond_angle_mismatches"])
-            == int(best_score["gross_bond_angle_mismatches"])
-            and abs(second_gap) <= 1.0e-8
-            and abs(float(second_score["heavy_rmsd"]) - float(best_score["heavy_rmsd"]))
-            <= 1.0e-6
-        )
+    best_mapping = decision.selected.as_index_mapping()
+    lam_metrics = _score_cp2_lam_domain(
+        reference,
+        experimental_connectivity,
+        best_mapping,
+    )
     metrics = MappingMetrics(
         method=(
             "trusted_experimental_labels"
             if reference.structure.path == experimental.path
-            else "reference_graph_zmatrix_internal_rmsd"
+            else "cp2_global_reference_zmatrix"
         ),
-        heavy_mapping_count=min(mapping_count, max_heavy_mappings),
-        candidates_truncated=truncated,
-        gross_bond_angle_mismatches=int(best_score["gross_bond_angle_mismatches"]),
-        internal_coordinate_score=float(best_score["internal_coordinate_score"]),
-        heavy_kabsch_rmsd_angstrom=float(best_score["heavy_rmsd"]),
-        second_best_score_gap=second_gap,
-        torsion_orientation=str(best_score["torsion_orientation"]),
-        mapping_ambiguous=mapping_ambiguous,
+        heavy_mapping_count=decision.heavy_mapping_count,
+        candidates_truncated=decision.candidates_truncated,
+        gross_bond_angle_mismatches=(
+            decision.selected.gross_bond_angle_mismatches
+        ),
+        internal_coordinate_score=decision.selected.internal_coordinate_score,
+        heavy_kabsch_rmsd_angstrom=(
+            decision.selected.heavy_atom_rmsd_angstrom
+        ),
+        second_best_score_gap=decision.second_best_score_gap,
+        torsion_orientation="same",
+        mapping_ambiguous=decision.mapping_ambiguous,
         reference_order_assumed=reference.order_assumed,
+        rigid_torsion_rms_delta_degrees=float(
+            decision.selected.rigid_torsion_rms_delta_degrees
+        ),
+        rigid_torsion_max_abs_delta_degrees=float(
+            decision.selected.rigid_torsion_max_abs_delta_degrees
+        ),
+        independent_torsion_domain_rms_distance_degrees=float(
+            lam_metrics["independent_torsion_domain_rms_distance_degrees"]
+        ),
+        independent_torsion_domain_max_distance_degrees=float(
+            lam_metrics["independent_torsion_domain_max_distance_degrees"]
+        ),
+        independent_torsions_outside_domain=int(
+            lam_metrics["independent_torsions_outside_domain"]
+        ),
+        reflection_allowed=decision.reflection_allowed,
+        mapping_method_version=decision.method_version,
+        full_mapping_count=decision.full_mapping_count,
+        fixed_pair_all_atom_rmsd_angstrom=(
+            decision.selected.fixed_pair_all_atom_rmsd_angstrom
+        ),
+        primary_tie_count=decision.primary_tie_count,
+        final_tie_count=decision.final_tie_count,
+        fixed_pair_rmsd_gap_angstrom=decision.fixed_pair_rmsd_gap_angstrom,
+        selection_reason=decision.selection_reason,
+        primary_score_atol=decision.primary_score_atol,
+        fixed_pair_rmsd_atol_angstrom=(
+            decision.fixed_pair_rmsd_atol_angstrom
+        ),
+        template_internal_coordinates=decision.selected.reference_values,
+        experimental_internal_coordinates=decision.selected.experimental_values,
     )
     return best_mapping, metrics
 
 
-def _enumerate_hydrogen_assignments(
+def _score_cp2_lam_domain(
     reference: _ReferenceContext,
-    experimental: StructureData,
-    experimental_connectivity: _Connectivity,
-    heavy_mapping: Mapping[int, int],
-) -> tuple[tuple[dict[int, int], ...], float]:
-    reference_order = sorted(heavy_mapping)
-    experimental_order = [heavy_mapping[index] for index in reference_order]
-    reference_coords = np.asarray(
-        [reference.unwrapped[index] for index in reference_order], dtype=float
-    )
-    experimental_coords = np.asarray(
-        [experimental_connectivity.unwrapped[index] for index in experimental_order],
-        dtype=float,
-    )
-    rotation, mobile_center, target_center, heavy_rmsd = _kabsch_transform(
-        experimental_coords, reference_coords,
-    )
-
-    assignment_groups: list[tuple[tuple[tuple[int, int], ...], ...]] = []
-    for reference_heavy_atom, experimental_heavy_atom in heavy_mapping.items():
-        reference_hydrogens = sorted(
-            node
-            for node in reference.graph.neighbors(reference_heavy_atom)
-            if reference.structure.atoms[node].element == "H"
-        )
-        experimental_hydrogens = sorted(
-            node
-            for node in experimental_connectivity.graph.neighbors(
-                experimental_heavy_atom
-            )
-            if experimental.atoms[node].element == "H"
-        )
-        if len(reference_hydrogens) != len(experimental_hydrogens):
-            raise ValueError("Hydrogen count differs for mapped heavy atoms")
-        if not reference_hydrogens:
-            continue
-        permutations = sorted(
-            itertools.permutations(experimental_hydrogens),
-            key=lambda permutation: (
-                sum(
-                    float(
-                        np.linalg.norm(
-                            _apply_kabsch(
-                                experimental_connectivity.unwrapped[experimental_index],
-                                rotation,
-                                mobile_center,
-                                target_center,
-                            )
-                            - reference.unwrapped[reference_index]
-                        )
-                    )
-                    ** 2
-                    for reference_index, experimental_index in zip(
-                        reference_hydrogens, permutation
-                    )
-                ),
-                permutation,
-            ),
-        )
-        assignment_groups.append(
-            tuple(
-                tuple(zip(reference_hydrogens, permutation))
-                for permutation in permutations
-            )
-        )
-    combinations = itertools.product(*assignment_groups) if assignment_groups else [()]
-    results: list[dict[int, int]] = []
-    for combination in combinations:
-        result = dict(heavy_mapping)
-        for assignments in combination:
-            result.update(assignments)
-        if len(result) != len(reference.component) or len(set(result.values())) != len(
-            result
-        ):
-            raise ValueError("Incomplete or non-bijective full-atom mapping")
-        results.append(result)
-    if not results:
-        raise ValueError("No complete hydrogen assignment was generated")
-    return tuple(results), heavy_rmsd
-
-
-def _score_zmatrix_mapping(
-    reference: _ReferenceContext,
-    experimental: StructureData,
     experimental_connectivity: _Connectivity,
     mapping: Mapping[str, int],
 ) -> dict[str, object]:
-    reference_values = _internal_values(
-        reference.topology, reference.canonical_to_reference, reference.unwrapped,
-    )
     experimental_values = _internal_values(
         reference.topology, mapping, experimental_connectivity.unwrapped,
     )
-    orientation_indices = _heavy_torsion_orientation_indices(reference)
-    orientation_anchor_sites = _torsion_site_indices(
-        reference.topology, orientation_indices
+    independent_domains = _independent_torsion_domains(
+        reference.molecular_type, reference.topology
     )
-    reference_anchor_coordinates = np.asarray(
-        [
-            reference.unwrapped[
-                reference.canonical_to_reference[
-                    reference.topology.sites[index - 1].label
-                ]
-            ]
-            for index in orientation_anchor_sites
-        ],
-        dtype=float,
-    )
-    experimental_anchor_coordinates = np.asarray(
-        [
-            experimental_connectivity.unwrapped[
-                mapping[reference.topology.sites[index - 1].label]
-            ]
-            for index in orientation_anchor_sites
-        ],
-        dtype=float,
-    )
-    orientation_anchor_planar = (
-        len(orientation_anchor_sites) >= 4
-        and _maximum_planarity_deviation(reference_anchor_coordinates) <= 0.05
-        and _maximum_planarity_deviation(experimental_anchor_coordinates) <= 0.05
-    )
-    if orientation_anchor_planar:
-        orientation = 1
-    elif orientation_indices:
-        same_cost = _torsion_cost(
-            reference_values, experimental_values, 1, orientation_indices
-        )
-        inverted_cost = _torsion_cost(
-            reference_values, experimental_values, -1, orientation_indices
-        )
-        orientation = -1 if inverted_cost + 1.0e-10 < same_cost else 1
-    else:
-        orientation = 1
-    orientation_label = "same"
-    if orientation == -1:
-        reference_coordinates = np.asarray(
-            [
-                reference.unwrapped[reference.canonical_to_reference[site.label]]
-                for site in reference.topology.sites
-            ],
-            dtype=float,
-        )
-        experimental_coordinates = np.asarray(
-            [
-                experimental_connectivity.unwrapped[mapping[site.label]]
-                for site in reference.topology.sites
-            ],
-            dtype=float,
-        )
-        if (
-            _maximum_planarity_deviation(reference_coordinates) <= 0.05
-            and _maximum_planarity_deviation(experimental_coordinates) <= 0.05
-        ):
-            orientation_label = "planar_inversion_equivalent"
-        else:
-            orientation_label = "globally_inverted"
 
-    weighted: list[float] = []
-    bond_deltas: list[float] = []
-    angle_deltas: list[float] = []
-    for reference_value, experimental_value in zip(
-        reference_values, experimental_values
+    independent_domain_distances: list[float] = []
+    for site, experimental_value in zip(
+        reference.topology.sites, experimental_values
     ):
-        if reference_value[0] is not None:
-            delta = float(experimental_value[0]) - float(reference_value[0])
-            bond_deltas.append(delta)
-            weighted.append((delta / 0.05) ** 2)
-        if reference_value[1] is not None:
-            delta = float(experimental_value[1]) - float(reference_value[1])
-            angle_deltas.append(delta)
-            weighted.append((delta / 5.0) ** 2)
-        if reference_value[2] is not None:
-            delta = _circular_difference(
-                float(experimental_value[2]), orientation * float(reference_value[2]),
+        if site.index not in independent_domains:
+            continue
+        if experimental_value[2] is None:
+            raise ValueError(
+                f"Independent torsion dih{site.index} has no Z-matrix dihedral"
             )
-            weighted.append((delta / 15.0) ** 2)
-    gross = sum(abs(value) > 0.25 for value in bond_deltas)
-    gross += sum(abs(value) > 15.0 for value in angle_deltas)
+        domain = independent_domains[site.index]
+        independent_domain_distances.append(
+            _periodic_interval_distance_degrees(
+                float(experimental_value[2]),
+                domain.lower_degrees,
+                domain.upper_degrees,
+            )
+        )
     return {
-        "gross_bond_angle_mismatches": gross,
-        "internal_coordinate_score": math.sqrt(sum(weighted) / max(1, len(weighted))),
-        "torsion_orientation": orientation_label,
+        "independent_torsion_domain_rms_distance_degrees": _rms(
+            independent_domain_distances
+        ),
+        "independent_torsion_domain_max_distance_degrees": _max_abs(
+            independent_domain_distances
+        ),
+        "independent_torsions_outside_domain": sum(
+            distance > 1.0e-10 for distance in independent_domain_distances
+        ),
     }
 
 
-def _maximum_planarity_deviation(coordinates: np.ndarray) -> float:
-    if coordinates.ndim != 2 or coordinates.shape[1] != 3:
-        raise ValueError("Planarity coordinates must have shape (n, 3)")
-    if len(coordinates) <= 3:
-        return 0.0
-    centered = coordinates - coordinates.mean(axis=0)
-    _left, _singular, right = np.linalg.svd(centered, full_matrices=False)
-    normal = right[-1]
-    return float(np.max(np.abs(centered @ normal)))
-
-
-def _heavy_torsion_orientation_indices(
-    reference: _ReferenceContext,
-) -> tuple[int, ...]:
-    anchor_indices: list[int] = []
-    fallback_indices: list[int] = []
-    for index, site in enumerate(reference.topology.sites):
-        if (
-            site.bond_to is None
-            or site.angle_to is None
-            or site.dihedral_to is None
-        ):
-            continue
-        site_indices = (
-            site.index,
-            site.bond_to,
-            site.angle_to,
-            site.dihedral_to,
-        )
-        sites = [reference.topology.sites[value - 1] for value in site_indices]
-        if any(item.element == "H" for item in sites):
-            continue
-        fallback_indices.append(index)
-        heavy_degrees = []
-        for item in sites:
-            atom_index = reference.canonical_to_reference[item.label]
-            heavy_degrees.append(
-                sum(
-                    reference.structure.atoms[neighbor].element != "H"
-                    for neighbor in reference.graph.neighbors(atom_index)
-                )
-            )
-        if all(value >= 2 for value in heavy_degrees):
-            anchor_indices.append(index)
-    return tuple(anchor_indices or fallback_indices)
-
-
-def _torsion_site_indices(
+def _as_shared_zmatrix_sites(
     topology: CP2LamTopology,
-    torsion_indices: Sequence[int],
-) -> tuple[int, ...]:
-    result: set[int] = set()
-    for index in torsion_indices:
-        site = topology.sites[index]
-        result.add(site.index)
-        for reference_index in (site.bond_to, site.angle_to, site.dihedral_to):
-            if reference_index is not None:
-                result.add(reference_index)
-    return tuple(sorted(result))
+) -> tuple[ZMatrixSite, ...]:
+    return tuple(
+        ZMatrixSite(
+            index=site.index,
+            label=site.label,
+            element=site.element,
+            bond_to=site.bond_to,
+            angle_to=site.angle_to,
+            dihedral_to=site.dihedral_to,
+        )
+        for site in topology.sites
+    )
+
+
+def _flexible_coordinate_keys(
+    molecular_type: CP2MolecularType,
+    topology: CP2LamTopology,
+) -> frozenset[InternalCoordinateKey]:
+    return frozenset(
+        InternalCoordinateKey("dihedral", site_index)
+        for site_index in _independent_torsion_domains(
+            molecular_type, topology
+        )
+    )
+
+
+def _independent_torsion_domains(
+    molecular_type: CP2MolecularType,
+    topology: CP2LamTopology,
+) -> dict[int, CP2Torsion]:
+    """Return independent-torsion LAM domains keyed by Z-matrix site index."""
+
+    domains: dict[int, CP2Torsion] = {}
+    for torsion in molecular_type.torsions:
+        match = re.fullmatch(r"dih(\d+)", torsion.label, flags=re.IGNORECASE)
+        if match is None:
+            raise ValueError(
+                f"Independent torsion label {torsion.label!r} is not of the form dihN"
+            )
+        site_index = int(match.group(1))
+        if not 1 <= site_index <= len(topology.sites):
+            raise ValueError(
+                f"Independent torsion {torsion.label!r} refers to missing Z-matrix site"
+            )
+        if topology.sites[site_index - 1].dihedral_to is None:
+            raise ValueError(
+                f"Independent torsion {torsion.label!r} refers to a site without a dihedral"
+            )
+        if site_index in domains:
+            raise ValueError(f"Duplicate independent torsion domain for {torsion.label!r}")
+        if not math.isfinite(torsion.lower_degrees) or not math.isfinite(
+            torsion.upper_degrees
+        ):
+            raise ValueError(f"Non-finite independent torsion domain for {torsion.label!r}")
+        if abs(torsion.upper_degrees - torsion.lower_degrees) > 360.0 + 1.0e-10:
+            raise ValueError(
+                f"Independent torsion domain for {torsion.label!r} spans more than 360 degrees"
+            )
+        domains[site_index] = torsion
+    return domains
 
 
 def _internal_values(
@@ -2425,7 +2334,7 @@ def _assign_components(
             rank = (
                 sum(item.gross_bond_angle_mismatches for item in metrics),
                 sum(item.internal_coordinate_score for item in metrics),
-                sum(item.heavy_kabsch_rmsd_angstrom for item in metrics),
+                sum(item.fixed_pair_all_atom_rmsd_angstrom for item in metrics),
                 tuple((key, selected[key]) for key in sorted(selected)),
             )
             if best is None or rank < best[0]:
@@ -2448,6 +2357,157 @@ def _assign_components(
             "Could not assign every experimental component to the CP2 molecular TYPE blocks"
         )
     return best[1]
+
+
+def _write_zmatrix_mapping_artifact(
+    path: Path,
+    *,
+    experimental: StructureData,
+    reference_paths: Mapping[int, str | Path],
+    zmatrix_paths: Mapping[int, Path],
+    mappings: Sequence[ComponentMapping],
+    mapping_rows: Sequence[Mapping[str, object]],
+    compack_metadata: Mapping[str, object],
+    trusted_experimental_labels: bool,
+) -> None:
+    """Write the engine-neutral mapping contract consumed by output adapters."""
+
+    method_versions = {item.metrics.mapping_method_version for item in mappings}
+    if method_versions != {MAPPING_METHOD_VERSION}:
+        raise ValueError(
+            "Component mappings do not share the current mapping method version: "
+            f"{sorted(method_versions)}"
+        )
+    mapping_rows_by_slot: dict[tuple[int, int], list[dict[str, object]]] = {}
+    for row in mapping_rows:
+        slot = (
+            int(row["molecular_type_index"]),
+            int(row["occurrence_index"]),
+        )
+        mapping_rows_by_slot.setdefault(slot, []).append(dict(row))
+
+    components = []
+    for item in mappings:
+        slot = (item.molecular_type_index, item.occurrence_index)
+        rows = mapping_rows_by_slot.get(slot, [])
+        if len(rows) != len(item.canonical_to_experimental):
+            raise ValueError(f"Incomplete mapping rows for TYPE/occurrence {slot}")
+        rows.sort(key=lambda row: int(row["cp2_site_index_1based"]))
+        expected_labels = [label for label, _index in item.canonical_to_experimental]
+        if [str(row["cp2_label"]) for row in rows] != expected_labels:
+            raise ValueError(f"Mapping artifact order differs from Zmatrix for {slot}")
+        portable_rows = [
+            {
+                "zmatrix_site_index_1based": int(row["cp2_site_index_1based"]),
+                "zmatrix_label": str(row["cp2_label"]),
+                "element": str(row["element"]),
+                "experimental_atom_index_0based": int(
+                    row["experimental_atom_index_0based"]
+                ),
+                "experimental_label": str(row["experimental_label"]),
+                "experimental_fractional_coordinates": [
+                    float(row["original_fractional_x"]),
+                    float(row["original_fractional_y"]),
+                    float(row["original_fractional_z"]),
+                ],
+            }
+            for row in rows
+        ]
+        components.append(
+            {
+                "molecular_type_index": item.molecular_type_index,
+                "occurrence_index": item.occurrence_index,
+                "experimental_component_index": item.experimental_component_index,
+                "selection": {
+                    "heavy_mapping_count": item.metrics.heavy_mapping_count,
+                    "full_mapping_count": item.metrics.full_mapping_count,
+                    "candidates_truncated": item.metrics.candidates_truncated,
+                    "gross_bond_angle_mismatches": (
+                        item.metrics.gross_bond_angle_mismatches
+                    ),
+                    "rigid_internal_coordinate_score": (
+                        item.metrics.internal_coordinate_score
+                    ),
+                    "fixed_pair_all_atom_rmsd_angstrom": (
+                        item.metrics.fixed_pair_all_atom_rmsd_angstrom
+                    ),
+                    "heavy_atom_rmsd_angstrom": (
+                        item.metrics.heavy_kabsch_rmsd_angstrom
+                    ),
+                    "primary_tie_count": item.metrics.primary_tie_count,
+                    "final_tie_count": item.metrics.final_tie_count,
+                    "second_best_score_gap": item.metrics.second_best_score_gap,
+                    "fixed_pair_rmsd_gap_angstrom": (
+                        item.metrics.fixed_pair_rmsd_gap_angstrom
+                    ),
+                    "selection_reason": item.metrics.selection_reason,
+                    "primary_score_atol": item.metrics.primary_score_atol,
+                    "fixed_pair_rmsd_atol_angstrom": (
+                        item.metrics.fixed_pair_rmsd_atol_angstrom
+                    ),
+                    "mapping_ambiguous": item.metrics.mapping_ambiguous,
+                    "reflection_allowed": item.metrics.reflection_allowed,
+                },
+                "atom_mapping": portable_rows,
+                "template_internal_coordinates": [
+                    asdict(value)
+                    for value in item.metrics.template_internal_coordinates
+                ],
+                "experimental_internal_coordinates": [
+                    asdict(value)
+                    for value in item.metrics.experimental_internal_coordinates
+                ],
+            }
+        )
+
+    mapped_type_indices = {item.molecular_type_index for item in mappings}
+    reusable_for_csofm = (
+        not trusted_experimental_labels
+        and mapped_type_indices.issubset(set(zmatrix_paths))
+        and all(
+            item.metrics.mapping_method_version == MAPPING_METHOD_VERSION
+            and not item.metrics.candidates_truncated
+            and not item.metrics.mapping_ambiguous
+            and not item.metrics.reference_order_assumed
+            and item.metrics.gross_bond_angle_mismatches == 0
+            and item.metrics.torsion_orientation == "same"
+            and not item.metrics.reflection_allowed
+            for item in mappings
+        )
+    )
+
+    artifact = {
+        "schema_version": 1,
+        "mapping_method_version": MAPPING_METHOD_VERSION,
+        "template_source": (
+            "trusted_experimental_labels_legacy"
+            if trusted_experimental_labels
+            else "cp2_global_search"
+        ),
+        "reflection_allowed": False,
+        "reusable_for_csofm": reusable_for_csofm,
+        "experimental_structure": _path_provenance(experimental.path),
+        "reference_structures": {
+            str(index): _path_provenance(Path(reference))
+            for index, reference in sorted(reference_paths.items())
+        },
+        "canonical_zmatrices": {
+            str(index): _path_provenance(zmatrix)
+            for index, zmatrix in sorted(zmatrix_paths.items())
+        },
+        "compack_reference_selection": dict(compack_metadata),
+        "components": components,
+    }
+    path.write_text(
+        json.dumps(artifact, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    read_mapping_artifact(
+        path,
+        experimental_structure=experimental.path,
+        reference_paths=reference_paths,
+        zmatrix_paths=zmatrix_paths,
+    )
 
 
 def _write_expcrys_pdb(
@@ -2546,22 +2606,39 @@ def _write_expcrys_pdb(
         )
     lines.extend(["END", ""])
     path.write_text("\n".join(lines), encoding="utf-8")
-    _validate_written_pdb(path, len(rows))
+    _validate_written_pdb(path, rows)
     return rows
 
 
-def _validate_written_pdb(path: Path, expected_atoms: int) -> None:
+def _validate_written_pdb(
+    path: Path, expected_rows: Sequence[Mapping[str, object]]
+) -> None:
     lines = path.read_text(encoding="utf-8").splitlines()
     atom_lines = [line for line in lines if line.startswith("HETATM")]
-    if len(atom_lines) != expected_atoms:
+    if len(atom_lines) != len(expected_rows):
         raise AssertionError(
-            f"PDB atom count mismatch: {len(atom_lines)} vs {expected_atoms}"
+            f"PDB atom count mismatch: {len(atom_lines)} vs {len(expected_rows)}"
         )
-    for serial, line in enumerate(atom_lines, start=1):
+    for serial, (line, expected) in enumerate(
+        zip(atom_lines, expected_rows), start=1
+    ):
         if int(line[6:11]) != serial:
             raise AssertionError("PDB serial numbers are not contiguous")
-        for field in (line[30:38], line[38:46], line[46:54]):
-            float(field)
+        if line[12:16].strip() != str(expected["cp2_label"]):
+            raise AssertionError("Written PDB label differs from selected mapping")
+        if line[76:78].strip() != str(expected["element"]):
+            raise AssertionError("Written PDB element differs from selected mapping")
+        observed_coordinates = tuple(
+            float(field) for field in (line[30:38], line[38:46], line[46:54])
+        )
+        expected_coordinates = tuple(
+            float(expected[name])
+            for name in ("pdb_x_angstrom", "pdb_y_angstrom", "pdb_z_angstrom")
+        )
+        if observed_coordinates != expected_coordinates:
+            raise AssertionError(
+                "Written PDB coordinates differ from the selected label-coordinate pairs"
+            )
 
 
 def _normalize_space_group_key(symbol: str) -> str:
@@ -3479,79 +3556,54 @@ def _topology_formula(topology: CP2LamTopology) -> tuple[tuple[str, int], ...]:
     return tuple(sorted(Counter(topology.elements).items()))
 
 
-def _kabsch_transform(
-    mobile: np.ndarray, target: np.ndarray,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, float]:
-    mobile_center = mobile.mean(axis=0)
-    target_center = target.mean(axis=0)
-    centered_mobile = mobile - mobile_center
-    centered_target = target - target_center
-    covariance = centered_mobile.T @ centered_target
-    left, _singular, right_transpose = np.linalg.svd(covariance)
-    rotation = left @ right_transpose
-    if np.linalg.det(rotation) < 0.0:
-        left[:, -1] *= -1.0
-        rotation = left @ right_transpose
-    aligned = centered_mobile @ rotation + target_center
-    rmsd = math.sqrt(float(np.mean(np.sum((aligned - target) ** 2, axis=1))))
-    return rotation, mobile_center, target_center, rmsd
-
-
-def _apply_kabsch(
-    coordinate: np.ndarray,
-    rotation: np.ndarray,
-    mobile_center: np.ndarray,
-    target_center: np.ndarray,
-) -> np.ndarray:
-    return (np.asarray(coordinate) - mobile_center) @ rotation + target_center
-
-
 def _angle_degrees(first: np.ndarray, center: np.ndarray, last: np.ndarray) -> float:
-    left = first - center
-    right = last - center
-    denominator = float(np.linalg.norm(left) * np.linalg.norm(right))
-    if denominator <= 1.0e-12:
-        raise ValueError("Undefined bond angle in atom mapping")
-    cosine = max(-1.0, min(1.0, float(np.dot(left, right) / denominator)))
-    return math.degrees(math.acos(cosine))
+    return _shared_angle_degrees(first, center, last)
 
 
 def _dihedral_degrees(
     first: np.ndarray, second: np.ndarray, third: np.ndarray, fourth: np.ndarray,
 ) -> float:
-    b0 = -(second - first)
-    b1 = third - second
-    b2 = fourth - third
-    norm = float(np.linalg.norm(b1))
-    if norm <= 1.0e-12:
-        raise ValueError("Undefined dihedral in atom mapping")
-    b1 = b1 / norm
-    v = b0 - np.dot(b0, b1) * b1
-    w = b2 - np.dot(b2, b1) * b1
-    return math.degrees(
-        math.atan2(float(np.dot(np.cross(b1, v), w)), float(np.dot(v, w)))
-    )
+    return _shared_dihedral_degrees(first, second, third, fourth)
 
 
 def _circular_difference(left: float, right: float) -> float:
-    return ((left - right + 180.0) % 360.0) - 180.0
+    return _shared_circular_difference_degrees(left, right)
 
 
-def _torsion_cost(
-    reference: Sequence[tuple[float | None, float | None, float | None]],
-    experimental: Sequence[tuple[float | None, float | None, float | None]],
-    sign: int,
-    indices: Sequence[int],
+def _periodic_interval_distance_degrees(
+    angle: float,
+    lower: float,
+    upper: float,
 ) -> float:
-    return sum(
-        _circular_difference(
-            float(experimental[index][2]),
-            sign * float(reference[index][2]),
-        )
-        ** 2
-        for index in indices
-        if reference[index][2] is not None and experimental[index][2] is not None
-    )
+    """Shortest circular distance from an angle to a closed LAM interval."""
+
+    if not all(math.isfinite(value) for value in (angle, lower, upper)):
+        raise ValueError("Periodic LAM-domain distance requires finite angles")
+    raw_span = upper - lower
+    if abs(raw_span) > 360.0 + 1.0e-10:
+        raise ValueError("Periodic LAM interval cannot span more than 360 degrees")
+    if abs(raw_span) >= 360.0 - 1.0e-10:
+        return 0.0
+    if raw_span < 0.0:
+        upper += 360.0
+
+    center = 0.5 * (lower + upper)
+    lifted_angle = angle + 360.0 * round((center - angle) / 360.0)
+    if lifted_angle < lower:
+        return lower - lifted_angle
+    if lifted_angle > upper:
+        return lifted_angle - upper
+    return 0.0
+
+
+def _rms(values: Sequence[float]) -> float:
+    if not values:
+        return 0.0
+    return math.sqrt(sum(value * value for value in values) / len(values))
+
+
+def _max_abs(values: Sequence[float]) -> float:
+    return max((abs(value) for value in values), default=0.0)
 
 
 __all__ = [

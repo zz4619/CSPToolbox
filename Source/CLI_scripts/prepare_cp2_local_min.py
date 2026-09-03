@@ -39,7 +39,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="append",
         default=[],
         metavar="TYPE_INDEX=PATH",
-        help="Canonical landscape/reference structure for a CP2 molecular type; repeat as needed.",
+        help=(
+            "Canonical CP2 global-search structure for a molecular type; "
+            "repeat as needed. CSO-FM-polished structures are not templates."
+        ),
     )
     prepare.add_argument(
         "--zmatrix",
@@ -215,6 +218,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"expcrys_pdb={artifacts.expcrys_pdb_path}")
     print(f"manifest={artifacts.manifest_path}")
     print(f"atom_mapping={artifacts.mapping_tsv_path}")
+    print(f"zmatrix_mapping={artifacts.mapping_artifact_path}")
     if artifacts.pbs_script_path is not None:
         print(f"pbs_script={artifacts.pbs_script_path}")
     return 0

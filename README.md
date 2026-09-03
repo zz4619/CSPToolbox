@@ -100,9 +100,15 @@ csp-cp2-local-min status Local_Min_CP2/REFCODE
 ```
 
 Each prepared job contains a JSON provenance manifest, a TSV atom-mapping
-table, and—when an executable is supplied—a self-contained, single-core CX3 PBS
-bundle. The executable is copied byte-for-byte into the bundle; the runner uses
-job-ID-keyed node-local scratch and copies results back. The supplied branch
+table, and a versioned, engine-neutral `zmatrix_mapping.json`. The mapping
+artifact records the CP2 global-search template, authoritative Z-matrix,
+selected label-coordinate pairs, complete template/experimental internal
+coordinates, fixed-pair RMSD, selection reason, and source hashes. A later
+CSO-FM adapter can therefore consume exactly the same permutation after
+verifying the Z-matrix hash; it must not rematch the atoms. When an executable
+is supplied, the prepared job also contains a self-contained, single-core CX3
+PBS bundle. The executable is copied byte-for-byte into the bundle; the runner
+uses job-ID-keyed node-local scratch and copies results back. The supplied branch
 binary needs only the CX3 production-tools and MKL runtime modules plus the
 private NAG Kusari licence file at `$HOME/.nag/license.dat`. Keep `$HOME/.nag`
 readable only by its owner (mode `700`) and the licence file at mode `600`;
@@ -117,19 +123,27 @@ command reads the structured
 `CP2_LOCAL_MIN_RESULT_V1` record, optimizer information, final energies, and
 output structure.
 
+The `--reference` inputs are CP2 global-search structures, not structures
+polished with CSO-FM. Atom mapping is energy-model independent: graph-valid
+candidates are ranked by rigid Z-matrix agreement with that CP2 template.
+Candidates tied within the recorded primary-score tolerance are compared by
+fixed-correspondence, all-atom RMSD after translation and a proper rotation
+only. Atom pairs remain locked; COMPACK rematching, reflection, and torsional
+optimization are not part of this final check. A remaining tie is recorded as
+ambiguous before deterministic atom indices are used for reproducible output.
+
 Runnable-job validation is conservative: truncated, ambiguous, assumed-order,
-grossly mismatched, and globally inverted mappings do not pass automatic
-validation. Globally inverted mappings remain inspectable in a preparation-only
-bundle, but cannot be made runnable even with `--allow-unvalidated-mapping`:
-CSPToolbox does not yet prove that inversion is achiral or symmetry-equivalent.
-When the heavy-atom torsion anchors are planar within 0.05 A, the matcher uses
-one canonical same-handed convention because the torsion sign is not a useful
-orientation discriminator. Otherwise, an inverted torsion sign is accepted as
-`planar_inversion_equivalent` only when both complete mapped molecules are
-planar within 0.05 A; inversion within that molecular plane is then equivalent
-to a proper 180-degree rotation.
-The override remains available for the other explicitly audited mapping
-failures. The single-core runner also fixes OpenMP and MKL to one thread.
+grossly mismatched, reflected, and out-of-LAM-domain mappings do not pass
+automatic validation. Rigid torsions are compared to the CP2 global-search
+template with shortest-periodic angular differences. Independent torsions do
+not influence the permutation; after selection, CP2 separately checks their
+shortest-periodic distance to the full interval declared in `input.in`. This
+separation ensures that a genuine LAM-coverage failure cannot be hidden by
+selecting a chemically incorrect atom permutation. The manifest explicitly
+records that reflection was disabled.
+The override remains available for other explicitly audited
+mapping failures. The single-core runner also fixes OpenMP and MKL to one
+thread.
 
 Prepared runnable cases can be combined into one sequential, single-core PBS
 job. Each case remains isolated and receives a unique node-local scratch
@@ -149,12 +163,12 @@ The batch assembly step does not submit the job. It requires every listed case
 to have the same executable checksum and PBS runtime settings, and writes a TSV
 case manifest plus per-case and aggregate status files.
 
-The supported pilot scope is single-component Z'=1 with an explicit landscape
-reference and nonambiguous, nontruncated mapping. Z'>1 and multicomponent inputs
-are gated behind `--allow-unvalidated` because no validation result set is
-available. Optimizer convergence is reported separately and is not called a
-confirmed local minimum without Hessian or perturbation evidence. TODOs are to
-validate Z'>1/multicomponent cases, add a flexible-torsion-bound precheck, make
+The supported pilot scope is single-component Z'=1 with an explicit CP2
+global-search reference and nonambiguous, nontruncated mapping. Z'>1 and
+multicomponent inputs are gated behind `--allow-unvalidated` because no
+validation result set is available. Optimizer convergence is reported
+separately and is not called a confirmed local minimum without Hessian or
+perturbation evidence. TODOs are to validate Z'>1/multicomponent cases, make
 absolute LAM references portable, and determine whether every experimental
 structure reaches a genuine local minimum on the CP2 PES.
 

@@ -21,8 +21,11 @@ if str(PROJECT_ROOT) not in sys.path:
 from Source.cp2_local_min import (  # noqa: E402
     CP2_SUPPORTED_SPACE_GROUPS,
     ComponentMapping,
+    MAPPING_METHOD_VERSION,
     MappingMetrics,
+    _circular_difference,
     _minimum_intermolecular_contact,
+    _periodic_interval_distance_degrees,
     _symmetry_from_hall,
     build_cp2_local_min_batch,
     canonicalize_structure_for_cp2,
@@ -37,6 +40,7 @@ from Source.cp2_local_min import (  # noqa: E402
 from Source.CLI_scripts.prepare_cp2_local_min_batch import (  # noqa: E402
     main as prepare_batch_main,
 )
+from Source.zmatrix_mapping import read_mapping_artifact  # noqa: E402
 
 
 SINGLE_TYPE_INPUT = """MOLECULAR TYPES 1
@@ -279,7 +283,7 @@ END
             )
             self.assertNotEqual(source.cell_parameters, transformed.cell_parameters)
 
-    def test_globally_inverted_mapping_is_not_automatically_validated(self) -> None:
+    def test_only_same_orientation_mapping_is_automatically_validated(self) -> None:
         common = dict(
             method="reference_graph_zmatrix_internal_rmsd",
             heavy_mapping_count=2,
@@ -297,9 +301,14 @@ END
                 torsion_orientation="globally_inverted", **common
             ).validation_safe
         )
-        self.assertTrue(
+        self.assertFalse(
             MappingMetrics(
                 torsion_orientation="planar_inversion_equivalent", **common
+            ).validation_safe
+        )
+        self.assertFalse(
+            MappingMetrics(
+                torsion_orientation="same", reflection_allowed=True, **common
             ).validation_safe
         )
         self.assertEqual(
@@ -307,6 +316,43 @@ END
             MappingMetrics(
                 torsion_orientation="globally_inverted", **common
             ).validation_failures,
+        )
+
+    def test_independent_torsion_uses_periodic_lam_domain_distance(self) -> None:
+        distance = _periodic_interval_distance_degrees
+
+        self.assertEqual(0.0, distance(179.0, 170.0, -170.0))
+        self.assertEqual(0.0, distance(-179.0, 170.0, -170.0))
+        self.assertAlmostEqual(10.0, distance(160.0, 170.0, -170.0))
+        self.assertEqual(0.0, distance(390.0, -30.0, 30.0))
+        self.assertAlmostEqual(149.0, distance(179.0, -30.0, 30.0))
+        self.assertEqual(0.0, distance(-123.0, -180.0, 180.0))
+
+    def test_periodicity_does_not_turn_reflection_into_equivalence(self) -> None:
+        self.assertEqual(0.0, _circular_difference(181.0, -179.0))
+        self.assertEqual(120.0, abs(_circular_difference(120.0, -120.0)))
+
+    def test_out_of_domain_independent_torsion_fails_mapping_validation(self) -> None:
+        metrics = MappingMetrics(
+            method="reference_graph_rigid_torsion_lam_domain",
+            heavy_mapping_count=1,
+            candidates_truncated=False,
+            gross_bond_angle_mismatches=0,
+            internal_coordinate_score=0.1,
+            heavy_kabsch_rmsd_angstrom=0.01,
+            second_best_score_gap=None,
+            torsion_orientation="same",
+            mapping_ambiguous=False,
+            reference_order_assumed=False,
+            independent_torsion_domain_rms_distance_degrees=12.0,
+            independent_torsion_domain_max_distance_degrees=12.0,
+            independent_torsions_outside_domain=1,
+        )
+
+        self.assertFalse(metrics.validation_safe)
+        self.assertIn(
+            "independent_torsions_outside_lam_domain",
+            metrics.validation_failures,
         )
 
     def test_globally_inverted_mapping_cannot_be_waived_for_runnable_job(
@@ -456,7 +502,10 @@ END
                 ["CX", "NX", "OX", "HX"], [row["experimental_label"] for row in rows]
             )
             manifest = json.loads(artifacts.manifest_path.read_text(encoding="utf-8"))
-            self.assertEqual(2, manifest["schema_version"])
+            self.assertEqual(3, manifest["schema_version"])
+            self.assertEqual(
+                MAPPING_METHOD_VERSION, manifest["mapping_method_version"]
+            )
             self.assertFalse(manifest["scientifically_validated"])
             self.assertTrue(manifest["mapping_validated"])
             self.assertTrue(manifest["potential"]["byte_identical"])
@@ -465,6 +514,92 @@ END
                 ["C1", "N1", "O1", "H1"],
                 manifest["molecular_types"][0]["canonical_atom_order"],
             )
+            mapping_metrics = manifest["mappings"][0]["metrics"]
+            self.assertEqual(
+                "cp2_global_reference_zmatrix",
+                mapping_metrics["method"],
+            )
+            self.assertEqual(
+                MAPPING_METHOD_VERSION,
+                mapping_metrics["mapping_method_version"],
+            )
+            self.assertGreaterEqual(mapping_metrics["full_mapping_count"], 1)
+            self.assertIn(
+                mapping_metrics["selection_reason"],
+                {
+                    "unique_primary_score",
+                    "fixed_pair_all_atom_rmsd",
+                    "deterministic_unresolved_tie",
+                },
+            )
+            self.assertEqual(
+                0, mapping_metrics["independent_torsions_outside_domain"]
+            )
+            self.assertEqual(
+                0.0,
+                mapping_metrics[
+                    "independent_torsion_domain_max_distance_degrees"
+                ],
+            )
+            self.assertEqual("same", mapping_metrics["torsion_orientation"])
+            self.assertFalse(mapping_metrics["reflection_allowed"])
+            mapping_artifact = json.loads(
+                artifacts.mapping_artifact_path.read_text(encoding="utf-8")
+            )
+            self.assertEqual(
+                MAPPING_METHOD_VERSION,
+                mapping_artifact["mapping_method_version"],
+            )
+            self.assertEqual("cp2_global_search", mapping_artifact["template_source"])
+            self.assertTrue(mapping_artifact["reusable_for_csofm"])
+            self.assertEqual(
+                0.08,
+                mapping_artifact["compack_reference_selection"][
+                    "rmsd_1_angstrom"
+                ],
+            )
+            self.assertEqual(
+                ["C1", "N1", "O1", "H1"],
+                [
+                    row["zmatrix_label"]
+                    for row in mapping_artifact["components"][0]["atom_mapping"]
+                ],
+            )
+            self.assertEqual(
+                ["CX", "NX", "OX", "HX"],
+                [
+                    row["experimental_label"]
+                    for row in mapping_artifact["components"][0]["atom_mapping"]
+                ],
+            )
+            portable_atom = mapping_artifact["components"][0]["atom_mapping"][0]
+            self.assertNotIn("cp2_label", portable_atom)
+            self.assertNotIn("pdb_x_angstrom", portable_atom)
+            self.assertEqual(
+                [0.3, 0.15, 0.1],
+                portable_atom["experimental_fractional_coordinates"],
+            )
+            self.assertEqual(
+                artifacts.mapping_artifact_path.resolve(),
+                Path(manifest["zmatrix_mapping_artifact"]["path"]),
+            )
+            verified_artifact = read_mapping_artifact(
+                artifacts.mapping_artifact_path,
+                experimental_structure=experimental,
+                reference_paths={1: reference},
+                zmatrix_paths={1: system / "Zmatrix"},
+                require_csofm_reusable=True,
+            )
+            self.assertEqual("cp2_global_search", verified_artifact["template_source"])
+            wrong_zmatrix = root / "wrong_Zmatrix"
+            wrong_zmatrix.write_text(
+                CANONICAL_ZMATRIX + "# changed\n", encoding="utf-8"
+            )
+            with self.assertRaisesRegex(ValueError, "Zmatrix hash"):
+                read_mapping_artifact(
+                    artifacts.mapping_artifact_path,
+                    zmatrix_paths={1: wrong_zmatrix},
+                )
             setting = manifest["crystal_setting_transformation"]
             self.assertEqual(1, setting["source_hall_number"])
             self.assertEqual(1, setting["target_hall_number"])
@@ -507,6 +642,65 @@ END
             self.assertIn("cp2_Minimise", script)
             self.assertNotIn(str(executable.resolve()), script)
             subprocess.run(["bash", "-n", str(artifacts.pbs_script_path)], check=True)
+
+            with self.assertRaisesRegex(
+                ValueError, "CP2 global-search reference structure is required"
+            ):
+                prepare_cp2_local_min_inputs(
+                    system,
+                    experimental,
+                    root / "case_without_cp2_reference",
+                    stage_mode="copy",
+                )
+
+    def test_preparation_records_independent_torsion_outside_lam_domain(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            system = root / "SyntheticSystem"
+            global_search = system / "5_GlobSrch"
+            global_search.mkdir(parents=True)
+            (global_search / "input.in").write_text(
+                SINGLE_TYPE_INPUT.replace(
+                    "dih4 -180.0 180.0", "dih4 90.0 90.0"
+                ),
+                encoding="utf-8",
+            )
+            (global_search / "flexible_lam_intra").write_text(
+                SYNTHETIC_LAM, encoding="utf-8"
+            )
+            (global_search / "potential.in").write_text(
+                "authoritative potential\n", encoding="utf-8"
+            )
+            (system / "Zmatrix").write_text(
+                CANONICAL_ZMATRIX, encoding="utf-8"
+            )
+            reference = root / "reference.res"
+            experimental = root / "experimental.res"
+            reference.write_text(REFERENCE_RES, encoding="utf-8")
+            experimental.write_text(EXPERIMENTAL_RES, encoding="utf-8")
+
+            artifacts = prepare_cp2_local_min_inputs(
+                system,
+                experimental,
+                root / "case",
+                reference_paths={1: reference},
+                stage_mode="copy",
+            )
+
+            manifest = json.loads(artifacts.manifest_path.read_text(encoding="utf-8"))
+            metrics = manifest["mappings"][0]["metrics"]
+            self.assertFalse(manifest["mapping_validated"])
+            self.assertEqual(1, metrics["independent_torsions_outside_domain"])
+            self.assertAlmostEqual(
+                90.0,
+                metrics["independent_torsion_domain_max_distance_degrees"],
+            )
+            self.assertIn(
+                "independent_torsions_outside_lam_domain",
+                manifest["mappings"][0]["validation_failures"],
+            )
 
     def test_single_type_occurrence_count_can_follow_experimental_zprime(
         self,
