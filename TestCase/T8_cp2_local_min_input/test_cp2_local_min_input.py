@@ -351,6 +351,25 @@ END
             ).validation_failures,
         )
 
+    def test_gross_mismatch_count_is_diagnostic_not_a_validation_failure(self) -> None:
+        metrics = MappingMetrics(
+            method="reference_graph_zmatrix_internal_rmsd",
+            heavy_mapping_count=1,
+            candidates_truncated=False,
+            gross_bond_angle_mismatches=1,
+            internal_coordinate_score=0.5,
+            heavy_kabsch_rmsd_angstrom=0.1,
+            second_best_score_gap=0.2,
+            torsion_orientation="same",
+            mapping_ambiguous=False,
+            reference_order_assumed=False,
+        )
+
+        self.assertTrue(metrics.validation_safe)
+        self.assertNotIn(
+            "gross_bond_angle_mismatches", metrics.validation_failures
+        )
+
     def test_independent_torsion_uses_periodic_lam_domain_distance(self) -> None:
         distance = _periodic_interval_distance_degrees
 

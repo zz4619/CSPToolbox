@@ -29,14 +29,14 @@ from Source.zmatrix_mapping import (  # noqa: E402
 
 
 def _candidate(
-    *, score: float, rmsd: float, mapping: tuple[int, ...]
+    *, score: float, rmsd: float, mapping: tuple[int, ...], gross: int = 0
 ) -> MappingCandidate:
     return MappingCandidate(
         canonical_to_experimental=tuple(
             (f"A{position}", index)
             for position, index in enumerate(mapping, start=1)
         ),
-        gross_bond_angle_mismatches=0,
+        gross_bond_angle_mismatches=gross,
         internal_coordinate_score=score,
         fixed_pair_all_atom_rmsd_angstrom=rmsd,
         heavy_atom_rmsd_angstrom=rmsd,
@@ -54,6 +54,70 @@ def _candidate(
 
 
 class ZMatrixMappingTests(unittest.TestCase):
+    def test_rigid_and_independent_torsions_use_separate_scales(self) -> None:
+        sites = (
+            ZMatrixSite(1, "C1", "C"),
+            ZMatrixSite(2, "C2", "C", bond_to=1),
+            ZMatrixSite(3, "C3", "C", bond_to=2, angle_to=1),
+            ZMatrixSite(4, "H1", "H", bond_to=3, angle_to=2, dihedral_to=1),
+            ZMatrixSite(5, "H2", "H", bond_to=3, angle_to=2, dihedral_to=1),
+        )
+        reference = {
+            0: (0.0, 0.0, 0.0),
+            1: (1.0, 0.0, 0.0),
+            2: (1.0, 1.0, 0.0),
+            3: (1.0, 1.0, 1.0),
+            4: (1.0, 1.0, -1.0),
+        }
+        # Rotating both terminal atoms by the same 15 degrees around the C3-C2
+        # axis leaves bonds and angles unchanged and gives equal torsion deltas
+        # at rows 4 and 5.
+        angle = np.deg2rad(15.0)
+        experimental = dict(reference)
+        for index in (3, 4):
+            x, y, z = reference[index]
+            experimental[index] = (
+                1.0 + (x - 1.0) * np.cos(angle) + z * np.sin(angle),
+                y,
+                -(x - 1.0) * np.sin(angle) + z * np.cos(angle),
+            )
+        mapping = {"C1": 0, "C2": 1, "C3": 2, "H1": 3, "H2": 4}
+        independent = frozenset({InternalCoordinateKey("dihedral", 5)})
+
+        candidate = score_mapping_candidate(
+            sites=sites,
+            reference_coordinates=reference,
+            canonical_to_reference=mapping,
+            experimental_coordinates=experimental,
+            canonical_to_experimental=mapping,
+            flexible_coordinates=independent,
+        )
+
+        self.assertAlmostEqual(15.0, candidate.rigid_torsion_rms_delta_degrees)
+        self.assertAlmostEqual(
+            15.0, candidate.independent_torsion_rms_delta_degrees
+        )
+        # Two equal angular deltas contribute 2.25 and 1.0 squared units;
+        # the score averages those with all other populated coordinates.
+        populated_coordinate_count = 4 + 3 + 2
+        expected = np.sqrt((2.25 + 1.0) / populated_coordinate_count)
+        self.assertAlmostEqual(expected, candidate.internal_coordinate_score)
+
+    def test_gross_mismatch_count_is_diagnostic_not_a_selection_gate(self) -> None:
+        continuous_winner = _candidate(
+            score=0.10, rmsd=0.5, mapping=(1, 0), gross=1
+        )
+        zero_gross_but_worse = _candidate(
+            score=0.20, rmsd=0.0, mapping=(0, 1), gross=0
+        )
+
+        decision = select_mapping_candidate(
+            (zero_gross_but_worse, continuous_winner)
+        )
+
+        self.assertEqual(continuous_winner, decision.selected)
+        self.assertEqual("unique_primary_score", decision.selection_reason)
+
     def test_independent_torsions_contribute_to_primary_score(self) -> None:
         sites = (
             ZMatrixSite(1, "C1", "C"),

@@ -30,7 +30,7 @@ from networkx.algorithms import isomorphism as nx_isomorphism
 
 
 MAPPING_METHOD_VERSION = (
-    "cp2_global_reference_zmatrix_all_torsion_fixed_pair_rmsd_v4"
+    "cp2_global_reference_zmatrix_continuous_split_torsion_fixed_pair_rmsd_v5"
 )
 DEFAULT_MAX_HEAVY_MAPPINGS = 100_000
 DEFAULT_MAX_FULL_MAPPINGS = 500_000
@@ -79,7 +79,10 @@ class MappingScoreSettings:
 
     bond_scale_angstrom: float = 0.05
     angle_scale_degrees: float = 5.0
-    torsion_scale_degrees: float = 15.0
+    rigid_torsion_scale_degrees: float = 10.0
+    independent_torsion_scale_degrees: float = 15.0
+    # These cutoffs only populate diagnostics.  They never filter or reject a
+    # mapping candidate; selection is continuous in the coordinate deltas.
     gross_bond_delta_angstrom: float = 0.25
     gross_angle_delta_degrees: float = 15.0
     primary_score_atol: float = 1.0e-8
@@ -317,9 +320,11 @@ def score_mapping_candidate(
             )
             if torsion_key in flexible_coordinates:
                 independent_torsion_deltas.append(delta)
+                torsion_scale = settings.independent_torsion_scale_degrees
             else:
                 rigid_torsion_deltas.append(delta)
-            weighted.append((delta / settings.torsion_scale_degrees) ** 2)
+                torsion_scale = settings.rigid_torsion_scale_degrees
+            weighted.append((delta / torsion_scale) ** 2)
 
     canonical_mapping = tuple(
         (site.label, int(canonical_to_experimental[site.label])) for site in sites
@@ -380,21 +385,22 @@ def select_mapping_candidate(
     full_mapping_count: int | None = None,
     candidates_truncated: bool = False,
 ) -> MappingDecision:
-    """Apply primary-score, fixed-RMSD, then deterministic selection stages."""
+    """Apply continuous primary-score, fixed-RMSD, then deterministic stages.
+
+    Gross bond/angle mismatch counts are retained on every candidate as audit
+    diagnostics, but they do not form a discontinuous selection class.
+    """
 
     if not candidates:
         raise ValueError("At least one mapping candidate is required")
-    best_gross = min(item.gross_bond_angle_mismatches for item in candidates)
-    gross_class = [
-        item for item in candidates if item.gross_bond_angle_mismatches == best_gross
-    ]
-    gross_class.sort(
+    ranked_candidates = sorted(
+        candidates,
         key=lambda item: (item.internal_coordinate_score, item.deterministic_key)
     )
-    best_primary = gross_class[0].internal_coordinate_score
+    best_primary = ranked_candidates[0].internal_coordinate_score
     primary_ties = [
         item
-        for item in gross_class
+        for item in ranked_candidates
         if abs(item.internal_coordinate_score - best_primary)
         <= settings.primary_score_atol
     ]
@@ -414,8 +420,8 @@ def select_mapping_candidate(
     selected = min(final_ties, key=lambda item: item.deterministic_key)
 
     second_score_gap = (
-        gross_class[1].internal_coordinate_score - best_primary
-        if len(gross_class) > 1
+        ranked_candidates[1].internal_coordinate_score - best_primary
+        if len(ranked_candidates) > 1
         else None
     )
     rmsd_values = sorted(
@@ -763,7 +769,8 @@ def _validate_inputs(
     positive = (
         settings.bond_scale_angstrom,
         settings.angle_scale_degrees,
-        settings.torsion_scale_degrees,
+        settings.rigid_torsion_scale_degrees,
+        settings.independent_torsion_scale_degrees,
         settings.gross_bond_delta_angstrom,
         settings.gross_angle_delta_degrees,
         settings.primary_score_atol,

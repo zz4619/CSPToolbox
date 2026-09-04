@@ -128,26 +128,34 @@ output structure.
 
 The `--reference` inputs are CP2 global-search structures, not structures
 polished with CSO-FM. Atom mapping is energy-model independent: graph-valid
-candidates are ranked by agreement with all available coordinates in that CP2
-template Z-matrix. This includes shortest-periodic differences for both rigid
-and independent torsions; excluding independent torsions can select the wrong
-symmetry-related oxygen or hydrogen permutation.
+candidates are ranked by a continuous, dimensionless RMS score against all
+available coordinates in that CP2 template Z-matrix. The default scales are
+0.05 A for bonds, 5 degrees for angles, 10 degrees for rigid torsions, and
+15 degrees for independent torsions. Torsions use shortest-periodic
+differences. The larger independent-torsion scale allows genuine conformational
+motion while still distinguishing symmetry-related oxygen or hydrogen
+permutations.
 Candidates tied within the recorded primary-score tolerance are compared by
 fixed-correspondence, all-atom RMSD after translation and a proper rotation
 only. Atom pairs remain locked; COMPACK rematching, reflection, and torsional
 optimization are not part of this final check. A remaining tie is recorded as
 ambiguous before deterministic atom indices are used for reproducible output.
 
+The 0.25 A bond and 15 degree angle "gross mismatch" counts are diagnostics,
+not hard candidate-selection classes or automatic validation failures. They
+remain in the mapping artifact for review, but a candidate is not discarded at
+either boundary; the continuous score avoids discontinuous permutation changes.
+
 Runnable-job validation is conservative: truncated, ambiguous, assumed-order,
-grossly mismatched, reflected, and out-of-LAM-domain mappings do not pass
-automatic validation. Rigid and independent torsions are compared to the CP2
-global-search template with shortest-periodic angular differences during atom
-assignment. After selection, CP2 separately checks each independent torsion's
-shortest-periodic distance to the full interval declared in `input.in`. An
-out-of-domain result therefore remains a validation failure; the mapping score
-does not force a candidate into the domain. The manifest explicitly records
-separate rigid- and independent-torsion diagnostics and that reflection was
-disabled.
+reflected, and out-of-LAM-domain mappings do not pass automatic validation.
+Rigid and independent torsions are compared to the CP2 global-search template
+with shortest-periodic angular differences during atom assignment. After
+selection, CP2 separately checks each independent torsion's shortest-periodic
+distance to the full interval declared in `input.in`. An out-of-domain result
+therefore remains a validation failure; the mapping score does not force a
+candidate into the domain. The manifest explicitly records the score scales,
+separate rigid- and independent-torsion diagnostics, the diagnostic-only gross
+mismatch count, and that reflection was disabled.
 The override remains available for other explicitly audited
 mapping failures. The single-core runner also fixes OpenMP and MKL to one
 thread.

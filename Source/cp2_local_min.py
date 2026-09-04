@@ -46,6 +46,7 @@ from .zmatrix_mapping import (
     MAPPING_METHOD_VERSION,
     InternalCoordinateKey,
     InternalCoordinateValues,
+    MappingScoreSettings,
     ZMatrixSite,
     angle_degrees as _shared_angle_degrees,
     circular_difference_degrees as _shared_circular_difference_degrees,
@@ -334,8 +335,6 @@ class MappingMetrics:
             failures.append("mapping_ambiguous")
         if self.reference_order_assumed:
             failures.append("reference_order_assumed")
-        if self.gross_bond_angle_mismatches != 0:
-            failures.append("gross_bond_angle_mismatches")
         if self.torsion_orientation != "same":
             failures.append("torsion_orientation_not_same")
         if self.reflection_allowed:
@@ -2340,7 +2339,6 @@ def _assign_components(
                 for component_index in component_indices
             ]
             rank = (
-                sum(item.gross_bond_angle_mismatches for item in metrics),
                 sum(item.internal_coordinate_score for item in metrics),
                 sum(item.fixed_pair_all_atom_rmsd_angstrom for item in metrics),
                 tuple((key, selected[key]) for key in sorted(selected)),
@@ -2433,10 +2431,12 @@ def _write_zmatrix_mapping_artifact(
                     "gross_bond_angle_mismatches": (
                         item.metrics.gross_bond_angle_mismatches
                     ),
+                    "gross_bond_angle_mismatches_are_diagnostic_only": True,
                     "internal_coordinate_score": (
                         item.metrics.internal_coordinate_score
                     ),
                     "coordinate_score_includes_independent_torsions": True,
+                    "score_scales": asdict(MappingScoreSettings()),
                     "rigid_torsion_rms_delta_degrees": (
                         item.metrics.rigid_torsion_rms_delta_degrees
                     ),
@@ -2490,7 +2490,6 @@ def _write_zmatrix_mapping_artifact(
             and not item.metrics.candidates_truncated
             and not item.metrics.mapping_ambiguous
             and not item.metrics.reference_order_assumed
-            and item.metrics.gross_bond_angle_mismatches == 0
             and item.metrics.torsion_orientation == "same"
             and not item.metrics.reflection_allowed
             for item in mappings
