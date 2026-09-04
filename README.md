@@ -110,12 +110,15 @@ is supplied, the prepared job also contains a self-contained, single-core CX3
 PBS bundle. The executable is copied byte-for-byte into the bundle; the runner
 uses job-ID-keyed node-local scratch and copies results back. The supplied branch
 binary needs only the CX3 production-tools and MKL runtime modules plus the
-private NAG Kusari licence file at `$HOME/.nag/license.dat`. Keep `$HOME/.nag`
-readable only by its owner (mode `700`) and the licence file at mode `600`;
-create or update that file directly on CX3, outside this repository. The
+private departmental Linux NAG Kusari licence file at
+`$HOME/.nag/ChemEngDept-nag_keys-2026-linux.txt`. Keep `$HOME/.nag` readable
+only by its owner (mode `700`) and the licence file at mode `600`; create or
+update that file directly on CX3, outside this repository, and do not share it
+outside Chemical Engineering. The
 generated runner exports `NAG_KUSARI_FILE` and stops before CP2 if the file is
 missing or unreadable. For a permitted short licence preflight such as
-`klcheck`, export `NAG_KUSARI_FILE="$HOME/.nag/license.dat"` first. Run the
+`klcheck`, export
+`NAG_KUSARI_FILE="$HOME/.nag/ChemEngDept-nag_keys-2026-linux.txt"` first. Run the
 actual minimisation through the cluster scheduler. A different execution-host
 path can be supplied with `--nag-license-file`, but licence contents are never
 staged or written to provenance. The library does not submit jobs. The status

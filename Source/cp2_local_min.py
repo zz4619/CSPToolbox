@@ -391,7 +391,7 @@ class CP2PBSSettings:
     # The branch binary links NAG statically and has no dynamic MPI dependency;
     # only the Kusari licence location is needed in addition to MKL at runtime.
     # Store a path only: licence contents are never read, copied, or recorded.
-    nag_license_file: str = "$HOME/.nag/license.dat"
+    nag_license_file: str = "$HOME/.nag/ChemEngDept-nag_keys-2026-linux.txt"
     queue: str | None = None
 
 

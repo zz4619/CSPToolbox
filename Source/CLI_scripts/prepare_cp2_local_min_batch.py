@@ -51,7 +51,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="append",
         help="Override the default CX3 runtime modules; repeat in load order.",
     )
-    parser.add_argument("--nag-license-file", default="$HOME/.nag/license.dat")
+    parser.add_argument(
+        "--nag-license-file",
+        default="$HOME/.nag/ChemEngDept-nag_keys-2026-linux.txt",
+    )
     return parser.parse_args(argv)
 
 

@@ -655,14 +655,15 @@ END
             self.assertNotIn("impi/", script)
             self.assertNotIn("$EBROOTNAGLIB/scripts/nagvars.sh", script)
             self.assertIn(
-                'export NAG_KUSARI_FILE="${HOME}"/.nag/license.dat', script
+                'export NAG_KUSARI_FILE="${HOME}"/.nag/ChemEngDept-nag_keys-2026-linux.txt',
+                script,
             )
             self.assertIn('! -f "$NAG_KUSARI_FILE"', script)
             self.assertIn('! -r "$NAG_KUSARI_FILE"', script)
             self.assertNotIn("/sw-eb/software/NAGlib/license", script)
             self.assertNotIn("NAG key begin", script)
             self.assertEqual(
-                "$HOME/.nag/license.dat",
+                "$HOME/.nag/ChemEngDept-nag_keys-2026-linux.txt",
                 manifest["execution"]["pbs_settings"]["nag_license_file"],
             )
             self.assertNotIn(
@@ -865,7 +866,7 @@ END
                 "walltime": "24:00:00",
                 "memory_gb": 8,
                 "modules": ["tools/prod", "imkl/2022.1.0"],
-                "nag_license_file": "$HOME/.nag/license.dat",
+                "nag_license_file": "$HOME/.nag/ChemEngDept-nag_keys-2026-linux.txt",
                 "queue": None,
             }
             for refcode in ("FORM01", "FORM02"):

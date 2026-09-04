@@ -111,7 +111,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     prepare.add_argument("--pbs-queue")
     prepare.add_argument(
         "--nag-license-file",
-        default="$HOME/.nag/license.dat",
+        default="$HOME/.nag/ChemEngDept-nag_keys-2026-linux.txt",
         help=(
             "NAG Kusari licence path on the execution host; use an absolute path "
             "or a path beginning with '$HOME/'. Licence contents are never staged."
