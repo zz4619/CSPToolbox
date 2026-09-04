@@ -303,6 +303,8 @@ class MappingMetrics:
     reference_order_assumed: bool
     rigid_torsion_rms_delta_degrees: float = 0.0
     rigid_torsion_max_abs_delta_degrees: float = 0.0
+    independent_torsion_rms_delta_degrees: float = 0.0
+    independent_torsion_max_abs_delta_degrees: float = 0.0
     independent_torsion_domain_rms_distance_degrees: float = 0.0
     independent_torsion_domain_max_distance_degrees: float = 0.0
     independent_torsions_outside_domain: int = 0
@@ -2111,7 +2113,7 @@ def _match_component(
         canonical_to_reference=reference.canonical_to_reference,
         experimental_graph=experimental_graph,
         experimental_coordinates=experimental_connectivity.unwrapped,
-        flexible_coordinates=_flexible_coordinate_keys(
+        flexible_coordinates=_independent_torsion_keys(
             reference.molecular_type, reference.topology
         ),
         max_heavy_mappings=max_heavy_mappings,
@@ -2147,6 +2149,12 @@ def _match_component(
         ),
         rigid_torsion_max_abs_delta_degrees=float(
             decision.selected.rigid_torsion_max_abs_delta_degrees
+        ),
+        independent_torsion_rms_delta_degrees=float(
+            decision.selected.independent_torsion_rms_delta_degrees
+        ),
+        independent_torsion_max_abs_delta_degrees=float(
+            decision.selected.independent_torsion_max_abs_delta_degrees
         ),
         independent_torsion_domain_rms_distance_degrees=float(
             lam_metrics["independent_torsion_domain_rms_distance_degrees"]
@@ -2236,7 +2244,7 @@ def _as_shared_zmatrix_sites(
     )
 
 
-def _flexible_coordinate_keys(
+def _independent_torsion_keys(
     molecular_type: CP2MolecularType,
     topology: CP2LamTopology,
 ) -> frozenset[InternalCoordinateKey]:
@@ -2425,8 +2433,21 @@ def _write_zmatrix_mapping_artifact(
                     "gross_bond_angle_mismatches": (
                         item.metrics.gross_bond_angle_mismatches
                     ),
-                    "rigid_internal_coordinate_score": (
+                    "internal_coordinate_score": (
                         item.metrics.internal_coordinate_score
+                    ),
+                    "coordinate_score_includes_independent_torsions": True,
+                    "rigid_torsion_rms_delta_degrees": (
+                        item.metrics.rigid_torsion_rms_delta_degrees
+                    ),
+                    "rigid_torsion_max_abs_delta_degrees": (
+                        item.metrics.rigid_torsion_max_abs_delta_degrees
+                    ),
+                    "independent_torsion_rms_delta_degrees": (
+                        item.metrics.independent_torsion_rms_delta_degrees
+                    ),
+                    "independent_torsion_max_abs_delta_degrees": (
+                        item.metrics.independent_torsion_max_abs_delta_degrees
                     ),
                     "fixed_pair_all_atom_rmsd_angstrom": (
                         item.metrics.fixed_pair_all_atom_rmsd_angstrom

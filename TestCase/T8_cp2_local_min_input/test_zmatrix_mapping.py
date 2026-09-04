@@ -23,6 +23,7 @@ from Source.zmatrix_mapping import (  # noqa: E402
     ZMatrixSite,
     match_zmatrix_atoms,
     proper_rotation_rmsd,
+    score_mapping_candidate,
     select_mapping_candidate,
 )
 
@@ -45,12 +46,73 @@ def _candidate(
         angle_max_abs_delta_degrees=0.0,
         rigid_torsion_rms_delta_degrees=0.0,
         rigid_torsion_max_abs_delta_degrees=0.0,
+        independent_torsion_rms_delta_degrees=0.0,
+        independent_torsion_max_abs_delta_degrees=0.0,
         reference_values=(),
         experimental_values=(),
     )
 
 
 class ZMatrixMappingTests(unittest.TestCase):
+    def test_independent_torsions_contribute_to_primary_score(self) -> None:
+        sites = (
+            ZMatrixSite(1, "C1", "C"),
+            ZMatrixSite(2, "C2", "C", bond_to=1),
+            ZMatrixSite(3, "C3", "C", bond_to=2, angle_to=1),
+            ZMatrixSite(4, "H1", "H", bond_to=3, angle_to=2, dihedral_to=1),
+            ZMatrixSite(5, "H2", "H", bond_to=3, angle_to=2, dihedral_to=1),
+        )
+        coordinates = {
+            0: (0.0, 0.0, 0.0),
+            1: (1.0, 0.0, 0.0),
+            2: (1.0, 1.0, 0.0),
+            3: (1.0, 1.0, 1.0),
+            4: (1.0, 1.0, -1.0),
+        }
+        canonical_to_reference = {
+            "C1": 0,
+            "C2": 1,
+            "C3": 2,
+            "H1": 3,
+            "H2": 4,
+        }
+        independent_torsions = frozenset(
+            {
+                InternalCoordinateKey("dihedral", 4),
+                InternalCoordinateKey("dihedral", 5),
+            }
+        )
+        correct = score_mapping_candidate(
+            sites=sites,
+            reference_coordinates=coordinates,
+            canonical_to_reference=canonical_to_reference,
+            experimental_coordinates=coordinates,
+            canonical_to_experimental=canonical_to_reference,
+            flexible_coordinates=independent_torsions,
+        )
+        swapped = score_mapping_candidate(
+            sites=sites,
+            reference_coordinates=coordinates,
+            canonical_to_reference=canonical_to_reference,
+            experimental_coordinates=coordinates,
+            canonical_to_experimental={
+                **canonical_to_reference,
+                "H1": 4,
+                "H2": 3,
+            },
+            flexible_coordinates=independent_torsions,
+        )
+
+        decision = select_mapping_candidate((swapped, correct))
+
+        self.assertEqual(correct, decision.selected)
+        self.assertEqual("unique_primary_score", decision.selection_reason)
+        self.assertEqual(0.0, correct.independent_torsion_rms_delta_degrees)
+        self.assertAlmostEqual(
+            180.0, swapped.independent_torsion_rms_delta_degrees
+        )
+        self.assertGreater(swapped.internal_coordinate_score, 0.0)
+
     def test_hydrogen_permutation_uses_fixed_pair_all_atom_rmsd(self) -> None:
         sites = (
             ZMatrixSite(1, "C1", "C"),

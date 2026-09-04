@@ -574,6 +574,12 @@ END
                     "independent_torsion_domain_max_distance_degrees"
                 ],
             )
+            self.assertIn(
+                "independent_torsion_rms_delta_degrees", mapping_metrics
+            )
+            self.assertIn(
+                "independent_torsion_max_abs_delta_degrees", mapping_metrics
+            )
             self.assertEqual("same", mapping_metrics["torsion_orientation"])
             self.assertFalse(mapping_metrics["reflection_allowed"])
             mapping_artifact = json.loads(
@@ -585,6 +591,13 @@ END
             )
             self.assertEqual("cp2_global_search", mapping_artifact["template_source"])
             self.assertTrue(mapping_artifact["reusable_for_csofm"])
+            artifact_selection = mapping_artifact["components"][0]["selection"]
+            self.assertTrue(
+                artifact_selection[
+                    "coordinate_score_includes_independent_torsions"
+                ]
+            )
+            self.assertIn("internal_coordinate_score", artifact_selection)
             self.assertEqual(
                 0.08,
                 mapping_artifact["compack_reference_selection"][

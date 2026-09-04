@@ -128,7 +128,10 @@ output structure.
 
 The `--reference` inputs are CP2 global-search structures, not structures
 polished with CSO-FM. Atom mapping is energy-model independent: graph-valid
-candidates are ranked by rigid Z-matrix agreement with that CP2 template.
+candidates are ranked by agreement with all available coordinates in that CP2
+template Z-matrix. This includes shortest-periodic differences for both rigid
+and independent torsions; excluding independent torsions can select the wrong
+symmetry-related oxygen or hydrogen permutation.
 Candidates tied within the recorded primary-score tolerance are compared by
 fixed-correspondence, all-atom RMSD after translation and a proper rotation
 only. Atom pairs remain locked; COMPACK rematching, reflection, and torsional
@@ -137,13 +140,14 @@ ambiguous before deterministic atom indices are used for reproducible output.
 
 Runnable-job validation is conservative: truncated, ambiguous, assumed-order,
 grossly mismatched, reflected, and out-of-LAM-domain mappings do not pass
-automatic validation. Rigid torsions are compared to the CP2 global-search
-template with shortest-periodic angular differences. Independent torsions do
-not influence the permutation; after selection, CP2 separately checks their
-shortest-periodic distance to the full interval declared in `input.in`. This
-separation ensures that a genuine LAM-coverage failure cannot be hidden by
-selecting a chemically incorrect atom permutation. The manifest explicitly
-records that reflection was disabled.
+automatic validation. Rigid and independent torsions are compared to the CP2
+global-search template with shortest-periodic angular differences during atom
+assignment. After selection, CP2 separately checks each independent torsion's
+shortest-periodic distance to the full interval declared in `input.in`. An
+out-of-domain result therefore remains a validation failure; the mapping score
+does not force a candidate into the domain. The manifest explicitly records
+separate rigid- and independent-torsion diagnostics and that reflection was
+disabled.
 The override remains available for other explicitly audited
 mapping failures. The single-core runner also fixes OpenMP and MKL to one
 thread.

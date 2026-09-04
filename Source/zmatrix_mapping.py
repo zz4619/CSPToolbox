@@ -3,12 +3,15 @@
 The reference coordinates may come from any structure source, but the local-
 minimisation workflow uses a CrystalPredictor2 global-search structure.  The
 matcher deliberately knows nothing about CP2 or CSO-FM LAM file formats.  It
-selects one graph-preserving atom permutation from rigid Z-matrix coordinates
-and uses fixed-correspondence, all-atom RMSD only to break numerical ties.
+selects one graph-preserving atom permutation from all available Z-matrix
+coordinates, including independent torsions, and uses fixed-correspondence,
+all-atom RMSD only to break numerical ties.
 
-Flexible-coordinate domain checks belong to the consuming energy model.  This
-keeps the atom permutation identical when the resulting mapping is later used
-to prepare either a CP2 PDB or a CSO-FM RES file.
+LAM-domain checks still belong to the consuming energy model.  The shared
+template-coordinate score keeps the atom permutation identical when the
+resulting mapping is later used to prepare either a CP2 PDB or a CSO-FM RES
+file, while preventing symmetry-related independent torsions from being
+ignored during atom assignment.
 """
 
 from __future__ import annotations
@@ -26,7 +29,9 @@ import numpy as np
 from networkx.algorithms import isomorphism as nx_isomorphism
 
 
-MAPPING_METHOD_VERSION = "cp2_global_reference_zmatrix_fixed_pair_rmsd_v3"
+MAPPING_METHOD_VERSION = (
+    "cp2_global_reference_zmatrix_all_torsion_fixed_pair_rmsd_v4"
+)
 DEFAULT_MAX_HEAVY_MAPPINGS = 100_000
 DEFAULT_MAX_FULL_MAPPINGS = 500_000
 
@@ -96,6 +101,8 @@ class MappingCandidate:
     angle_max_abs_delta_degrees: float
     rigid_torsion_rms_delta_degrees: float
     rigid_torsion_max_abs_delta_degrees: float
+    independent_torsion_rms_delta_degrees: float
+    independent_torsion_max_abs_delta_degrees: float
     reference_values: tuple[InternalCoordinateValues, ...]
     experimental_values: tuple[InternalCoordinateValues, ...]
 
@@ -145,6 +152,9 @@ def match_zmatrix_atoms(
     ``reference_graph`` and ``experimental_graph`` must contain one molecular
     component each.  Every node must carry an ``element`` attribute and every
     coordinate must be a molecule-contiguous Cartesian position in angstrom.
+    Dihedrals listed in ``flexible_coordinates`` are classified as independent
+    torsions for diagnostics, but they still contribute to the primary score.
+    Flexible bonds and angles remain excluded when explicitly listed.
     """
 
     _validate_inputs(
@@ -273,6 +283,7 @@ def score_mapping_candidate(
     bond_deltas: list[float] = []
     angle_deltas: list[float] = []
     rigid_torsion_deltas: list[float] = []
+    independent_torsion_deltas: list[float] = []
     for site, reference_value, experimental_value in zip(
         sites, reference_values, experimental_values
     ):
@@ -299,15 +310,15 @@ def score_mapping_candidate(
             angle_deltas.append(delta)
             weighted.append((delta / settings.angle_scale_degrees) ** 2)
         torsion_key = InternalCoordinateKey("dihedral", site.index)
-        if (
-            reference_value.dihedral_degrees is not None
-            and torsion_key not in flexible_coordinates
-        ):
+        if reference_value.dihedral_degrees is not None:
             delta = circular_difference_degrees(
                 float(experimental_value.dihedral_degrees),
                 float(reference_value.dihedral_degrees),
             )
-            rigid_torsion_deltas.append(delta)
+            if torsion_key in flexible_coordinates:
+                independent_torsion_deltas.append(delta)
+            else:
+                rigid_torsion_deltas.append(delta)
             weighted.append((delta / settings.torsion_scale_degrees) ** 2)
 
     canonical_mapping = tuple(
@@ -348,6 +359,12 @@ def score_mapping_candidate(
         angle_max_abs_delta_degrees=_max_abs(angle_deltas),
         rigid_torsion_rms_delta_degrees=_rms(rigid_torsion_deltas),
         rigid_torsion_max_abs_delta_degrees=_max_abs(rigid_torsion_deltas),
+        independent_torsion_rms_delta_degrees=_rms(
+            independent_torsion_deltas
+        ),
+        independent_torsion_max_abs_delta_degrees=_max_abs(
+            independent_torsion_deltas
+        ),
         reference_values=reference_values if include_internal_coordinates else (),
         experimental_values=(
             experimental_values if include_internal_coordinates else ()
