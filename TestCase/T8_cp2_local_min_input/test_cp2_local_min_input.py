@@ -283,6 +283,39 @@ END
             )
             self.assertNotEqual(source.cell_parameters, transformed.cell_parameters)
 
+    def test_matching_hall_setting_preserves_cell_and_coordinates(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            path = Path(temporary_directory) / "p_minus_1.res"
+            path.write_text(
+                """TITL non-reduced P-1 cell already in the target Hall setting
+CELL 1.0 3.7525 12.3229 13.0618 71.499 85.676 85.202
+LATT 1
+SFAC C N
+C1 1 0.3681 0.71876 0.27316 11.0 0.03
+N1 2 0.5767 0.76954 0.08583 11.0 0.03
+END
+""",
+                encoding="utf-8",
+            )
+            source = read_structure(path)
+            source_contact = _minimum_intermolecular_contact(source)
+
+            transformed, provenance = canonicalize_structure_for_cp2(
+                source, "P-1"
+            )
+            transformed_contact = _minimum_intermolecular_contact(transformed)
+
+            self.assertEqual(2, source.symmetry.hall_number)
+            self.assertEqual(2, transformed.symmetry.hall_number)
+            self.assertFalse(provenance.changed)
+            self.assertEqual(source.cell_parameters, transformed.cell_parameters)
+            self.assertEqual(source.atoms, transformed.atoms)
+            self.assertAlmostEqual(
+                source_contact.distance_angstrom,
+                transformed_contact.distance_angstrom,
+                places=12,
+            )
+
     def test_only_same_orientation_mapping_is_automatically_validated(self) -> None:
         common = dict(
             method="reference_graph_zmatrix_internal_rmsd",

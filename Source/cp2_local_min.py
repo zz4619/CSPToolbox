@@ -2778,6 +2778,34 @@ def canonicalize_structure_for_cp2(
             f"{cp2_space_group!r} is number {target_type.number}"
         )
 
+    # The structure is already expressed in CP2's exact Hall setting.  Asking
+    # spglib to standardize it again is unnecessary and can select a different
+    # (but symmetry-equivalent) reduced cell.  Applying that conventional-cell
+    # result to the asymmetric-unit coordinates is not an identity operation
+    # and previously produced false packing-distance changes for valid P-1 and
+    # P21/c experimental structures.
+    if structure.symmetry.hall_number == target_hall_number:
+        identity = np.eye(3, dtype=float)
+        transformation = CrystalSettingTransformation(
+            source_hall_number=structure.symmetry.hall_number,
+            target_hall_number=target_hall_number,
+            target_space_group=cp2_space_group,
+            transformation_matrix=tuple(
+                tuple(float(value) for value in row) for row in identity
+            ),
+            origin_shift=(0.0, 0.0, 0.0),
+            standard_rotation_matrix=tuple(
+                tuple(float(value) for value in row) for row in identity
+            ),
+            changed=False,
+        )
+        return (
+            replace(
+                structure, space_group=cp2_space_group, symmetry=target_symmetry
+            ),
+            transformation,
+        )
+
     full_positions: list[np.ndarray] = []
     full_types: list[int] = []
     # Use a deterministic general-position marker motif to encode the supplied
