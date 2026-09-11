@@ -63,21 +63,37 @@ Installed console commands defined in `pyproject.toml`:
 - `csp-vasp-summary`
 - `csp-vasp-manifest`
 - `csp-zmat-viewer`
+- `csp-view` (the same CLI, including coordinate files, overlays and crystals)
 
 The CLI directory also contains plotting, rendering, CSORM/CSOFM generation,
 Gaussian generation, and VASP summary scripts that were moved out of the top
 level of `Source/` during cleanup.
 
-## Z-Matrix Viewer
+## Molecular and Crystal Viewer
 
-`csp-zmat-viewer` writes a standalone interactive HTML file from a numeric
-`# ZMAT v1` file. The output has no Python server or external JavaScript
-runtime requirement, so it can be produced on an HPC filesystem and opened
-locally.
+`csp-view` writes a standalone HTML viewer with its JavaScript, styling and
+structure data included. It supports ordinary coordinate files without a
+Z-matrix, Z-matrices with independent DoFs, grey-reference conformer overlays,
+asymmetric-unit/full-cell views, and experimental-to-Z-matrix atom mappings.
+`csp-zmat-viewer` remains available as an alias.
 
 ```bash
-csp-zmat-viewer molecule.zmat --output molecule_viewer.html
+csp-view molecule.xyz --output molecule_viewer.html
+csp-view molecule.zmat --independent-dofs dih8 dih10 dih12
+csp-view after.pdb --reference before.pdb --output comparison.html
+csp-view experiment.cif --crystal --output crystal.html
+csp-view experiment.pdb --zmatrix Zmatrix --dofs-file input.in
 ```
+
+See [the viewer guide](docs/VIEWER.md) for all five workflows, mapping direction,
+crystal conventions, the Python API and browser verification. Independent DoFs
+are supplied explicitly; the viewer does not infer which coordinates are free.
+
+New integrations should use `csptoolbox.zmatrix_viewer` and
+`render_viewer_fragment` rather than copying a renderer into a project-specific
+script. The standalone page and fragment use the same packaged assets and
+per-instance controls. Existing `Source.zmatrix_viewer` imports remain supported;
+historical generated HTML and external project helpers are left in place.
 
 ## Cleanup Notes
 
@@ -108,3 +124,15 @@ Run a lightweight syntax check:
 ```bash
 python -m py_compile Source/*.py Source/CLI_scripts/*.py csptoolbox/*.py
 ```
+
+Viewer and shared Z-matrix regression checks, from this repository root:
+
+```bash
+python -m unittest discover -s TestCase/T4_zmatrix_viewer -p 'test_*.py' -v
+python -m unittest discover -s TestCase/T3_zmatrix_generation -p 'test_*.py' -v
+python -m unittest discover -s TestCase/T7_shared_zmatrix -p 'test_*.py' -v
+```
+
+See [AGENTS.md](AGENTS.md) for scope boundaries, other discovered test commands,
+packaging checks and completion criteria. No repository-wide lint, formatter,
+type-checker or CI command is currently configured.
