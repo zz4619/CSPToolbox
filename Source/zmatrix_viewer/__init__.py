@@ -1,22 +1,32 @@
-"""Interactive static viewer utilities for CSPToolbox Z-matrix files."""
+"""Portable molecular, Z-matrix, comparison and crystal viewers."""
 
 from __future__ import annotations
 
 from pathlib import Path
 
 from .geometry import build_viewer_molecule, reconstruct_coordinates
-from .html_export import render_viewer_html, write_viewer_html
+from .html_export import (render_viewer_html, write_viewer_html, render_viewer_fragment,
+                          write_viewer_fragment, viewer_payload)
+from .preparation import (build_structure_view, build_comparison_view, build_mapping_view,
+                          build_crystal_view, build_gallery, read_dofs)
 from .model import (
     ViewerAtom,
     ViewerBond,
     ViewerDihedral,
     ViewerMolecule,
+    ViewerCoordinate,
+    ViewerScene,
+    ViewerDocument,
     ZMatrixAtom,
     ZMatrixDocument,
 )
 from .parser import load_zmatrix, parse_zmatrix_text
 
 __all__ = [
+    "ViewerCoordinate", "ViewerScene", "ViewerDocument",
+    "build_structure_view", "build_comparison_view", "build_mapping_view",
+    "build_crystal_view", "build_gallery", "read_dofs", "viewer_payload",
+    "render_viewer_fragment", "write_viewer_fragment",
     "ViewerAtom",
     "ViewerBond",
     "ViewerDihedral",

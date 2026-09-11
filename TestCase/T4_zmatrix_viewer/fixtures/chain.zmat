@@ -1,0 +1,8 @@
+# ZMAT v1
+# title: Four-carbon geometry fixture
+# independent_dofs: dih4
+# labels: C1 C2 C3 C4
+C
+C 1 1.54
+C 2 1.54 1 111.0
+C 3 1.54 2 111.0 1 60.0

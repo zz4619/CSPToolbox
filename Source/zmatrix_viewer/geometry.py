@@ -69,6 +69,8 @@ def build_viewer_molecule(
 ) -> ViewerMolecule:
     """Reconstruct a parsed Z-matrix and prepare the browser payload."""
 
+    if not math.isfinite(covalent_scale) or covalent_scale <= 0:
+        raise ValueError("covalent_scale must be finite and positive.")
     coordinates = reconstruct_coordinates(document.atoms)
     viewer_atoms = tuple(
         ViewerAtom(
@@ -385,4 +387,3 @@ def _unit(vec: Vec3) -> Vec3:
 
 def _distance(left: Vec3, right: Vec3) -> float:
     return _norm(_sub(left, right))
-

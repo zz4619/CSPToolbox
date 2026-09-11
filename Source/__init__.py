@@ -72,6 +72,15 @@ _EXPORTS = {
     "build_zmatrix_viewer_document": ("Source.zmatrix_viewer", "build_zmatrix_viewer_document"),
     "render_zmatrix_viewer_html": ("Source.zmatrix_viewer", "render_zmatrix_viewer_html"),
     "write_zmatrix_viewer_html": ("Source.zmatrix_viewer", "write_zmatrix_viewer_html"),
+    "build_structure_view": ("Source.zmatrix_viewer", "build_structure_view"),
+    "build_comparison_view": ("Source.zmatrix_viewer", "build_comparison_view"),
+    "build_mapping_view": ("Source.zmatrix_viewer", "build_mapping_view"),
+    "build_crystal_view": ("Source.zmatrix_viewer", "build_crystal_view"),
+    "build_gallery": ("Source.zmatrix_viewer", "build_gallery"),
+    "render_viewer_html": ("Source.zmatrix_viewer", "render_viewer_html"),
+    "write_viewer_html": ("Source.zmatrix_viewer", "write_viewer_html"),
+    "render_viewer_fragment": ("Source.zmatrix_viewer", "render_viewer_fragment"),
+    "write_viewer_fragment": ("Source.zmatrix_viewer", "write_viewer_fragment"),
 }
 
 __all__ = sorted(_EXPORTS)

@@ -85,3 +85,46 @@ class ViewerMolecule:
     warnings: tuple[str, ...]
     source_name: str | None = None
 
+
+@dataclass(frozen=True)
+class ViewerCoordinate:
+    """An internal coordinate with a stable bnd/ang/dih row identity."""
+
+    name: str
+    kind: str
+    atom_indices: tuple[int, ...]
+    atom_labels: tuple[str, ...]
+    value: float
+    unit: str
+    independent: bool = False
+    reference_value: float | None = None
+    lower: float | None = None
+    upper: float | None = None
+
+
+@dataclass(frozen=True)
+class ViewerScene:
+    """One selectable workflow; coordinates are prepared in Python, never refitted in JS."""
+
+    title: str
+    molecule: ViewerMolecule
+    reference: ViewerMolecule | None = None
+    full_cell: ViewerMolecule | None = None
+    cell: tuple[tuple[float, float, float], ...] = ()
+    coordinates: tuple[ViewerCoordinate, ...] = ()
+    mapping: tuple[tuple[str, str], ...] = ()
+    rmsd: float | None = None
+    mapping_method: str = ""
+    notices: tuple[str, ...] = ()
+    source_paths: tuple[str, ...] = ()
+    source_hashes: tuple[tuple[str, str], ...] = ()
+    mapped_zmatrix: str | None = None
+
+
+@dataclass(frozen=True)
+class ViewerDocument:
+    """A portable collection of scenes, using one renderer and payload schema."""
+
+    scenes: tuple[ViewerScene, ...]
+    title: str = "CSPToolbox molecular viewer"
+    schema_version: int = 1

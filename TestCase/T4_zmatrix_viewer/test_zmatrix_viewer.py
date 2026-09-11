@@ -20,7 +20,7 @@ from Source.zmatrix_viewer.geometry import (  # noqa: E402
     measure_dihedral_degrees,
     reconstruct_coordinates,
 )
-from Source.zmatrix_viewer.html_export import render_viewer_html, write_viewer_html  # noqa: E402
+from Source.zmatrix_viewer.html_export import render_viewer_html, write_viewer_html, viewer_payload  # noqa: E402
 
 
 BRANCH_IMPROPER_ROOT = (
@@ -116,12 +116,13 @@ class ZMatrixViewerTests(unittest.TestCase):
         self.assertEqual(4, len(molecule.atoms))
         self.assertEqual(1, len(molecule.dihedrals))
         self.assertEqual(("C4", "C3", "C2", "C1"), molecule.dihedrals[0].atom_labels)
-        self.assertIn('id="moleculeCanvas"', html)
-        self.assertIn("window.__viewerReady = true", html)
+        self.assertTrue('data-role="canvas"' in html)
+        self.assertTrue('root.cspViewer=' in html)
         self.assertIn("labelled butane", html)
         self.assertIn("is-atom-hover", html)
         self.assertIn("function hitTestAtom", html)
-        self.assertIn("function atomHoverDihedrals", html)
+        self.assertEqual('dih4', viewer_payload(molecule)['scenes'][0]['coordinates'][0]['name'])
+        self.assertNotIn('<script src=', html)
 
     def test_cli_writes_standalone_html(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -134,7 +135,7 @@ class ZMatrixViewerTests(unittest.TestCase):
 
             self.assertEqual(0, exit_code)
             self.assertTrue(html_path.is_file())
-            self.assertIn("Dihedral Angles", html_path.read_text(encoding="utf-8"))
+            self.assertTrue("Internal coordinates" in html_path.read_text(encoding="utf-8"))
 
     def test_branch_improper_api_zmatrices_are_viewer_compatible(self) -> None:
         paths = sorted(BRANCH_IMPROPER_ROOT.glob("*.zmat"))

@@ -24,7 +24,7 @@ ELEMENT_SYMBOLS = frozenset(
 def load_zmatrix(path: str | Path) -> ZMatrixDocument:
     """Load a CSPToolbox numeric Z-matrix file."""
 
-    source_path = Path(path)
+    source_path = Path(path).resolve()
     return parse_zmatrix_text(
         source_path.read_text(encoding="utf-8"),
         source_name=str(source_path),
@@ -80,6 +80,10 @@ def parse_zmatrix_text(text: str, *, source_name: str | None = None) -> ZMatrixD
 
     for atom in atoms:
         _validate_atom(atom)
+
+    for left, right in explicit_bonds:
+        if not (1 <= left <= len(atoms) and 1 <= right <= len(atoms)):
+            raise ValueError(f"Explicit bond {left}-{right} references a nonexistent atom (1..{len(atoms)}).")
 
     return ZMatrixDocument(
         title=title,
@@ -223,6 +227,11 @@ def _validate_atom(atom: ZMatrixAtom) -> None:
 
     if atom.bond_length is not None and atom.bond_length <= 0.0:
         raise ValueError(f"Line {atom.line_number}: bond length must be positive.")
+    references = [r for r in (atom.bond_to, atom.angle_to, atom.dihedral_to) if r is not None]
+    if len(set(references)) != len(references):
+        raise ValueError(f"Line {atom.line_number}: coordinate references must be distinct.")
+    if atom.angle_degrees is not None and not 0.0 <= atom.angle_degrees <= 180.0:
+        raise ValueError(f"Line {atom.line_number}: angle must be between 0 and 180 degrees.")
 
 
 def _parse_bonds_comment(comment: str, line_number: int) -> set[tuple[int, int]]:
@@ -263,4 +272,3 @@ def _looks_int(value: str) -> bool:
     except ValueError:
         return False
     return True
-

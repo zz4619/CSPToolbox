@@ -1,0 +1,33 @@
+<section class="csp-viewer" id="__ROOT_ID__" aria-label="CSPToolbox molecular viewer">
+  <style>__VIEWER_CSS__</style>
+  <p data-role="loading" role="status">Loading the viewer… If it does not start, open the standalone HTML file in a browser with JavaScript enabled.</p>
+  <header class="csp-header">
+    <div><h2 data-role="title">CSPToolbox</h2><p data-role="subtitle"></p></div>
+    <label data-role="scene-control" hidden>Structure <select data-role="scene" aria-label="Structure"></select></label>
+  </header>
+  <div class="csp-tools">
+    <button type="button" data-action="reset">Reset view</button>
+    <button type="button" data-action="clear">Clear selection</button>
+    <label><input type="checkbox" data-role="labels" checked> Atom labels</label>
+    <label><input type="checkbox" data-role="hydrogens" checked> Hydrogens</label>
+    <label data-role="reference-control" hidden><input type="checkbox" data-role="reference" checked> Reference</label>
+    <label data-role="cell-control" hidden>Cell <select data-role="cell" aria-label="Cell display"><option value="asu">Asymmetric unit</option><option value="full">Full cell</option></select></label>
+  </div>
+  <div class="csp-layout">
+    <div class="csp-stage">
+      <canvas data-role="canvas" role="img" tabindex="0" aria-label="Molecular structure. Drag or use arrow keys to rotate; scroll or use plus and minus to zoom."></canvas>
+      <div class="csp-legend" data-role="legend"></div>
+    </div>
+    <aside class="csp-sidebar" aria-label="Coordinates and atom mapping">
+      <div class="csp-sidebar-header"><h3>Internal coordinates</h3><select data-role="filter" aria-label="Coordinate filter"><option value="independent">Independent DoFs</option><option value="dihedrals">All dihedrals</option><option value="all">All coordinates</option></select></div>
+      <div data-role="detail" class="csp-detail" aria-live="polite"></div>
+      <div data-role="coordinates" class="csp-coordinate-list"></div>
+      <details data-role="mapping-control" hidden><summary>Atom mapping</summary><div data-role="mapping" class="csp-mapping"></div></details>
+      <button type="button" data-action="download-zmatrix" hidden>Save mapped Z-matrix</button>
+    </aside>
+  </div>
+  <footer><span data-role="status" aria-live="polite"></span><p data-role="notices"></p></footer>
+  <p data-role="error" class="csp-error" role="alert" hidden></p>
+  <script type="application/json" data-role="data">__PAYLOAD__</script>
+  <script>(() => { const rootId = "__ROOT_ID__"; __VIEWER_JS__ })();</script>
+</section>
