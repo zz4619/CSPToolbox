@@ -116,6 +116,9 @@ Older personal workflow scripts from `CSP-personal/2_VASP` were archived in:
 The [water Z′=16 symmetry study](TestCase/T8_water_symmetry_20260914/README.md)
 exercises the existing reduction APIs against independent PLATON checks, with
 native-coordinate validation and explicit hydrogen/tolerance limitations.
+The [all-return Z′=4 PLATON study](TestCase/T9_z4_platon_20260914/README.md)
+adds batch checks for Ice and nicotinamide with source-setting validation and
+separate treatment of failed minimizations.
 
 Install in editable mode from the repository root:
 

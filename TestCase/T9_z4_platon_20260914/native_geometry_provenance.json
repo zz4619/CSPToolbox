@@ -1,0 +1,6 @@
+{
+  "source_path": "/Users/zianzhan/Desktop/CSP_sandbox/CSPImperial_high_z_analysis/tools/speed/high_z_20260914/scientific_geometry.py",
+  "source_sha256": "fd284701202459e8b95406e00787cdce28354f9d6dfbfecee03456a3b67b5f44",
+  "copied_without_modification": true,
+  "purpose": "Frozen native export parser and SG-consistent expansion validator; parent scientific analysis owns the original."
+}

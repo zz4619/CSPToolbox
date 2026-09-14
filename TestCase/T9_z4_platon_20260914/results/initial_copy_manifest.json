@@ -1,0 +1,80 @@
+[
+  {
+    "source": "/rds/general/user/zz4619/home/CSP_studies/cp2_high_z_scientific_20260914/native_export/export.x",
+    "path": "software/export.x",
+    "sha256": "9fda19499308009a01637f315a58c49167e3fe495c1e0d9e9874e7c75a697c2f",
+    "bytes": 6496320
+  },
+  {
+    "source": "/rds/general/user/zz4619/home/CSP_studies/cp2_high_z_scientific_20260914/native_export/export_driver.f90",
+    "path": "software/export_driver.f90",
+    "sha256": "671415895f83102d425ef26bfa2d11b7d2fad09a5e859fd4da576b0bc3fbe6c7",
+    "bytes": 44421
+  },
+  {
+    "source": "/rds/general/user/zz4619/home/CSP_studies/cp2_high_z_scientific_20260914/native_export/build_command.json",
+    "path": "software/build_command.json",
+    "sha256": "4922055eab4535343db200129871a49b6c08796a3aecb1200da1b99de6a377a2",
+    "bytes": 8104
+  },
+  {
+    "source": "/rds/general/user/zz4619/home/CSP_studies/water_z16_symmetry_20260914/software/platon/platon",
+    "path": "software/platon",
+    "sha256": "345d119365a4d29b1210ebcdf9634e11068fcab91a44cfdc0e91bbab17c49fdb",
+    "bytes": 4494872
+  },
+  {
+    "source": "/rds/general/user/zz4619/home/CSP_studies/cp2_high_z_scientific_20260914/Ice_Z4/input.in",
+    "path": "inputs/Ice_Z4/input.in",
+    "sha256": "fd9d958d0a444d80cf5d6fedef6f0f99d2129c7c1fbce8f4bae17ecc6fbd2526",
+    "bytes": 724
+  },
+  {
+    "source": "/rds/general/user/zz4619/home/CSP_studies/cp2_high_z_scientific_20260914/Ice_Z4/potential.in",
+    "path": "inputs/Ice_Z4/potential.in",
+    "sha256": "14f5c933d133d5bd401b04e7d254cad6bfb397235298abc257db3702f321aa33",
+    "bytes": 5092
+  },
+  {
+    "source": "/rds/general/user/zz4619/home/CSP_studies/cp2_high_z_scientific_20260914/Ice_Z4/rigid_lam_intra",
+    "path": "inputs/Ice_Z4/rigid_lam_intra",
+    "sha256": "a18c2460300c0c2f6f35604bc86e88694a99aacbf080d16ca73b7d39804afa1f",
+    "bytes": 391
+  },
+  {
+    "source": "/rds/general/user/zz4619/home/CSP_studies/cp2_high_z_scientific_20260914/Ice_Z4/records.json",
+    "path": "inputs/Ice_Z4/records.json",
+    "sha256": "a0490121e07823c2b2d2ea5a877309793d56007b07761c179c9339458e6946b6",
+    "bytes": 7291246
+  },
+  {
+    "source": "/rds/general/user/zz4619/home/CSP_studies/cp2_high_z_scientific_20260914/Nicotinamide_Z4/input.in",
+    "path": "inputs/Nicotinamide_Z4/input.in",
+    "sha256": "267b27da3641544b9cc1347967afffe26e75b9afe66dece3b4ac9e6303e4ecdf",
+    "bytes": 776
+  },
+  {
+    "source": "/rds/general/user/zz4619/home/CSP_studies/cp2_high_z_scientific_20260914/Nicotinamide_Z4/potential.in",
+    "path": "inputs/Nicotinamide_Z4/potential.in",
+    "sha256": "14f5c933d133d5bd401b04e7d254cad6bfb397235298abc257db3702f321aa33",
+    "bytes": 5092
+  },
+  {
+    "source": "/rds/general/user/zz4619/home/CSP_studies/cp2_high_z_scientific_20260914/Nicotinamide_Z4/flexible_lam_intra",
+    "path": "inputs/Nicotinamide_Z4/flexible_lam_intra",
+    "sha256": "494821de3f401c08dff0ae99caee06a64e89259a02e16058883845670ad7f940",
+    "bytes": 7379651
+  },
+  {
+    "source": "/rds/general/user/zz4619/home/CSP_studies/cp2_high_z_scientific_20260914/Nicotinamide_Z4/Zmatrix",
+    "path": "inputs/Nicotinamide_Z4/Zmatrix",
+    "sha256": "e0def6bbe0ad9fa9866f9f8e95e7f355dea9eb418168a754fc627f99f90c979f",
+    "bytes": 378
+  },
+  {
+    "source": "/rds/general/user/zz4619/home/CSP_studies/cp2_high_z_scientific_20260914/Nicotinamide_Z4/records.json",
+    "path": "inputs/Nicotinamide_Z4/records.json",
+    "sha256": "3d2504edf12b75bbaa3f233d6ff8f6b9cfc9143eed90468d8d1c2772fd2c827e",
+    "bytes": 9547885
+  }
+]

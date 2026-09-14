@@ -1,0 +1,10 @@
+{
+  "job_id": "4056251.pbs-7",
+  "study_on_cx3": "$HOME/CSP_studies/z4_platon_20260914",
+  "workers": 32,
+  "walltime": "01:00:00",
+  "memory": "64gb",
+  "expected_terminal_structures": 20000,
+  "expected_platon_checks": 120000,
+  "scientific_result_status": "pending"
+}

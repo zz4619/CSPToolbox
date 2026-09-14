@@ -1,0 +1,8 @@
+{
+  "original_driver_sha256": "671415895f83102d425ef26bfa2d11b7d2fad09a5e859fd4da576b0bc3fbe6c7",
+  "fixed_driver_sha256": "ed4fedd91e5a92ddd13144f16044b1c0982a261b1abbe4e61bfdc46d8dc8c51d",
+  "original_binary_sha256": "9fda19499308009a01637f315a58c49167e3fe495c1e0d9e9874e7c75a697c2f",
+  "fixed_binary_sha256": "be4da3dd7f10f5363b3b6d479cb960ded742390354986322c768093d808a6727",
+  "scientific_source_modified": false,
+  "correction": "Use unique run-specific SpaceList setting, not last SpaceSupported numeric match"
+}

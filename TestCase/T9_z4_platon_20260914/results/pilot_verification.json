@@ -1,0 +1,92 @@
+{
+  "Ice_Z4": {
+    "records": 28,
+    "checks": 168,
+    "all_exported": true,
+    "all_checked": true,
+    "native_groups": [
+      1,
+      2,
+      4,
+      5,
+      7,
+      9,
+      13,
+      14,
+      15,
+      18,
+      19,
+      20,
+      29,
+      33,
+      43,
+      56,
+      60,
+      61,
+      76,
+      86,
+      88,
+      96,
+      145,
+      148,
+      152,
+      169
+    ],
+    "native_status_counts": {
+      "0": 26,
+      "6": 1,
+      "-1": 1
+    },
+    "maximum_expansion_error_a": 8.031766357121556e-15,
+    "maximum_metric_relative_error": 4.045708345478658e-15
+  },
+  "Nicotinamide_Z4": {
+    "records": 31,
+    "checks": 186,
+    "all_exported": true,
+    "all_checked": true,
+    "native_groups": [
+      1,
+      2,
+      4,
+      5,
+      7,
+      9,
+      13,
+      14,
+      15,
+      18,
+      19,
+      20,
+      29,
+      33,
+      43,
+      56,
+      60,
+      61,
+      76,
+      86,
+      88,
+      96,
+      145,
+      148,
+      152,
+      169
+    ],
+    "native_status_counts": {
+      "0": 26,
+      "6": 1,
+      "4": 1,
+      "-5": 1,
+      "-4": 1,
+      "-2": 1
+    },
+    "maximum_expansion_error_a": 7.851939153761386e-14,
+    "maximum_metric_relative_error": 4.5984283792451946e-15
+  },
+  "archive": {
+    "name": "corrected_pilot_evidence.tar.gz",
+    "sha256": "fa01a384a4272b8e43d21d1b5fe32f08eacaa86abec80861ff85c1afd3bca741",
+    "bytes": 25276594
+  }
+}

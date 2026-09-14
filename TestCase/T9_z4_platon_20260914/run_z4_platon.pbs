@@ -1,0 +1,18 @@
+#!/bin/bash
+#PBS -N cp2_z4_platon
+#PBS -l walltime=01:00:00
+#PBS -l select=1:ncpus=32:mem=64gb
+#PBS -j oe
+set -eo pipefail
+cd "$PBS_O_WORKDIR"
+trap 'status=$?; printf "%s\n" "$status" > job_exit_status.txt' EXIT
+source /etc/profile > environment.log 2>&1
+source "$HOME/load_CSP_env.sh" >> environment.log 2>&1
+module load CSD/2025.3.1 >> environment.log 2>&1
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+export CSP_TIMING=0 CP2_SCREEN_PROFILE=0
+api_python="$CSDHOME/ccdc-software/csd-python-api/miniconda/bin/python"
+date -u
+hostname
+"$api_python" scripts/run_batch.py --study "$PWD" --workers 32 > progress.jsonl 2> batch.stderr
+date -u

@@ -1,0 +1,40 @@
+{
+  "method": "spglib on original full O/H coordinates at symprec 0.05 A",
+  "spglib_version": "2.7.0",
+  "source_archive_sha256": "fa01a384a4272b8e43d21d1b5fe32f08eacaa86abec80861ff85c1afd3bca741",
+  "checks": [
+    {
+      "row": 4,
+      "status": 0,
+      "platon_group": 33,
+      "spglib_group": 33,
+      "spglib_symbol": "Pna2_1",
+      "symmetry_operations_in_original_cell": 8,
+      "molecules_in_original_cell": 8,
+      "geometric_zprime": 1.0,
+      "platon_geometric_zprime": 1.0
+    },
+    {
+      "row": 49,
+      "status": 6,
+      "platon_group": 9,
+      "spglib_group": 9,
+      "spglib_symbol": "Cc",
+      "symmetry_operations_in_original_cell": 2,
+      "molecules_in_original_cell": 4,
+      "geometric_zprime": 2.0,
+      "platon_geometric_zprime": 2.0
+    },
+    {
+      "row": 287,
+      "status": -1,
+      "platon_group": 4,
+      "spglib_group": 4,
+      "spglib_symbol": "P2_1",
+      "symmetry_operations_in_original_cell": 4,
+      "molecules_in_original_cell": 4,
+      "geometric_zprime": 1.0,
+      "platon_geometric_zprime": 1.0
+    }
+  ]
+}
