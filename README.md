@@ -119,6 +119,9 @@ native-coordinate validation and explicit hydrogen/tolerance limitations.
 The [all-return Z′=4 PLATON study](TestCase/T9_z4_platon_20260914/README.md)
 adds batch checks for Ice and nicotinamide with source-setting validation and
 separate treatment of failed minimizations.
+Its [session report](TestCase/T9_z4_platon_20260914/SESSION_REPORT.md) records
+completed findings; the [result-check TODO](TestCase/T9_z4_platon_20260914/TODO.md)
+contains the remaining full-batch collection and validation steps.
 
 Install in editable mode from the repository root:
 

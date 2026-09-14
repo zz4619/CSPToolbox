@@ -9,8 +9,11 @@ minimize, alter the archived coordinates, or identify experimental phases.
 The complete batch runs on CX3 as job `4056251.pbs-7`, using 32 independent
 processes and a one-hour allocation. Scientific results will be added after
 checking completeness and any exclusions.
-The thread follow-up `finish-z4-platon-validation` checks every half hour and is
-set to collect, verify and report the complete batch, then pause itself.
+At the session handoff on 14 September 2026, the job was still queued for CPUs.
+The thread follow-up `finish-z4-platon-validation` is **paused** because the user
+is closing the session; its saved interval is four hours. The submitted CX3 job
+has not been cancelled. Resume from the [pending result checklist](TODO.md),
+and read the [session report](SESSION_REPORT.md) for completed findings and limits.
 
 ## Geometry and settings
 
