@@ -1,0 +1,23 @@
+{
+  "download_url": "https://www.platonsoft.nl/xraysoft/Mac-OSX/platon/platon_special.f",
+  "source_sha256": "5a881202ba0114749f56518ce64b6761c13691d335a40b258eff8e65da6d6020",
+  "source_bytes": 6258398,
+  "version_banner": "PLATON-2026; internal version 200626",
+  "source_modified": false,
+  "build_command": "gfortran -O0 -w -o platon platon_special.f",
+  "installed_host": "CX3",
+  "installed_path": "$HOME/CSP_studies/water_z16_symmetry_20260914/software/platon/platon",
+  "compiler": "GNU Fortran (GCC) 8.5.0 20210514 (Red Hat 8.5.0-28)",
+  "executable_sha256": "345d119365a4d29b1210ebcdf9634e11068fcab91a44cfdc0e91bbab17c49fdb",
+  "local_mac_attempt": {
+    "compiler_installed": "Homebrew GCC 16.1.0",
+    "platon_build_completed": false,
+    "reason": "Apple macOS SDK absent; assembler/linker cannot find SDK or libSystem",
+    "stderr_file": "software/platon/build.stderr"
+  },
+  "notes": [
+    "No X11 or graphical frontend required for this official special build.",
+    "PLATON source stays in the external study, not redistributed in this Git branch.",
+    "ADDSYM ignores hydrogens even with EXACT; ordinary O/H results therefore concern the O framework."
+  ]
+}

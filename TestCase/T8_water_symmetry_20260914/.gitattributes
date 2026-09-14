@@ -1,0 +1,5 @@
+# Preserve the checksum-pinned native inputs and generated scientific evidence.
+inputs/* -text
+# Preserve the archived native LAM file byte-for-byte, including its final blank line.
+inputs/rigid_lam_intra whitespace=-blank-at-eof
+results/** -text

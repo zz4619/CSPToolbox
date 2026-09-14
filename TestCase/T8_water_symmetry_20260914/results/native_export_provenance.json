@@ -1,0 +1,9 @@
+{
+  "source_sha256": "9496c46071ba5710fe4f66c0dbe90d015871cac72a1822a14e54cb6a60fd0d65",
+  "driver_sha256": "671415895f83102d425ef26bfa2d11b7d2fad09a5e859fd4da576b0bc3fbe6c7",
+  "scientific_source_modified": false,
+  "minimization_or_clustering": false,
+  "starting_geometry": "native candidate raw torsion differences",
+  "final_geometry": "native weighted geometry with minimizer angdif2 periodic differences",
+  "precision": "reconstruction of rounded native pose records; not a full-precision trajectory"
+}

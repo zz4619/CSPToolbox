@@ -1,0 +1,644 @@
+[
+  {
+    "name": "inversion_control",
+    "variants": {
+      "full_OH": {
+        "tolerance_a": 0.01,
+        "space_group": "P -1",
+        "space_group_number": 2,
+        "hall_number": 2,
+        "atomic_orbits": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ],
+        "asu_atoms": 24,
+        "asu_element_counts": {
+          "O": 8,
+          "H": 16
+        },
+        "symmetry_operations": [
+          {
+            "rotation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "translation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maximum_distance_a": 0.0,
+            "rms_distance_a": 0.0
+          },
+          {
+            "rotation": [
+              [
+                -1,
+                0,
+                0
+              ],
+              [
+                0,
+                -1,
+                0
+              ],
+              [
+                0,
+                0,
+                -1
+              ]
+            ],
+            "translation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maximum_distance_a": 3.66205343881779e-15,
+            "rms_distance_a": 1.9694075549100145e-15
+          }
+        ],
+        "primitive_atoms": 48,
+        "primitive_volume_a3": 2599.4463826921306,
+        "reduction_roundtrip": {
+          "same_element_counts": true,
+          "maximum_distance_a": 9.870741542026438e-08,
+          "rms_distance_a": 6.902854677989129e-08
+        }
+      },
+      "oxygen_only": {
+        "tolerance_a": 0.01,
+        "space_group": "P -1",
+        "space_group_number": 2,
+        "hall_number": 2,
+        "atomic_orbits": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "asu_atoms": 8,
+        "asu_element_counts": {
+          "O": 8
+        },
+        "symmetry_operations": [
+          {
+            "rotation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "translation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maximum_distance_a": 0.0,
+            "rms_distance_a": 0.0
+          },
+          {
+            "rotation": [
+              [
+                -1,
+                0,
+                0
+              ],
+              [
+                0,
+                -1,
+                0
+              ],
+              [
+                0,
+                0,
+                -1
+              ]
+            ],
+            "translation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maximum_distance_a": 3.66205343881779e-15,
+            "rms_distance_a": 1.2947314098277875e-15
+          }
+        ],
+        "primitive_atoms": 16,
+        "primitive_volume_a3": 2599.4463826921306,
+        "reduction_roundtrip": {
+          "same_element_counts": true,
+          "maximum_distance_a": 9.54688481942811e-08,
+          "rms_distance_a": 6.797509950140699e-08
+        }
+      },
+      "hydrogen_proxy": {
+        "tolerance_a": 0.01,
+        "space_group": "P -1",
+        "space_group_number": 2,
+        "hall_number": 2,
+        "atomic_orbits": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ],
+        "asu_atoms": 24,
+        "asu_element_counts": {
+          "O": 8,
+          "C": 16
+        },
+        "symmetry_operations": [
+          {
+            "rotation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "translation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maximum_distance_a": 0.0,
+            "rms_distance_a": 0.0
+          },
+          {
+            "rotation": [
+              [
+                -1,
+                0,
+                0
+              ],
+              [
+                0,
+                -1,
+                0
+              ],
+              [
+                0,
+                0,
+                -1
+              ]
+            ],
+            "translation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maximum_distance_a": 3.66205343881779e-15,
+            "rms_distance_a": 1.9694075549100145e-15
+          }
+        ],
+        "primitive_atoms": 48,
+        "primitive_volume_a3": 2599.4463826921306,
+        "reduction_roundtrip": {
+          "same_element_counts": true,
+          "maximum_distance_a": 9.870741542026438e-08,
+          "rms_distance_a": 6.902854677989129e-08
+        }
+      }
+    },
+    "expected_space_group_numbers": {
+      "full_OH": 2,
+      "oxygen_only": 2,
+      "hydrogen_proxy": 2
+    },
+    "oxygen_inversion_applied_to_original_OH": {
+      "maximum_distance_a": 0.0,
+      "rms_distance_a": 0.0
+    }
+  },
+  {
+    "name": "hydrogen_broken_control",
+    "variants": {
+      "full_OH": {
+        "tolerance_a": 0.01,
+        "space_group": "P 1",
+        "space_group_number": 1,
+        "hall_number": 1,
+        "atomic_orbits": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47
+        ],
+        "asu_atoms": 48,
+        "asu_element_counts": {
+          "O": 16,
+          "H": 32
+        },
+        "symmetry_operations": [
+          {
+            "rotation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "translation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maximum_distance_a": 0.0,
+            "rms_distance_a": 0.0
+          }
+        ],
+        "primitive_atoms": 48,
+        "primitive_volume_a3": 2599.4463826921306,
+        "reduction_roundtrip": {
+          "same_element_counts": true,
+          "maximum_distance_a": 9.870741441140076e-08,
+          "rms_distance_a": 6.714661252609033e-08
+        }
+      },
+      "oxygen_only": {
+        "tolerance_a": 0.01,
+        "space_group": "P -1",
+        "space_group_number": 2,
+        "hall_number": 2,
+        "atomic_orbits": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "asu_atoms": 8,
+        "asu_element_counts": {
+          "O": 8
+        },
+        "symmetry_operations": [
+          {
+            "rotation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "translation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maximum_distance_a": 0.0,
+            "rms_distance_a": 0.0
+          },
+          {
+            "rotation": [
+              [
+                -1,
+                0,
+                0
+              ],
+              [
+                0,
+                -1,
+                0
+              ],
+              [
+                0,
+                0,
+                -1
+              ]
+            ],
+            "translation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maximum_distance_a": 3.66205343881779e-15,
+            "rms_distance_a": 1.2947314098277875e-15
+          }
+        ],
+        "primitive_atoms": 16,
+        "primitive_volume_a3": 2599.4463826921306,
+        "reduction_roundtrip": {
+          "same_element_counts": true,
+          "maximum_distance_a": 9.54688481942811e-08,
+          "rms_distance_a": 6.797509950140699e-08
+        }
+      },
+      "hydrogen_proxy": {
+        "tolerance_a": 0.01,
+        "space_group": "P 1",
+        "space_group_number": 1,
+        "hall_number": 1,
+        "atomic_orbits": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47
+        ],
+        "asu_atoms": 48,
+        "asu_element_counts": {
+          "O": 16,
+          "C": 32
+        },
+        "symmetry_operations": [
+          {
+            "rotation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "translation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "maximum_distance_a": 0.0,
+            "rms_distance_a": 0.0
+          }
+        ],
+        "primitive_atoms": 48,
+        "primitive_volume_a3": 2599.4463826921306,
+        "reduction_roundtrip": {
+          "same_element_counts": true,
+          "maximum_distance_a": 9.870741441140076e-08,
+          "rms_distance_a": 6.714661252609033e-08
+        }
+      }
+    },
+    "expected_space_group_numbers": {
+      "full_OH": 1,
+      "oxygen_only": 2,
+      "hydrogen_proxy": 1
+    },
+    "oxygen_inversion_applied_to_original_OH": {
+      "maximum_distance_a": 0.9518648533519984,
+      "rms_distance_a": 0.23961176201029347
+    }
+  }
+]

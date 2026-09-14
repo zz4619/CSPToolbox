@@ -1,0 +1,2148 @@
+{
+  "schema": 1,
+  "platon_sha256": "345d119365a4d29b1210ebcdf9634e11068fcab91a44cfdc0e91bbab17c49fdb",
+  "runs": [
+    {
+      "name": "hydrogen_broken_control__full_OH__0.01__0.001",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.11141388805117458,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__0.01__0.005",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05824073601979762,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__0.01__0.01",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04646993393544108,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__0.01__0.02",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.049351549008861184,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__0.01__0.05",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.056183430016972125,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__0.01__0.1",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05104898998979479,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__0.01__0.2",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05324545199982822,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__0.1__0.001",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05529712594579905,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__0.1__0.005",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05584718694444746,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__0.1__0.01",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.06081725005060434,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__0.1__0.02",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05153040890581906,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__0.1__0.05",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04859890206716955,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__0.1__0.1",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05374603404197842,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__0.1__0.2",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.06058662408031523,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__1.0__0.001",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.055097363074310124,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__1.0__0.005",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05162398098036647,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__1.0__0.01",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05946582101751119,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__1.0__0.02",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04397488501854241,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__1.0__0.05",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05131709494162351,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__1.0__0.1",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.049419798073358834,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__full_OH__1.0__0.2",
+      "structure": "hydrogen_broken_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.056391919031739235,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "111b83bfe5ed59351dd15dc4d9de38219c8d801e579c8a388de950bde43000f5"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__0.01__0.001",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.027382939006201923,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__0.01__0.005",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.022176965954713523,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__0.01__0.01",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.02166548208333552,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__0.01__0.02",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.02047204098198563,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__0.01__0.05",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05924307694658637,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__0.01__0.1",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.018454815028235316,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__0.01__0.2",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.024355984991416335,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__0.1__0.001",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.023454652982763946,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__0.1__0.005",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.02377502096351236,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__0.1__0.01",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.026736504049040377,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__0.1__0.02",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.028328966931439936,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__0.1__0.05",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.022346116951666772,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__0.1__0.1",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.018711289041675627,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__0.1__0.2",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.02139992592856288,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__1.0__0.001",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.02526884898543358,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__1.0__0.005",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.025910930009558797,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__1.0__0.01",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.036086738924495876,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__1.0__0.02",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.02467262197751552,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__1.0__0.05",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.024008902022615075,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__1.0__0.1",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.028767673997208476,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__hydrogen_proxy__1.0__0.2",
+      "structure": "hydrogen_broken_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.0229137500282377,
+      "space_group": "P1",
+      "included_atoms": 48,
+      "source_sha256": "9b221fd540bffa2cc5a0fa105333e2bd30ca7e6e7fefe771ca96c3122c2adf66"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__0.01__0.001",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04339286498725414,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__0.01__0.005",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.038519190973602235,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__0.01__0.01",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.03346033103298396,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__0.01__0.02",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.03622018196620047,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__0.01__0.05",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.031059835921041667,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__0.01__0.1",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.034592024981975555,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__0.01__0.2",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04257712105754763,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__0.1__0.001",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04061486502178013,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__0.1__0.005",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.043095225002616644,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__0.1__0.01",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.032615019008517265,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__0.1__0.02",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.031155206030234694,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__0.1__0.05",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.03681583295110613,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__0.1__0.1",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.036850729025900364,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__0.1__0.2",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.037042364943772554,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__1.0__0.001",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.03873034298885614,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__1.0__0.005",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.055873651057481766,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__1.0__0.01",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05398670304566622,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__1.0__0.02",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.07497589604463428,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__1.0__0.05",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05800042499322444,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__1.0__0.1",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.0419085860485211,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "hydrogen_broken_control__oxygen_only__1.0__0.2",
+      "structure": "hydrogen_broken_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04640416195616126,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "060d44992f30d10bffba0ad7ff4c36929fc78d56ade11c542b3f3a99a03e6ab7"
+    },
+    {
+      "name": "inversion_control__full_OH__0.01__0.001",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.053356004995293915,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__0.01__0.005",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.0410486850887537,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__0.01__0.01",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.057794147985987365,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__0.01__0.02",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.06090839998796582,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__0.01__0.05",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.07505387405399233,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__0.01__0.1",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.06492781604174525,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__0.01__0.2",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.06466409901622683,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__0.1__0.001",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.0597773720510304,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__0.1__0.005",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.07526263000909239,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__0.1__0.01",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04938365600537509,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__0.1__0.02",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.0507886849809438,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__0.1__0.05",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05962842598091811,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__0.1__0.1",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05204996792599559,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__0.1__0.2",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05079569306690246,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__1.0__0.001",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05000323604326695,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__1.0__0.005",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.0528917380142957,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__1.0__0.01",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.0541411949088797,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__1.0__0.02",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.0578075140947476,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__1.0__0.05",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.049685847014188766,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__1.0__0.1",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05205475399270654,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__full_OH__1.0__0.2",
+      "structure": "inversion_control",
+      "variant": "full_OH",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.06010225403588265,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "62c2ea34075e08a282f0a4b6a15633fb335c68250de28646225989ad26462f61"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__0.01__0.001",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.060433696024119854,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__0.01__0.005",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.06343394995201379,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__0.01__0.01",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.06841254094615579,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__0.01__0.02",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.06721336103510112,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__0.01__0.05",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.06160464102867991,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__0.01__0.1",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.06535340507980436,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__0.01__0.2",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.060851436108350754,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__0.1__0.001",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.10479318804573268,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__0.1__0.005",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05193854100070894,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__0.1__0.01",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05805494706146419,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__0.1__0.02",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.0555075800511986,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__0.1__0.05",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05948027002159506,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__0.1__0.1",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.06355282990261912,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__0.1__0.2",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.0637374249054119,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__1.0__0.001",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05543333396781236,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__1.0__0.005",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.07181736594066024,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__1.0__0.01",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05874029197730124,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__1.0__0.02",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05207432899624109,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__1.0__0.05",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.06025482201948762,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__1.0__0.1",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04942699405364692,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__hydrogen_proxy__1.0__0.2",
+      "structure": "inversion_control",
+      "variant": "hydrogen_proxy",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.06814129801932722,
+      "space_group": "P-1",
+      "included_atoms": 48,
+      "source_sha256": "6a781fcc67e806cec1218d4a5c1787b8405841742d0544f62e35e59348d642e4"
+    },
+    {
+      "name": "inversion_control__oxygen_only__0.01__0.001",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04413816099986434,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__0.01__0.005",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.03258322109468281,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__0.01__0.01",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.044052378041669726,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__0.01__0.02",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.0310673889471218,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__0.01__0.05",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.045658671064302325,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__0.01__0.1",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.036116185947321355,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__0.01__0.2",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.01,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.03198876592796296,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__0.1__0.001",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.0612082559382543,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__0.1__0.005",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.045661309035494924,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__0.1__0.01",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04080358298961073,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__0.1__0.02",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.043674938031472266,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__0.1__0.05",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04522858001291752,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__0.1__0.1",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04223382705822587,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__0.1__0.2",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 0.1,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.040460912976413965,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__1.0__0.001",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.05219375295564532,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__1.0__0.005",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.005,
+        0.005,
+        0.005
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04769960802514106,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__1.0__0.01",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04104114102665335,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__1.0__0.02",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.03787937306333333,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__1.0__0.05",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.11328884609974921,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__1.0__0.1",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.04140040103811771,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    },
+    {
+      "name": "inversion_control__oxygen_only__1.0__0.2",
+      "structure": "inversion_control",
+      "variant": "oxygen_only",
+      "angle_tolerance_deg": 1.0,
+      "distance_tolerances_a": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "process_exit": 0,
+      "checked": true,
+      "wall_s": 0.03972674498800188,
+      "space_group": "P-1",
+      "included_atoms": 16,
+      "source_sha256": "0764c189484ff7af93df8c9ca94b8a35684c585b9bb30e0c1e32080484db4db2"
+    }
+  ]
+}

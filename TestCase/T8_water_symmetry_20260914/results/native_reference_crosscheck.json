@@ -1,0 +1,24 @@
+{
+  "reference_sha256": "aea7f74b3fc1f8c736797b6ce8019ce96375cde915332d9370cdc07b22da1abe",
+  "all_checked": true,
+  "comparisons": [
+    {
+      "native_sample_id": 118,
+      "native_rank": 14,
+      "start_row": 2,
+      "max_parameter_rounding": 4.984274157848745e-07,
+      "maximum_cell_difference_a": 2.220446049250313e-16,
+      "maximum_atom_error_a": 2.6645352591003757e-15,
+      "printed_start_maximum_atom_error_a": 6.929733768731911e-06
+    },
+    {
+      "native_sample_id": 190,
+      "native_rank": 21,
+      "start_row": 1,
+      "max_parameter_rounding": 4.989885247219661e-07,
+      "maximum_cell_difference_a": 1.7763568394002505e-15,
+      "maximum_atom_error_a": 4.440892098500626e-15,
+      "printed_start_maximum_atom_error_a": 8.68183050960014e-06
+    }
+  ]
+}

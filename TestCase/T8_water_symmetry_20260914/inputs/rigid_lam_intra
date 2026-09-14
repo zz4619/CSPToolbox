@@ -1,0 +1,21 @@
+Intramolecular energy/gradients/hessian/charges for:
+
+H2O rigid reference from login_20260911T114403Z
+
+Generated at level of theory:
+
+PBE1PBE/6-311G(d,p)
+
+Across 0 dimensional grid:
+
+      start  interval finish
+
+Constraints: 0
+From starting Z-matrix:
+O1  1  -0.750476921
+H2  2  0.375296925  1 bnd2
+H2  3  0.375179996  1 bnd3  2 ang3
+bnd2 0.9584061026
+bnd3 0.9584061364
+ang3 103.7577610232
+

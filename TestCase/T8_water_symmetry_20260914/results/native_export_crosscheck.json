@@ -1,0 +1,75 @@
+{
+  "reference_sha256": "98630f0067ca9ea9f77a2027acbb11c7c7d717ef0595b0b20c8a8593c7909652",
+  "native_export_source_sha256": "4b796a6226f27dfa3b3cafc441f45c277fcbbd30557156d220445ab4f2e8dc3e",
+  "all_checked": true,
+  "alignment": false,
+  "asu_periodic_wrapping": false,
+  "full_cell_check": "integer lattice translation only",
+  "atom_permutation": false,
+  "comparisons": [
+    {
+      "row": 1,
+      "state": "start",
+      "atoms": 48,
+      "maximum_asu_cartesian_component_error_a": 2.6645352591003757e-15,
+      "maximum_cell_component_error_a": 1.7763568394002505e-15,
+      "maximum_full_cell_periodic_atom_error_a": 2.886579864025407e-15
+    },
+    {
+      "row": 1,
+      "state": "final",
+      "atoms": 48,
+      "maximum_asu_cartesian_component_error_a": 2.220446049250313e-15,
+      "maximum_cell_component_error_a": 8.881784197001252e-16,
+      "maximum_full_cell_periodic_atom_error_a": 3.5025316579191205e-15
+    },
+    {
+      "row": 2,
+      "state": "start",
+      "atoms": 48,
+      "maximum_asu_cartesian_component_error_a": 1.7763568394002505e-15,
+      "maximum_cell_component_error_a": 0.0,
+      "maximum_full_cell_periodic_atom_error_a": 3.076740298213702e-15
+    },
+    {
+      "row": 2,
+      "state": "final",
+      "atoms": 48,
+      "maximum_asu_cartesian_component_error_a": 3.552713678800501e-15,
+      "maximum_cell_component_error_a": 0.0,
+      "maximum_full_cell_periodic_atom_error_a": 6.3851862155760505e-15
+    },
+    {
+      "row": 3,
+      "state": "start",
+      "atoms": 48,
+      "maximum_asu_cartesian_component_error_a": 1.7763568394002505e-15,
+      "maximum_cell_component_error_a": 8.881784197001252e-16,
+      "maximum_full_cell_periodic_atom_error_a": 2.5219419200973697e-15
+    },
+    {
+      "row": 3,
+      "state": "final",
+      "atoms": 48,
+      "maximum_asu_cartesian_component_error_a": 3.552713678800501e-15,
+      "maximum_cell_component_error_a": 0.0,
+      "maximum_full_cell_periodic_atom_error_a": 4.334599453019702e-15
+    },
+    {
+      "row": 4,
+      "state": "start",
+      "atoms": 48,
+      "maximum_asu_cartesian_component_error_a": 3.552713678800501e-15,
+      "maximum_cell_component_error_a": 8.881784197001252e-16,
+      "maximum_full_cell_periodic_atom_error_a": 4.189529226675416e-15
+    },
+    {
+      "row": 4,
+      "state": "final",
+      "atoms": 48,
+      "maximum_asu_cartesian_component_error_a": 4.440892098500626e-15,
+      "maximum_cell_component_error_a": 1.7763568394002505e-15,
+      "maximum_full_cell_periodic_atom_error_a": 7.336361679204213e-15
+    }
+  ]
+}

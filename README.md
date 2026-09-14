@@ -113,6 +113,10 @@ Older personal workflow scripts from `CSP-personal/2_VASP` were archived in:
 
 ## Development
 
+The [water Z′=16 symmetry study](TestCase/T8_water_symmetry_20260914/README.md)
+exercises the existing reduction APIs against independent PLATON checks, with
+native-coordinate validation and explicit hydrogen/tolerance limitations.
+
 Install in editable mode from the repository root:
 
 ```bash
