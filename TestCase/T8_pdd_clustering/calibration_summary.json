@@ -1,0 +1,100 @@
+{
+  "study_date": "2026-09-22",
+  "system": "Nicotinamide Zprime4, 26 space groups",
+  "natural_structures": 283,
+  "real_reference_pairs": 5213,
+  "natural_positive_pairs": 1,
+  "settings": {
+    "threshold": 0.2,
+    "energy_tolerance": 1.0,
+    "density_tolerance": 20.0,
+    "index_dimensions": 8,
+    "block_size": 64,
+    "numeric_slack": 1e-10
+  },
+  "descriptor_k": 100,
+  "final_confirmation": "CCDC API3.6.1,15 matched molecules,RMSD<0.20 A",
+  "reference_clusters": 282,
+  "indexed_clusters": 282,
+  "identical_assignments": true,
+  "indexed_statistics": {
+    "structures": 283,
+    "index_candidates": 5214,
+    "amd_checks": 5214,
+    "eligibility_passes": 5213,
+    "emd_calls": 5213,
+    "confirmation_calls": 6,
+    "exhaustive_representatives": 39646,
+    "elapsed_s": 5.0677665180992335,
+    "index_builds": 4
+  },
+  "native_export": {
+    "wall_s": 59.77,
+    "cpu_user_s": 46.24,
+    "peak_rss_kib": 694736
+  },
+  "reference_initial": {
+    "wall_s": 600.02,
+    "cpu_user_s": 570.49,
+    "peak_rss_kib": 200708
+  },
+  "reference_continuation": {
+    "wall_s": 113.84,
+    "cpu_user_s": 101.59,
+    "peak_rss_kib": 194876
+  },
+  "indexed_process": {
+    "wall_s": 22.9,
+    "cpu_user_s": 5.82,
+    "peak_rss_kib": 238936
+  },
+  "indexed_application_total_s": 14.152373310178518,
+  "indexed_descriptor_cache_load_s": 1.1872969372197986,
+  "local_initial_descriptor_build_and_import_s": 38.402264959178865,
+  "controls": {
+    "families": 16,
+    "pairs": 64,
+    "calibration_families": 8,
+    "validation_families": 8,
+    "calibration_at_020": {
+      "threshold": 0.2,
+      "true_positive": 24,
+      "false_merge": 0,
+      "missed_duplicate": 0,
+      "true_negative": 8,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "validation_at_020": {
+      "threshold": 0.2,
+      "true_positive": 24,
+      "false_merge": 0,
+      "missed_duplicate": 0,
+      "true_negative": 8,
+      "precision": 1.0,
+      "recall": 1.0
+    }
+  },
+  "pdd_only_natural_at_020": {
+    "threshold": 0.2,
+    "true_positive": 1,
+    "false_merge": 5,
+    "missed_duplicate": 0,
+    "true_negative": 5207,
+    "precision": 0.16666666666666666,
+    "recall": 1.0
+  },
+  "threshold_selection": "Smallest grid point in [0.03,0.05,0.055,0.06,0.075,0.10,0.125,0.15,0.175,0.20] retaining all controlled calibration positives; use ONLY as a COMPACK prefilter.",
+  "limits": [
+    "Only one natural duplicate; controlled perturbations are not independent minimized structures.",
+    "Original 200000-record job received SIGTERM; last native record139370, no final clustering.",
+    "Reference small run is the original script, continued from record234 with an adapted copied restart log after a600s timeout; original source and logs preserved.",
+    "CX3 cached comparison timing excludes descriptor generation, done locally using existing dependencies.",
+    "Raw CP2 geometry export still uses native Analyse; this is not a measured full pipeline replacement."
+  ],
+  "reference_active_wall_s": 713.86,
+  "final_run": "indexed_compack_final.json",
+  "input_identity": "5b3769a48b639a02eb09022c6187e692829690c55897e0f59f5d9e777a5f191b",
+  "reference_script_sha256": "a0537108be1231e431a4b474c23350007dec3445021fa525a54b15d616f14e3a",
+  "native_analyse_sha256": "54078123ae106902e2e607d1682a34830067189c186175ca72fcc18262a9c70c"
+}

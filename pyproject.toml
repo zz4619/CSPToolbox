@@ -24,6 +24,7 @@ dependencies = [
 ccdc = []
 
 [project.scripts]
+csp-cluster-pdd = "Source.CLI_scripts.cluster_pdd:main"
 csp-write-expanded-cifs = "Source.CLI_scripts.write_expanded_cifs:main"
 csp-vasp-cif-inputs = "Source.CLI_scripts.generate_vasp_inputs_from_cif_priority:main"
 csp-vasp-pbe0-inputs = "Source.CLI_scripts.generate_pbe0_vasp_inputs_from_latest_contcar:main"

@@ -17,12 +17,24 @@ The importable modules live under `Source/`:
 - `mie_typing.py`: FIT/Mie atom typing, inter-spec parsing, and validation.
 - `pdd_descriptor.py`: pointwise distance distribution descriptors and distance
   comparisons.
+- `pdd_clustering.py`: exact AMD indexing, PDD filtering and optional COMPACK
+  confirmation; see [the clustering guide](docs/PDD_CLUSTERING.md) for calibration,
+  cache provenance, scientific limits and the `csp-cluster-pdd` command.
+- `pdd_clustering_parallel.py`: checkpointed batch clustering of uniform-row PDD
+  array datasets, retaining the serial energy/identifier ordering.
 - `vasp_input.py`: VASP input builders for CIF and CONTCAR sources, including
   TPSS/PBE0 presets and default INCAR template paths.
 - `vasp_results.py`: VASP result parsing for `vasp.out`, `OUTCAR`, `CONTCAR`,
   calculation health/status classification, and system summaries.
 - `vasp_file_manifest.py`: reusable file manifest and tarball helpers for
   collecting selected VASP output files.
+
+
+For the distinction between landscape clustering and experimental matching,
+read the [PDD → RMSD20 workflow](docs/PDD_RMSD20_WORKFLOW.md). It documents the
+H-excluded screening settings, exact RMSD20 acceptance criteria, completed
+calibration and remaining recall checks. The CLI's optional `--compack` uses
+historical RMSD15 defaults and is not the RMSD20 study workflow.
 
 `Source/__init__.py` lazily exports the main classes and functions so lightweight
 tools can import CSPToolbox without immediately importing the full scientific
@@ -62,6 +74,7 @@ Installed console commands defined in `pyproject.toml`:
 - `csp-vasp-pbe0-inputs`
 - `csp-vasp-summary`
 - `csp-vasp-manifest`
+- `csp-cluster-pdd` (AMD lookup, PDD filtering and optional COMPACK confirmation)
 - `csp-zmat-viewer`
 - `csp-view` (the same CLI, including coordinate files, overlays and crystals)
 

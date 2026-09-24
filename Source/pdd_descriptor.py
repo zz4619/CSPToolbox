@@ -2,19 +2,24 @@
 
 from __future__ import annotations
 
-import collections
 from collections import Counter
 from dataclasses import dataclass
-from itertools import combinations, product
+from functools import lru_cache, reduce
+from itertools import product
+from math import gcd
+from typing import TYPE_CHECKING
 
 import numpy as np
-from ase.data import atomic_numbers, chemical_symbols
-from scipy.optimize import linprog
-from scipy.sparse import lil_matrix
+from scipy.optimize import linprog, linear_sum_assignment
+from scipy.sparse import coo_matrix
 from scipy.spatial import KDTree
 from scipy.spatial.distance import cdist, pdist, squareform
 
-from .crystal_structure import CrystalStructure
+if TYPE_CHECKING:
+    from .crystal_structure import CrystalStructure
+
+__all__ = ['PDDDescriptor', 'calculate_pdd', 'calculate_pdd_from_arrays',
+           'pdd_distance', 'pdd_distance_breakdown', 'pdd_descriptor_distance', 'pdd_to_amd']
 
 
 @dataclass(frozen=True)
@@ -45,6 +50,7 @@ def calculate_pdd(
     lexsort: bool = True,
     collapse: bool = True,
     collapse_tol: float = 1e-4,
+    workers: int = 1,
 ) -> PDDDescriptor:
     """Calculate the PDD descriptor for an explicit unit-cell structure."""
 
@@ -56,7 +62,37 @@ def calculate_pdd(
         raise ValueError("k must be at least 1.")
 
     motif, cell, center_numbers = _explicit_structure_to_pdd_input(structure)
-    distances = _nearest_neighbours(motif, cell, k)
+    return calculate_pdd_from_arrays(
+        motif, cell, [atom.element for atom in structure.atoms],
+        source_name=structure.name, k=k, typed=typed, lexsort=lexsort,
+        collapse=collapse, collapse_tol=collapse_tol, workers=workers,
+    )
+
+
+def calculate_pdd_from_arrays(
+    coordinates, cell, elements, *, source_name="CrystalStructure", k=100,
+    typed=True, lexsort=True, collapse=True, collapse_tol=1e-4, workers=1,
+) -> PDDDescriptor:
+    """Describe a FULL periodic cell; Cartesian coordinates and cell rows are in Å.
+
+    This entry point deliberately does not infer or expand space-group symmetry.
+    """
+    from ase.data import atomic_numbers, chemical_symbols
+    motif = np.asarray(coordinates, dtype=float)
+    cell = np.asarray(cell, dtype=float)
+    elements = tuple(elements)
+    if motif.ndim != 2 or motif.shape[1:] != (3,) or not len(motif):
+        raise ValueError("Coordinates must be a nonempty (N, 3) array.")
+    if cell.shape != (3, 3) or not np.all(np.isfinite(cell)) or abs(np.linalg.det(cell)) < 1e-12:
+        raise ValueError("Cell must be finite, nonsingular and 3 by 3.")
+    if not np.all(np.isfinite(motif)) or len(elements) != len(motif):
+        raise ValueError("Coordinates must be finite and match the element count.")
+    if isinstance(k, bool) or int(k) != k or k < 1:
+        raise ValueError("k must be a positive integer.")
+    if not np.isfinite(collapse_tol) or collapse_tol < 0:
+        raise ValueError("collapse_tol must be finite and nonnegative.")
+    center_numbers = np.array([atomic_numbers[e] for e in elements], dtype=int)
+    distances = _nearest_neighbours(motif, cell, int(k), workers=workers)
     weights = np.full((distances.shape[0],), 1.0 / distances.shape[0], dtype=float)
     center_elements = [chemical_symbols[number] for number in center_numbers]
 
@@ -92,7 +128,7 @@ def calculate_pdd(
         center_elements = [center_elements[index] for index in ordering]
 
     return PDDDescriptor(
-        source_name=structure.name,
+        source_name=source_name,
         k=k,
         weights=weights,
         distances=distances,
@@ -101,6 +137,46 @@ def calculate_pdd(
         collapse=collapse,
         collapse_tol=collapse_tol,
     )
+
+
+def _validate_descriptor(descriptor: PDDDescriptor) -> None:
+    w, d = descriptor.weights, descriptor.distances
+    if (w.ndim != 1 or not len(w) or d.shape != (len(w), descriptor.k)
+            or len(descriptor.center_elements) != len(w) or descriptor.k < 1):
+        raise ValueError("Invalid PDD array dimensions.")
+    if (not np.all(np.isfinite(w)) or not np.all(np.isfinite(d))
+            or np.any(w <= 0) or np.any(d < 0)
+            or not np.isclose(w.sum(), 1.0, atol=1e-12, rtol=0)):
+        raise ValueError("PDD needs finite nonnegative distances and positive normalized weights.")
+    if np.any(np.diff(d, axis=1) < -1e-12):
+        raise ValueError("PDD neighbour distances must be sorted within each row.")
+
+
+def pdd_to_amd(descriptor: PDDDescriptor) -> np.ndarray:
+    """Return the weighted column means, including all central elements."""
+    _validate_descriptor(descriptor)
+    return descriptor.weights @ descriptor.distances
+
+
+def pdd_descriptor_distance(a: PDDDescriptor, b: PDDDescriptor, *, metric="chebyshev") -> float:
+    """Compare cached descriptors, allowing equivalent cells of different sizes.
+
+    Typed comparisons require equal ELEMENT FRACTIONS, not equal cell atom counts.
+    Default EMD and AMD distances are in Å. Equal descriptors need not uniquely
+    identify a crystal at finite k; this is a geometric descriptor metric.
+    """
+    _validate_descriptor(a)
+    _validate_descriptor(b)
+    if a.k != b.k or a.typed != b.typed:
+        raise ValueError("PDDs must use the same k and typing mode.")
+    composition = None
+    if a.typed:
+        elements = sorted(set(a.center_elements) | set(b.center_elements))
+        for e in elements:
+            if not np.isclose(a.rows_for_element(e)[0].sum(), b.rows_for_element(e)[0].sum(), atol=1e-12, rtol=0):
+                raise ValueError("Typed PDDs require matching element fractions.")
+        composition = tuple((e, 1) for e in elements)
+    return _pdd_distance_breakdown(a, b, metric=metric, expected_composition=composition)[0]
 
 
 def pdd_distance(
@@ -215,6 +291,7 @@ def _pdd_distance_breakdown(
 def _explicit_structure_to_pdd_input(
     structure: CrystalStructure,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    from ase.data import atomic_numbers
     coordinates = np.array([atom.coordinates for atom in structure.atoms], dtype=float)
     fractional = np.mod(structure.cell.scaled_positions(coordinates), 1.0)
     cell = np.asarray(structure.cell.array, dtype=float)
@@ -230,6 +307,7 @@ def _collapse_typed_pdd_rows(
     *,
     collapse_tol: float,
 ) -> tuple[np.ndarray, np.ndarray, list[str]]:
+    from ase.data import chemical_symbols
     collapsed_weights: list[float] = []
     collapsed_distances: list[np.ndarray] = []
     collapsed_centers: list[str] = []
@@ -305,10 +383,12 @@ def _composition_signature(
 ) -> tuple[tuple[str, int], ...]:
     composition_a = Counter(atom.element for atom in structure_a.atoms)
     composition_b = Counter(atom.element for atom in structure_b.atoms)
-    signature_a = tuple(sorted(composition_a.items()))
-    signature_b = tuple(sorted(composition_b.items()))
+    divisor_a = reduce(gcd, composition_a.values())
+    divisor_b = reduce(gcd, composition_b.values())
+    signature_a = tuple(sorted((e, n // divisor_a) for e, n in composition_a.items()))
+    signature_b = tuple(sorted((e, n // divisor_b) for e, n in composition_b.items()))
     if signature_a != signature_b:
-        raise ValueError("PDD comparison requires matching element counts in the explicit unit cell.")
+        raise ValueError("PDD comparison requires matching element ratios in the explicit unit cell.")
     return signature_a
 
 
@@ -337,82 +417,43 @@ def _collapse_into_groups(overlapping: np.ndarray) -> list[list[int]]:
     return groups
 
 
-def _distance_squared(xy: tuple[int, ...], z: int) -> int:
-    return int(z**2 + sum(value**2 for value in xy))
+def _nearest_neighbours(motif: np.ndarray, cell: np.ndarray, k: int, *, workers=1) -> np.ndarray:
+    """Certify image coverage at the returned kth-neighbour radius.
 
+    Previously: append integer shells until distances stop changing. A short
+    lattice vector with large coefficients in a skew basis can occur much later,
+    so a temporary plateau did not establish completeness.
 
-def _distkey(point: tuple[int, ...] | list[int]) -> int:
-    return int(sum(value**2 for value in point))
-
-
-def _generate_integer_lattice(dims: int):
-    ymax = collections.defaultdict(int)
-    d = 0
-
-    if dims == 1:
-        yield np.array([[0]], dtype=int)
-        while True:
-            d += 1
-            yield np.array([[-d], [d]], dtype=int)
-
+    With wrapped fractional positions, any pair within R has image coefficients
+    |n_j| < 1 + R*||inverse(cell)[:,j]||. The integer bounds below therefore cover
+    every such pair. Reduction changes the basis only, not the periodic point set.
+    """
+    from ase.geometry import minkowski_reduce
+    cell, _ = minkowski_reduce(np.asarray(cell, dtype=float))
+    inverse = np.linalg.inv(cell)
+    motif = np.mod(np.asarray(motif) @ inverse, 1.0) @ cell
+    reciprocal_lengths = np.linalg.norm(inverse, axis=0)
+    volume = abs(np.linalg.det(cell))
+    radius = (3.0 * (k + 1) * volume / (4.0 * np.pi * len(motif))) ** (1.0 / 3.0)
+    radius = max(radius * 1.2, 1e-6)
     while True:
-        positive_int_lattice: list[tuple[int, ...]] = []
-        while True:
-            batch: list[tuple[int, ...]] = []
-            for xy in product(range(d + 1), repeat=dims - 1):
-                if _distance_squared(xy, ymax[xy]) <= d**2:
-                    batch.append((*xy, ymax[xy]))
-                    ymax[xy] += 1
-            if not batch:
-                break
-            positive_int_lattice += batch
-        positive_int_lattice.sort(key=_distkey)
-
-        int_lattice: list[tuple[int, ...] | list[int]] = []
-        for point in positive_int_lattice:
-            int_lattice.append(point)
-            for n_reflections in range(1, dims + 1):
-                for indexes in combinations(range(dims), n_reflections):
-                    if all(point[i] for i in indexes):
-                        reflected = list(point)
-                        for i in indexes:
-                            reflected[i] *= -1
-                        int_lattice.append(reflected)
-
-        yield np.array(int_lattice, dtype=int)
-        d += 1
+        bounds = np.ceil(radius * reciprocal_lengths + 1e-12).astype(int)
+        shifts = np.array(list(product(*(range(-b, b + 1) for b in bounds)))) @ cell
+        cloud = (shifts[:, None, :] + motif[None, :, :]).reshape(-1, 3)
+        distances, _ = KDTree(cloud).query(motif, k=k + 1, workers=workers)
+        kth = float(np.max(distances[:, -1]))
+        if np.isfinite(kth) and kth <= radius:
+            return distances[:, 1:]
+        radius = max(radius * 1.5, kth * (1.0 + 1e-12)) if np.isfinite(kth) else radius * 2
 
 
-def _generate_concentric_cloud(motif: np.ndarray, cell: np.ndarray):
-    int_lattice_generator = _generate_integer_lattice(cell.shape[0])
-
-    while True:
-        int_lattice = next(int_lattice_generator) @ cell
-        yield np.concatenate([motif + translation for translation in int_lattice])
-
-
-def _nearest_neighbours(motif: np.ndarray, cell: np.ndarray, k: int) -> np.ndarray:
-    cloud_generator = _generate_concentric_cloud(motif, cell)
-    n_points = 0
-    cloud_batches: list[np.ndarray] = []
-    while n_points <= k:
-        batch = next(cloud_generator)
-        n_points += batch.shape[0]
-        cloud_batches.append(batch)
-    cloud_batches.append(next(cloud_generator))
-    cloud = np.concatenate(cloud_batches)
-
-    tree = KDTree(cloud, compact_nodes=False, balanced_tree=False)
-    candidate_distances, _ = tree.query(motif, k=k + 1, workers=-1)
-    previous = np.zeros_like(candidate_distances)
-
-    while not np.allclose(previous, candidate_distances, atol=1e-12, rtol=0):
-        previous = candidate_distances
-        cloud = np.vstack((cloud, next(cloud_generator), next(cloud_generator)))
-        tree = KDTree(cloud, compact_nodes=False, balanced_tree=False)
-        candidate_distances, _ = tree.query(motif, k=k + 1, workers=-1)
-
-    return candidate_distances[:, 1:]
+@lru_cache(maxsize=32)
+def _transport_constraints(n_sources, n_sinks):
+    columns = np.arange(n_sources * n_sinks)
+    rows = np.concatenate((np.repeat(np.arange(n_sources), n_sinks),
+                           n_sources + np.tile(np.arange(n_sinks), n_sources)))
+    return coo_matrix((np.ones(2 * len(columns)), (rows, np.tile(columns, 2))),
+                      shape=(n_sources + n_sinks, len(columns))).tocsr()
 
 
 def _earth_movers_distance(
@@ -431,14 +472,17 @@ def _earth_movers_distance(
         raise ValueError("EMD requires matching total weights.")
 
     n_sources, n_sinks = cost_matrix.shape
-    n_variables = n_sources * n_sinks
+    if n_sources == 1:
+        return float(cost_matrix[0] @ sink_weights)
+    if n_sinks == 1:
+        return float(cost_matrix[:, 0] @ source_weights)
+    # Equal masses reduce exactly to bipartite assignment, avoiding a general LP.
+    if (n_sources == n_sinks and np.all(source_weights == source_weights[0])
+            and np.array_equal(source_weights, sink_weights)):
+        rows, cols = linear_sum_assignment(cost_matrix)
+        return float(source_weights[0] * cost_matrix[rows, cols].sum())
     c = cost_matrix.ravel()
-    a_eq = lil_matrix((n_sources + n_sinks, n_variables), dtype=float)
-
-    for source_index in range(n_sources):
-        a_eq[source_index, source_index * n_sinks : (source_index + 1) * n_sinks] = 1.0
-    for sink_index in range(n_sinks):
-        a_eq[n_sources + sink_index, sink_index::n_sinks] = 1.0
+    a_eq = _transport_constraints(n_sources, n_sinks)
 
     b_eq = np.concatenate((source_weights, sink_weights))
     attempts: list[tuple[str, object]] = []

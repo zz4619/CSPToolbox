@@ -1,0 +1,27 @@
+{
+  "python": "3.12.12 | packaged by conda-forge | (main, Jan 26 2026, 23:57:50) [Clang 19.1.7 ]",
+  "numpy": "2.4.1",
+  "scipy": "1.17.0",
+  "ase": "3.27.0",
+  "system": "macOS-26.5.2-x86_64-i386-64bit",
+  "hardware": {
+    "logical_cpus": 8,
+    "physical_memory_bytes": 17179869184
+  },
+  "repo_head": "a40c80c759a8007aaa1afd13e880e2fee4c1dbf1",
+  "repo_branch": "codex/amd-pdd-clustering",
+  "uncommitted_implementation": true,
+  "implementation_sha256": {
+    "Source/pdd_clustering.py": "7b160e7c1d1e88419f6b2c1be3a7648c77fb95cb768eb00eea467186672048bc",
+    "Source/pdd_descriptor.py": "0e7de4184c05a4dbdfb1c345893ece9a6d9a4d4372fd5004719b4395d4802da2",
+    "Source/pdd_clustering_io.py": "c455fcfa862345b1c2d1e74ac1d947ab6945ec6ac06997b58b1e65009258b0d4",
+    "Source/CLI_scripts/cluster_pdd.py": "3e11b256bbd25310a0377f79b3ab4fc529e7e17f131aa0e3a17c18d50a570dbb"
+  },
+  "model_sha256": {
+    "input.in": "c0fe5518860be46de66b279a0c6734484ec7109a909548bcae091a6f111eed7a",
+    "flexible_lam_intra": "494821de3f401c08dff0ae99caee06a64e89259a02e16058883845670ad7f940",
+    "cp2_groups.txt": "fb91a774602cbcbe03eab1a07063bf4b125017d405077605505150acb4ee10b7",
+    "crystals_stable.out": "66b3ad0068b06298463f957eeb5680fd2f403e004c5a9a19246df01942b06f17",
+    "reference_and_coordinates.tar.gz": "425be4ac79d9963d5c53d29b126e9f8d9e7a932826a6dda9b6395f0acb74f2dc"
+  }
+}
