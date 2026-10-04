@@ -9,8 +9,13 @@ code from one-off command-line scripts and keeps project-specific analysis in
 
 The importable modules live under `Source/`:
 
-- `crystal_structure.py`: shared crystal/molecule data structures, CIF parsing,
-  unit-cell expansion, reduction, symmetry checks, and z-matrix helpers.
+- `crystal/`: the crystal-structure core, split by topic. `structure.py` holds
+  the `CrystalStructure` class (API). The algorithms live in `cif.py`, `pdb.py`
+  and `res.py` (file formats), `symmetry.py` (spglib detection, SHELX
+  LATT/SYMM), `connectivity.py` (bonds, molecules, unwrapping),
+  `zmatrix_builder.py` (Z-matrices), `plotting.py`, and the small `records`,
+  `elements`, `lattice` and `fileio` modules. `crystal_structure.py` re-exports
+  the same API for existing imports.
 - `gaussian_input.py`: Gaussian input builders and job artifact helpers.
 - `csorm_input.py`: CSORM input builders and symmetry sanity checks.
 - `csofm_input.py`: CSOFM input builders and Gaussian final-energy parsing.
@@ -32,7 +37,8 @@ The importable modules live under `Source/`:
   viewer molecule payload construction, and standalone HTML export.
 - `cp2_local_min.py`: prepares experimental-structure local-minimisation jobs
   for CrystalPredictor2 and collects their machine-readable result status.
-
+- `zmatrix_mapping.py`: engine-neutral atom mapping of an experimental
+  structure onto an authoritative Z-matrix template.
 
 For the distinction between landscape clustering and experimental matching,
 read the [PDD → RMSD20 workflow](docs/PDD_RMSD20_WORKFLOW.md). It documents the
@@ -44,8 +50,8 @@ historical RMSD15 defaults and is not the RMSD20 study workflow.
 tools can import CSPToolbox without immediately importing the full scientific
 stack.
 
-The `csptoolbox/` package is a compatibility namespace that re-exports selected
-modules from `Source/`.
+The `csptoolbox/` package is the public import path: `csptoolbox.<module>`
+forwards to `Source.<module>` for every module, and both paths stay supported.
 
 ## PyZMAT Compatibility
 
@@ -70,6 +76,10 @@ through `GaussianSettings.fixed_internal_coordinates`; the builder writes each
 fixed value as a numeric literal in its Z-matrix atom row, omits its symbolic
 assignment, and rejects unknown coordinate names. This avoids relying on a
 Gaussian `Constants:` block for geometry symbols.
+
+PyZMAT does not yet read fixed coordinates written this way (KI-7). The
+Z-matrix formats used by CSPToolbox, PyZMAT, ml-lams and CSPImperial, with their
+writers and readers, are listed in [docs/FORMATS.md](docs/FORMATS.md).
 
 ## CLI Scripts
 
@@ -262,26 +272,22 @@ Older personal workflow scripts from `CSP-personal/2_VASP` were archived in:
 
 ## Development
 
-Install in editable mode from the repository root:
+From the repository root:
 
 ```bash
-python -m pip install -e /Users/zianzhan/Desktop/CSP_sandbox/CSPToolbox
+python -m pip install -e ".[dev]"   # editable install with pytest and ruff
+python -m pytest                    # every fast test (about 20 s)
+python -m pytest -m slow            # full CE755 T1/T2 regressions (about 1 min)
+ruff check .                        # syntax errors and pyflakes findings
 ```
 
-Run a lightweight syntax check:
+GitHub Actions runs ruff and the whole suite on Python 3.10 and 3.12.
 
-```bash
-python -m py_compile Source/*.py Source/CLI_scripts/*.py csptoolbox/*.py
-```
-
-Viewer and shared Z-matrix regression checks, from this repository root:
-
-```bash
-python -m unittest discover -s TestCase/T4_zmatrix_viewer -p 'test_*.py' -v
-python -m unittest discover -s TestCase/T3_zmatrix_generation -p 'test_*.py' -v
-python -m unittest discover -s TestCase/T7_shared_zmatrix -p 'test_*.py' -v
-```
-
-See [AGENTS.md](AGENTS.md) for scope boundaries, other discovered test commands,
-packaging checks and completion criteria. No repository-wide lint, formatter,
-type-checker or CI command is currently configured.
+- [docs/MAINTENANCE.md](docs/MAINTENANCE.md): where code goes, coding rules,
+  testing, git workflow and the engineering backlog.
+- [TestCase/README.md](TestCase/README.md): index of test cases.
+- [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md): confirmed scientific defects
+  not yet fixed, each pinned by a test.
+- [docs/FORMATS.md](docs/FORMATS.md): files exchanged with other repositories.
+- [CHANGELOG.md](CHANGELOG.md): user-visible changes.
+- [AGENTS.md](AGENTS.md): guidance for coding agents.

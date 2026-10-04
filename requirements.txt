@@ -1,3 +1,6 @@
+# Snapshot of one Conda environment, kept for reference. The package's
+# dependencies are declared in pyproject.toml, which is authoritative.
+#
 # Derived from the local conda environment `csp_310` on 2026-04-05
 # and a repo-wide import scan of Python sources in CSP-personal.
 #

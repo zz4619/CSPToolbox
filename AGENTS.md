@@ -7,13 +7,23 @@ repositories (including CSPImperial and Delta-learning) are separate projects.
 Check `git status --short` before changes and preserve unrelated edits. Do not
 reset, stage or rewrite other work. Read the root README and closer guidance first.
 
-Reusable implementations live in `Source/`; the public `csptoolbox` namespace
-forwards exports lazily through `Source/__init__.py`. Keep both import paths working.
+Read [docs/MAINTENANCE.md](docs/MAINTENANCE.md) before changing code. It covers
+where code goes, the coding rules, testing and git workflow.
+
+Reusable implementations live in `Source/`. The crystal-structure core is the
+`Source/crystal/` package, split by topic; `Source/crystal_structure.py` only
+re-exports it, so add nothing there. `csptoolbox/` holds one forwarding module per
+`Source` module. Keep both import paths working; T12 checks them, and
+CSPImperial imports `Source.*`.
+
 Put CLI argument handling in `Source/CLI_scripts/`, with reusable logic in the
 library. Register installed commands in `pyproject.toml` rather than inventing
-wrapper locations. Templates are under `Template/`; fixture/study folders are
-under `TestCase/`. Do not treat the untracked `MACE-Multipoles/` project as part of
-this change without checking its own scope.
+wrapper locations. Templates are under `Template/`; test cases and fixtures are
+under `TestCase/` (index: `TestCase/README.md`). Do not treat the untracked
+`MACE-Multipoles/` project, a separate repository, as part of this change.
+
+Files exchanged with PyZMAT, ml-lams and CSPImperial are listed in
+[docs/FORMATS.md](docs/FORMATS.md). Changing one changes another repository's input.
 
 For viewer tasks read [docs/VIEWER.md](docs/VIEWER.md). `model.py`, `readers.py` and
 `preparation.py` prepare scenes; `html_export.py` serializes them and uses the single
@@ -26,32 +36,32 @@ so parser changes require shared Z-matrix/Gaussian compatibility checks.
 Python >=3.10 and the dependencies in `pyproject.toml` are required. From this repo:
 
 ```bash
-python -m pip install -e .
-python -m Source.CLI_scripts.zmatrix_viewer --help
-python -m unittest discover -s TestCase/T4_zmatrix_viewer -p 'test_*.py' -v
-python -m unittest discover -s TestCase/T3_zmatrix_generation -p 'test_*.py' -v
-python -m unittest discover -s TestCase/T7_shared_zmatrix -p 'test_*.py' -v
-python -m unittest discover -s TestCase/T5_vasp_results -p 'test_*.py' -v
-python -m unittest discover -s TestCase/T6_conformer_generation -p 'test_*.py' -v
-python -m unittest discover -s TestCase/T8_pdd_clustering -p 'test_*.py' -v
+python -m pip install -e ".[dev]"
+python -m pytest                    # every fast test, all cases (about 20 s)
+python -m pytest -m slow            # full CE755 T1/T2 regressions (about 1 min)
+python -m pytest TestCase/T11_input_snapshots   # one case
+ruff check .                        # syntax errors and pyflakes findings
 python -m pip wheel --no-deps --no-build-isolation . -w /tmp/csptoolbox-wheel
 git diff --check
 ```
 
-Run the suites relevant to the change, not expensive unrelated scientific jobs.
-T3 discovery adds its test directory for local helper imports. T7 may be locally
-present but not yet committed; check its availability in a fresh clone. CCDC is an
-optional, separately installed/licensed integration. Do not invent a pip package
-or cluster setup command for it. This workspace has used the `csp_310` Conda
-environment, but select an available environment by verifying its dependencies.
-If matplotlib has no writable cache, set `MPLCONFIGDIR` to a task-owned temporary
-directory rather than changing global user settings.
+Run the cases relevant to the change. Before finishing any change to library
+code, also run the full fast suite. Known scientific defects are strict expected
+failures tagged `KI-n` (docs/KNOWN_ISSUES.md). If a change fixes one, remove its
+marker and move the entry to *Resolved*. If a change alters generated input
+files, regenerate the T11 snapshots with `CSPTOOLBOX_UPDATE_SNAPSHOTS=1` and
+review the diff. CI (GitHub Actions) runs ruff and the whole suite on Python 3.10
+and 3.12.
 
-No repository-wide formatter, lint command, type-checker configuration or CI
-workflow was found. Report these as unconfigured rather than claiming they pass.
+CCDC is an optional, separately installed/licensed integration. Do not invent a
+pip package or cluster setup command for it. This workspace has used the `csp_310`
+Conda environment, which lacks pytest and ruff; install the `dev` extra into an
+environment you own, not into a shared one. `TestCase/conftest.py` keeps
+matplotlib headless and redirects an unwritable `MPLCONFIGDIR`. No formatter or
+type checker is configured; do not reformat files you are not otherwise changing.
 The wheel build requires the setuptools/wheel build dependencies to be available;
 `--no-build-isolation` avoids implicitly downloading another build environment.
-Verify viewer HTML/CSS/JS assets are included in a wheel after packaging edits.
+T12 checks that the viewer HTML/CSS/JS assets are declared as package data.
 
 For descriptor/clustering work read `docs/PDD_CLUSTERING.md`. Preserve full-cell
 periodicity and typed element fractions. AMD shortlisting must not change results
