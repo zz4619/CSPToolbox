@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 import math
 from pathlib import Path
+import re
 from typing import Iterable
 
 from .crystal_structure import AtomRecord, CrystalStructure
@@ -267,7 +268,7 @@ class VaspInputBuilder:
     def render_gas_phase_run_script_text(self, system_name: str) -> str:
         script_text = self.render_run_script_text(system_name)
         script_text = script_text.replace("#$ -l h_rt=24:00:00", "#$ -l h_rt=4:00:00")
-        script_text = script_text.replace("#$ -pe mpi 160", "#$ -pe mpi 40")
+        script_text = re.sub(r"(?m)^#\$ -pe mpi \d+", "#$ -pe mpi 40", script_text)
         return script_text
 
     def build_potcar_text(self, atoms: list[AtomRecord]) -> str:
