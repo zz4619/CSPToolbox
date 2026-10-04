@@ -166,6 +166,14 @@ directory. The parent runner records failures and timeouts but continues to the
 next experimental structure; rerunning the batch skips cases that already have
 a successful structured CP2 result.
 
+For inventory-driven preparation with `prepare_cp2_local_min_batch.py`, an
+optional `exclude_reason` column keeps an in-scope experimental form in the
+preparation-status table while preventing creation of its case directory and
+excluding it from the PBS case manifest. Excluded rows are reported separately
+and do not count as preparation failures. Use a specific scientific reason,
+for example when a racemic crystal is incompatible with an enantiopure LAM
+model; do not delete the inventory row or overwrite historical results.
+
 ```bash
 csp-cp2-local-min assemble-batch Local_Min_CP2_All \
   --case-dir Local_Min_CP2_All/cases/SystemA/FORM01 \

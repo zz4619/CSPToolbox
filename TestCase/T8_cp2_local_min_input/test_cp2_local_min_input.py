@@ -986,11 +986,12 @@ END
                         "system_dir",
                         "experimental_structure",
                         "reference_1",
+                        "exclude_reason",
                     ),
                     delimiter="\t",
                 )
                 writer.writeheader()
-                for refcode in ("FORM01", "FORM02"):
+                for refcode in ("FORM01", "FORM02", "RACEMATE01"):
                     writer.writerow(
                         {
                             "system_name": "SyntheticSystem",
@@ -998,6 +999,12 @@ END
                             "system_dir": system,
                             "experimental_structure": experimental,
                             "reference_1": reference,
+                            "exclude_reason": (
+                                "Racemic form is incompatible with the "
+                                "enantiopure LAM model"
+                                if refcode == "RACEMATE01"
+                                else ""
+                            ),
                         }
                     )
             output = root / "batch"
@@ -1017,11 +1024,20 @@ END
             ) as handle:
                 statuses = list(csv.DictReader(handle, delimiter="\t"))
             self.assertEqual(
-                ["prepared_runnable", "prepared_runnable"],
+                ["prepared_runnable", "prepared_runnable", "excluded"],
                 [row["preparation_status"] for row in statuses],
+            )
+            self.assertEqual(
+                "Racemic form is incompatible with the enantiopure LAM model",
+                statuses[2]["exclusion_reason"],
             )
             self.assertTrue((output / "run_all_cp2_local_min.pbs").is_file())
             self.assertTrue((output / "cp2_local_min_batch_cases.tsv").is_file())
+            with (output / "cp2_local_min_batch_cases.tsv").open(
+                encoding="utf-8", newline=""
+            ) as handle:
+                cases = list(csv.DictReader(handle, delimiter="\t"))
+            self.assertEqual(["FORM01", "FORM02"], [row["refcode"] for row in cases])
 
     def test_nonzero_optimizer_info_is_failed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:

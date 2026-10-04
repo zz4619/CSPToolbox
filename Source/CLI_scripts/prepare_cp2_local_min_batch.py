@@ -82,6 +82,22 @@ def main(argv: list[str] | None = None) -> int:
     for row in rows:
         system_name = row["system_name"]
         refcode = row["refcode"]
+        exclude_reason = row.get("exclude_reason", "").strip()
+        if exclude_reason:
+            status_rows.append(
+                {
+                    "system_name": system_name,
+                    "refcode": refcode,
+                    "preparation_status": "excluded",
+                    "supported_scope": "",
+                    "structurally_supported": "",
+                    "mapping_validated": "",
+                    "case_dir": "",
+                    "exclusion_reason": exclude_reason,
+                    "error": "",
+                }
+            )
+            continue
         case_dir = destination / "cases" / system_name / refcode
         try:
             references = _indexed_paths(row, "reference_")
@@ -123,6 +139,7 @@ def main(argv: list[str] | None = None) -> int:
                     "structurally_supported": manifest["structurally_supported"],
                     "mapping_validated": manifest["mapping_validated"],
                     "case_dir": str(case_dir.resolve()),
+                    "exclusion_reason": "",
                     "error": "",
                 }
             )
@@ -136,6 +153,7 @@ def main(argv: list[str] | None = None) -> int:
                     "structurally_supported": "",
                     "mapping_validated": "",
                     "case_dir": str(case_dir.absolute()),
+                    "exclusion_reason": "",
                     "error": f"{type(error).__name__}: {error}",
                 }
             )
@@ -153,13 +171,18 @@ def main(argv: list[str] | None = None) -> int:
         job_name=args.job_name,
         per_case_timeout=args.per_case_timeout,
     )
+    excluded_count = sum(
+        row["preparation_status"] == "excluded" for row in status_rows
+    )
+    failed_count = len(rows) - len(runnable_cases) - excluded_count
     print(f"inventory_rows={len(rows)}")
     print(f"prepared_runnable={len(runnable_cases)}")
-    print(f"preparation_failed={len(rows) - len(runnable_cases)}")
+    print(f"excluded={excluded_count}")
+    print(f"preparation_failed={failed_count}")
     print(f"preparation_status={status_path}")
     print(f"cases_manifest={batch.cases_manifest_path}")
     print(f"pbs_script={batch.pbs_script_path}")
-    return 0 if len(runnable_cases) == len(rows) else 2
+    return 0 if failed_count == 0 else 2
 
 
 def _read_inventory(path: Path) -> list[dict[str, str]]:
@@ -184,6 +207,12 @@ def _read_inventory(path: Path) -> list[dict[str, str]]:
     if len(identities) != len(set(identities)):
         raise ValueError("CP2 batch inventory contains duplicate system/refcode rows")
     for row in rows:
+        if not row.get("system_name") or not row.get("refcode"):
+            raise ValueError(
+                "CP2 batch inventory has an empty system_name or refcode"
+            )
+        if row.get("exclude_reason", "").strip():
+            continue
         for key in required:
             if not row.get(key):
                 raise ValueError(
