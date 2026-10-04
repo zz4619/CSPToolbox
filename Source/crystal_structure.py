@@ -130,6 +130,30 @@ class ZMatrixRepresentation:
     warnings: list[str]
 
 
+def zmatrix_topology_signature(
+    zmatrix: ZMatrixRepresentation,
+) -> tuple[tuple[str, str, int | None, int | None, int | None], ...]:
+    """Return the geometry-independent identity of a Z-matrix definition."""
+
+    if len(zmatrix.entries) != len(zmatrix.ordered_atom_labels):
+        raise ValueError(
+            "Z-matrix entry count does not match its ordered atom-label count."
+        )
+    return tuple(
+        (
+            label,
+            entry.element,
+            entry.bond_to,
+            entry.angle_to,
+            entry.dihedral_to,
+        )
+        for label, entry in zip(
+            zmatrix.ordered_atom_labels,
+            zmatrix.entries,
+        )
+    )
+
+
 @dataclass(frozen=True)
 class _ZMatrixTemplateRow:
     atom_index: int
@@ -663,6 +687,171 @@ class CrystalStructure:
             )
 
         return zmatrices
+
+    def apply_zmatrix_topology(
+        self,
+        topology: ZMatrixRepresentation,
+        covalent_scale: float = DEFAULT_COVALENT_SCALE,
+        linear_threshold: float = DEFAULT_LINEAR_THRESHOLD,
+    ) -> ZMatrixRepresentation:
+        """Evaluate one fixed Z-matrix topology on this structure.
+
+        Atom order and all reference indices are copied unchanged from
+        ``topology``. Only bond lengths, bond angles, and dihedral angles are
+        evaluated from this structure's Cartesian coordinates. Atom labels are
+        therefore the required identity map between conformers.
+        """
+
+        signature = zmatrix_topology_signature(topology)
+        topology_labels = [row[0] for row in signature]
+        if len(topology_labels) != len(set(topology_labels)):
+            raise ValueError("Z-matrix topology contains duplicate atom labels.")
+
+        atoms_by_label = {atom.label: atom for atom in self.atoms}
+        if len(atoms_by_label) != len(self.atoms):
+            raise ValueError("Crystal structure contains duplicate atom labels.")
+
+        expected_labels = set(topology_labels)
+        observed_labels = set(atoms_by_label)
+        if observed_labels != expected_labels:
+            missing = sorted(expected_labels - observed_labels)
+            extra = sorted(observed_labels - expected_labels)
+            raise ValueError(
+                "Crystal structure atom labels do not match the Z-matrix "
+                f"topology; missing={missing}, extra={extra}."
+            )
+
+        ordered_atoms = [atoms_by_label[label] for label in topology_labels]
+        for position, (atom, row) in enumerate(zip(ordered_atoms, signature), start=1):
+            _label, expected_element, _bond_to, _angle_to, _dihedral_to = row
+            if atom.element != expected_element:
+                raise ValueError(
+                    f"Z-matrix row {position} label {atom.label!r} expects "
+                    f"element {expected_element}, found {atom.element}."
+                )
+
+        atom_index_by_label = {
+            atom.label: index for index, atom in enumerate(self.atoms)
+        }
+        adjacency = self._build_connectivity(covalent_scale)
+        ordered_coordinates = np.array(
+            [atom.coordinates for atom in ordered_atoms],
+            dtype=float,
+        )
+        entries: list[ZMatrixEntry] = []
+        warnings: list[str] = []
+
+        for position, (label, element, bond_to, angle_to, dihedral_to) in enumerate(
+            signature,
+            start=1,
+        ):
+            expected_reference_count = (
+                0 if position == 1 else 1 if position == 2 else 2 if position == 3 else 3
+            )
+            observed_reference_count = sum(
+                reference is not None
+                for reference in (bond_to, angle_to, dihedral_to)
+            )
+            if observed_reference_count != expected_reference_count:
+                raise ValueError(
+                    f"Z-matrix row {position} has {observed_reference_count} "
+                    f"references; expected {expected_reference_count}."
+                )
+
+            for reference_name, reference in (
+                ("bond", bond_to),
+                ("angle", angle_to),
+                ("dihedral", dihedral_to),
+            ):
+                if reference is not None and not 1 <= reference < position:
+                    raise ValueError(
+                        f"Z-matrix row {position} {reference_name} reference "
+                        f"{reference} does not point to an earlier row."
+                    )
+
+            bond_length = None
+            angle_degrees = None
+            dihedral_degrees = None
+            atom_position = position - 1
+
+            if bond_to is not None:
+                bond_position = bond_to - 1
+                atom_index = atom_index_by_label[label]
+                bond_label = topology_labels[bond_position]
+                bond_atom_index = atom_index_by_label[bond_label]
+                bonded_neighbors = {
+                    edge.neighbor for edge in adjacency[atom_index]
+                }
+                if bond_atom_index not in bonded_neighbors:
+                    raise ValueError(
+                        f"Z-matrix row {position} bond reference {bond_to} "
+                        f"({label}-{bond_label}) is not bonded in this structure."
+                    )
+                bond_length = float(
+                    np.linalg.norm(
+                        ordered_coordinates[atom_position]
+                        - ordered_coordinates[bond_position]
+                    )
+                )
+
+            if angle_to is not None and bond_to is not None:
+                angle_position = angle_to - 1
+                angle_degrees = self._angle_value(
+                    ordered_coordinates,
+                    atom_position,
+                    bond_to - 1,
+                    angle_position,
+                )
+                if self._linear_margin(angle_degrees) < linear_threshold:
+                    warnings.append(
+                        f"Atom {label} uses a near-linear angle reference "
+                        f"({angle_degrees:.2f} deg)."
+                    )
+
+            if (
+                dihedral_to is not None
+                and angle_to is not None
+                and bond_to is not None
+            ):
+                dihedral_position = dihedral_to - 1
+                dihedral_degrees = self._dihedral_value(
+                    ordered_coordinates,
+                    atom_position,
+                    bond_to - 1,
+                    angle_to - 1,
+                    dihedral_position,
+                )
+                anchor_angle = self._angle_value(
+                    ordered_coordinates,
+                    bond_to - 1,
+                    angle_to - 1,
+                    dihedral_position,
+                )
+                if self._linear_margin(anchor_angle) < linear_threshold:
+                    warnings.append(
+                        f"Atom {label} uses a near-linear dihedral anchor "
+                        f"({anchor_angle:.2f} deg)."
+                    )
+
+            entries.append(
+                ZMatrixEntry(
+                    label=label,
+                    element=element,
+                    bond_to=bond_to,
+                    bond_length=bond_length,
+                    angle_to=angle_to,
+                    angle_degrees=angle_degrees,
+                    dihedral_to=dihedral_to,
+                    dihedral_degrees=dihedral_degrees,
+                )
+            )
+
+        return ZMatrixRepresentation(
+            molecule_index=topology.molecule_index,
+            entries=entries,
+            ordered_atom_labels=list(topology_labels),
+            warnings=warnings,
+        )
 
     def write_unit_cell_molecule_image(
         self,

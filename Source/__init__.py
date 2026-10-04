@@ -19,6 +19,10 @@ _EXPORTS = {
     "SpaceGroupDetection": ("Source.crystal_structure", "SpaceGroupDetection"),
     "ZMatrixEntry": ("Source.crystal_structure", "ZMatrixEntry"),
     "ZMatrixRepresentation": ("Source.crystal_structure", "ZMatrixRepresentation"),
+    "zmatrix_topology_signature": (
+        "Source.crystal_structure",
+        "zmatrix_topology_signature",
+    ),
     "GaussianInputBuilder": ("Source.gaussian_input", "GaussianInputBuilder"),
     "GaussianJobArtifacts": ("Source.gaussian_input", "GaussianJobArtifacts"),
     "GaussianSettings": ("Source.gaussian_input", "GaussianSettings"),
