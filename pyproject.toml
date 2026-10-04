@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "csptoolbox"
-version = "0.1.0"
+version = "0.2.0.dev0"
 description = "Utilities for crystal structure prediction workflows."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -13,7 +13,6 @@ dependencies = [
   "matplotlib",
   "networkx",
   "numpy",
-  "pandas",
   "pymatgen",
   "rdkit",
   "scipy",
@@ -22,6 +21,8 @@ dependencies = [
 
 [project.optional-dependencies]
 ccdc = []
+test = ["pytest>=7"]
+dev = ["pytest>=7", "ruff>=0.5"]
 
 [project.scripts]
 csp-cluster-pdd = "Source.CLI_scripts.cluster_pdd:main"
@@ -41,3 +42,26 @@ include = ["Source", "Source.*", "csptoolbox", "csptoolbox.*"]
 
 [tool.setuptools.package-data]
 "Source.zmatrix_viewer" = ["assets/*.html", "assets/*.css", "assets/*.js"]
+
+# One command runs every suite: `python -m pytest`.
+# Full-dataset regressions are marked `slow` and run with `python -m pytest -m slow`.
+[tool.pytest.ini_options]
+testpaths = ["TestCase"]
+python_files = ["test_*.py"]
+pythonpath = [".", "TestCase"]
+addopts = "-ra -m 'not slow'"
+markers = [
+  "slow: full-dataset regressions over T1/T2 (minutes); run with -m slow",
+]
+filterwarnings = [
+  "ignore::DeprecationWarning:spglib.*",
+]
+
+# Lint for real defects only (syntax errors and pyflakes). Formatting is not
+# enforced, so existing files are not churned; see docs/MAINTENANCE.md.
+[tool.ruff]
+target-version = "py310"
+extend-exclude = ["MACE-Multipoles", "Codex_workspace", "build"]
+
+[tool.ruff.lint]
+select = ["E9", "F"]
