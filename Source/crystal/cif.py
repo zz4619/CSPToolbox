@@ -14,7 +14,6 @@ import warnings
 import numpy as np
 from ase import Atoms
 from ase.cell import Cell
-from ase.io import read as ase_read
 
 from .elements import guess_element_from_label, normalize_element_symbol
 from .fileio import parse_bool_tag, strip_quotes
@@ -191,6 +190,8 @@ def expand_cif_unit_cell(
             "ignore",
             message=r".*This may result in wrong setting!.*",
         )
+        from ase.io import read as ase_read  # imported here: ase.io is slow to import
+
         ase_atoms = ase_read(str(file_path))
     ase_atom_count = len(ase_atoms)
     ase_matches_manual, ase_comparison_message = _compare_ase_and_manual_expansions(

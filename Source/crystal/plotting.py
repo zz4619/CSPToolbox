@@ -8,9 +8,6 @@ from typing import TYPE_CHECKING
 import numpy as np
 from ase.data import atomic_numbers
 from ase.data.colors import jmol_colors
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 
 from .connectivity import build_connectivity, connected_components, unwrap_component
 from .records import DEFAULT_COVALENT_SCALE
@@ -52,7 +49,11 @@ def write_unit_cell_molecule_image(
     coords = np.vstack([component_positions[index] for index in ordered_indices])
     xy, projection_center, projection_basis = _project_for_plot(coords)
 
-    fig, ax = plt.subplots(figsize=(6, 6), dpi=200)
+    # The Figure API renders off-screen without pyplot, so no global backend is set.
+    from matplotlib.figure import Figure
+
+    fig = Figure(figsize=(6, 6), dpi=200)
+    ax = fig.subplots()
 
     if draw_box:
         box_corners = _unit_cell_corners(structure)
@@ -124,7 +125,6 @@ def write_unit_cell_molecule_image(
     ax.set_title(title or f"{structure.name} unit-cell molecules", fontsize=9, pad=6)
     fig.tight_layout(pad=0.1)
     fig.savefig(destination_path, bbox_inches="tight", pad_inches=0.05, transparent=False)
-    plt.close(fig)
 
 
 def _project_for_plot(coords: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
