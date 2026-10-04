@@ -108,6 +108,97 @@ class OutcarSummary:
 
 
 @dataclass(frozen=True)
+class OutcarForceAtom:
+    atom_index: int
+    element: str | None
+    position: tuple[float, float, float]
+    force: tuple[float, float, float]
+
+    @property
+    def force_norm_ev_ang(self) -> float:
+        return float(np.linalg.norm(np.array(self.force, dtype=float)))
+
+
+@dataclass(frozen=True)
+class OutcarForceBlock:
+    ionic_step: int
+    atoms: tuple[OutcarForceAtom, ...]
+    total_drift: tuple[float, float, float] | None
+
+    @property
+    def atom_count(self) -> int:
+        return len(self.atoms)
+
+    @property
+    def positions_ang(self) -> np.ndarray:
+        return np.array([atom.position for atom in self.atoms], dtype=float)
+
+    @property
+    def forces_ev_ang(self) -> np.ndarray:
+        return np.array([atom.force for atom in self.atoms], dtype=float)
+
+    @property
+    def force_norms_ev_ang(self) -> np.ndarray:
+        forces = self.forces_ev_ang
+        if forces.size == 0:
+            return np.array([], dtype=float)
+        return np.linalg.norm(forces, axis=1)
+
+    @property
+    def max_force_norm_ev_ang(self) -> float | None:
+        norms = self.force_norms_ev_ang
+        if norms.size == 0:
+            return None
+        return float(np.max(norms))
+
+    @property
+    def rms_force_norm_ev_ang(self) -> float | None:
+        norms = self.force_norms_ev_ang
+        if norms.size == 0:
+            return None
+        return float(np.sqrt(np.mean(norms**2)))
+
+    @property
+    def mean_force_norm_ev_ang(self) -> float | None:
+        norms = self.force_norms_ev_ang
+        if norms.size == 0:
+            return None
+        return float(np.mean(norms))
+
+    @property
+    def p95_force_norm_ev_ang(self) -> float | None:
+        norms = self.force_norms_ev_ang
+        if norms.size == 0:
+            return None
+        return float(np.percentile(norms, 95))
+
+
+@dataclass(frozen=True)
+class OutcarForces:
+    path: Path
+    exists: bool
+    nions: int | None
+    ion_types: tuple[str, ...]
+    ion_counts: tuple[int, ...]
+    total_force_block_count: int
+    blocks: tuple[OutcarForceBlock, ...]
+
+    @property
+    def force_block_count(self) -> int:
+        return self.total_force_block_count
+
+    @property
+    def retained_force_block_count(self) -> int:
+        return len(self.blocks)
+
+    @property
+    def final_block(self) -> OutcarForceBlock | None:
+        if not self.blocks:
+            return None
+        return self.blocks[-1]
+
+
+@dataclass(frozen=True)
 class VaspCalculationHealth:
     calculation_dir: Path
     status: str
@@ -338,6 +429,69 @@ def parse_outcar_summary(path: str | Path) -> OutcarSummary:
     )
 
 
+def parse_outcar_forces(
+    path: str | Path,
+    *,
+    all_ionic_steps: bool = False,
+) -> OutcarForces:
+    """Parse atom-resolved force blocks from a VASP ``OUTCAR``.
+
+    By default only the final ``POSITION / TOTAL-FORCE`` block is retained,
+    which is the usual geometry-quality diagnostic. Set ``all_ionic_steps`` to
+    retain every ionic step from a relaxation trajectory.
+    """
+
+    outcar_path = Path(path)
+    if not outcar_path.exists():
+        return OutcarForces(
+            path=outcar_path,
+            exists=False,
+            nions=None,
+            ion_types=(),
+            ion_counts=(),
+            total_force_block_count=0,
+            blocks=(),
+        )
+
+    lines = outcar_path.read_text(encoding="utf-8", errors="ignore").splitlines()
+    nions = _parse_outcar_nions(lines)
+    ion_types = _parse_outcar_ion_types(lines)
+    ion_counts = _parse_outcar_ion_counts(lines)
+    expanded_elements = _expand_ion_elements(ion_types, ion_counts)
+    if nions is not None and len(expanded_elements) != nions:
+        expanded_elements = ()
+
+    blocks: list[OutcarForceBlock] = []
+    block_index = 0
+    line_index = 0
+    while line_index < len(lines):
+        if not _is_force_block_header(lines[line_index]):
+            line_index += 1
+            continue
+
+        block_index += 1
+        block, line_index = _parse_force_block(
+            lines,
+            line_index + 1,
+            ionic_step=block_index,
+            expanded_elements=expanded_elements,
+        )
+        if all_ionic_steps:
+            blocks.append(block)
+        else:
+            blocks = [block]
+
+    return OutcarForces(
+        path=outcar_path,
+        exists=True,
+        nions=nions,
+        ion_types=ion_types,
+        ion_counts=ion_counts,
+        total_force_block_count=block_index,
+        blocks=tuple(blocks),
+    )
+
+
 def classify_vasp_calculation_dir(calculation_dir: str | Path) -> VaspCalculationHealth:
     """Classify one VASP calculation folder from text output files.
 
@@ -372,6 +526,113 @@ def classify_vasp_calculation_dir(calculation_dir: str | Path) -> VaspCalculatio
         vasp_out=vasp_out,
         outcar=outcar,
     )
+
+
+_FLOAT_PATTERN = r"[+-]?(?:\d+\.\d*|\.\d+|\d+)(?:[Ee][+-]?\d+)?"
+_FORCE_ROW_RE = re.compile(
+    rf"^\s*({_FLOAT_PATTERN})\s+({_FLOAT_PATTERN})\s+({_FLOAT_PATTERN})\s+"
+    rf"({_FLOAT_PATTERN})\s+({_FLOAT_PATTERN})\s+({_FLOAT_PATTERN})(?:\s+.*)?$"
+)
+
+
+def _parse_outcar_nions(lines: list[str]) -> int | None:
+    for line in lines:
+        match = re.search(r"\bNIONS\s*=\s*(\d+)", line)
+        if match:
+            return int(match.group(1))
+    return None
+
+
+def _parse_outcar_ion_types(lines: list[str]) -> tuple[str, ...]:
+    ion_types: list[str] = []
+    for line in lines:
+        match = re.search(r"\bVRHFIN\s*=\s*([A-Za-z][A-Za-z]?)\s*:", line)
+        if match:
+            ion_types.append(_normalize_poscar_symbol(match.group(1)))
+    return tuple(ion_types)
+
+
+def _parse_outcar_ion_counts(lines: list[str]) -> tuple[int, ...]:
+    for line in lines:
+        if "ions per type" not in line:
+            continue
+        _, _, tail = line.partition("=")
+        try:
+            return tuple(int(token) for token in tail.split())
+        except ValueError:
+            return ()
+    return ()
+
+
+def _expand_ion_elements(
+    ion_types: tuple[str, ...],
+    ion_counts: tuple[int, ...],
+) -> tuple[str, ...]:
+    if len(ion_types) != len(ion_counts):
+        return ()
+    elements: list[str] = []
+    for ion_type, count in zip(ion_types, ion_counts, strict=True):
+        elements.extend([ion_type] * count)
+    return tuple(elements)
+
+
+def _is_force_block_header(line: str) -> bool:
+    return "POSITION" in line and "TOTAL-FORCE" in line
+
+
+def _parse_force_block(
+    lines: list[str],
+    line_index: int,
+    *,
+    ionic_step: int,
+    expanded_elements: tuple[str, ...],
+) -> tuple[OutcarForceBlock, int]:
+    atoms: list[OutcarForceAtom] = []
+    total_drift: tuple[float, float, float] | None = None
+    index = line_index
+
+    while index < len(lines):
+        line = lines[index]
+        if atoms and _is_separator_line(line):
+            index += 1
+            break
+        match = _FORCE_ROW_RE.match(line)
+        if match:
+            values = tuple(float(match.group(number)) for number in range(1, 7))
+            atom_index = len(atoms) + 1
+            element = expanded_elements[atom_index - 1] if atom_index <= len(expanded_elements) else None
+            atoms.append(
+                OutcarForceAtom(
+                    atom_index=atom_index,
+                    element=element,
+                    position=values[:3],
+                    force=values[3:],
+                )
+            )
+        index += 1
+
+    for drift_index in range(index, min(index + 5, len(lines))):
+        if "total drift" not in lines[drift_index]:
+            continue
+        values = [float(value) for value in re.findall(_FLOAT_PATTERN, lines[drift_index])]
+        if len(values) >= 3:
+            total_drift = tuple(values[-3:])
+        index = drift_index + 1
+        break
+
+    return (
+        OutcarForceBlock(
+            ionic_step=ionic_step,
+            atoms=tuple(atoms),
+            total_drift=total_drift,
+        ),
+        index,
+    )
+
+
+def _is_separator_line(line: str) -> bool:
+    stripped = line.strip()
+    return bool(stripped) and set(stripped) == {"-"}
 
 
 def _detect_fatal_markers(text: str) -> tuple[str, ...]:
