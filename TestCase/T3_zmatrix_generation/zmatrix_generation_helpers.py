@@ -281,7 +281,7 @@ def _bonded(left: str, right: str, bond_pairs: set[frozenset[str]]) -> bool:
 
 
 def render_numeric_zmat_text(title: str, zmatrix: ZMatrixRepresentation) -> str:
-    lines = [f"# ZMAT v1", f"# title: {title}"]
+    lines = ["# ZMAT v1", f"# title: {title}"]
     for entry in zmatrix.entries:
         row = [entry.element]
         if entry.bond_to is not None and entry.bond_length is not None:

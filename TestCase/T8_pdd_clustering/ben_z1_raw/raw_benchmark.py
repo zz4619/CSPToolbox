@@ -7,7 +7,6 @@ from dataclasses import asdict
 import hashlib
 import json
 import multiprocessing
-from pathlib import Path
 import re
 import resource
 import sys

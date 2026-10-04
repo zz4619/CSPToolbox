@@ -3481,7 +3481,7 @@ def build_cp2_local_min_batch(
         "  fi",
         '  printf "%s\\t%s\\t%s\\t%s\\t%s\\t%s\\n" "$case_id" "$system_name" "$refcode" "$runner_status" "$batch_status" "$elapsed" >> "$STATUS_FILE"',
         '  printf "completed %s/%s: %s\\n" "$system_name" "$refcode" "$batch_status"',
-        f'done < "$CASE_MANIFEST"',
+        'done < "$CASE_MANIFEST"',
         'printf "total=%s\\nconverged=%s\\nfailed=%s\\ntimed_out=%s\\n" "$total" "$converged" "$failed" "$timed_out" > "$SUMMARY_FILE"',
         'cat "$SUMMARY_FILE"',
         'if [[ "$failed" -ne 0 || "$timed_out" -ne 0 ]]; then exit 1; fi',

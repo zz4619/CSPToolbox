@@ -1,7 +1,6 @@
 """Scientific identity, geometry, file-safety and export regressions for all workflows."""
 from dataclasses import replace
 import json
-import math
 import os
 from pathlib import Path
 import re
@@ -11,7 +10,7 @@ import unittest
 import numpy as np
 from csptoolbox.zmatrix_viewer import (
     build_structure_view, build_comparison_view, build_mapping_view, build_crystal_view,
-    build_gallery, build_viewer_document, load_zmatrix, parse_zmatrix_text,
+    build_gallery, build_viewer_document, parse_zmatrix_text,
     reconstruct_coordinates, render_viewer_fragment, render_viewer_html, write_viewer_html,
     write_viewer_fragment, viewer_payload, read_dofs,
 )
