@@ -8,7 +8,14 @@ from pathlib import Path
 
 from pymatgen.core import Molecule as PymatgenMolecule
 
-from .crystal_structure import AtomRecord, CrystalStructure, MoleculeGroup, ZMatrixRepresentation
+from .crystal_structure import (
+    AtomRecord,
+    CrystalStructure,
+    MoleculeGroup,
+    ZMatrixEntry,
+    ZMatrixRepresentation,
+)
+from .zmatrix_viewer import load_zmatrix
 
 
 TEMPLATE_DIR = Path(__file__).resolve().parents[1] / "Template" / "Gaussian_input"
@@ -31,6 +38,7 @@ class GaussianSettings:
     pop: str | None = "hlygat"
     others: str | None = "nosymm"
     pcm_eps: float | None = 11.0
+    fixed_internal_coordinates: frozenset[str] = frozenset()
     title: str = "Gas-phase optimization from crystal"
     walltime: str = "6:00:00"
     pbs_select: str = "1:ncpus=16:mpiprocs=16:mem=40gb"
@@ -95,7 +103,7 @@ class GaussianInputBuilder:
                 self.render_zmat_text(job_name, zmatrix),
                 encoding="utf-8",
             )
-            com_path.write_text(self.render_com_text(zmatrix, config), encoding="utf-8")
+            self.write_com_from_zmat_file(zmat_path, com_path, config)
             run_script_path.write_text(
                 self.render_run_script_text(job_name, config),
                 encoding="utf-8",
@@ -136,6 +144,15 @@ class GaussianInputBuilder:
             f"{config.charge} {config.multiplicity}",
         ]
         variable_lines: list[str] = []
+        fixed_names = set(config.fixed_internal_coordinates)
+        observed_names: set[str] = set()
+
+        def coordinate_token(name: str, value: float) -> str:
+            observed_names.add(name)
+            if name in fixed_names:
+                return f"{value:.6f}"
+            variable_lines.append(f"{name}={value:.6f}")
+            return name
 
         for atom_position, entry in enumerate(zmatrix.entries, start=1):
             variable_index = atom_position
@@ -145,40 +162,89 @@ class GaussianInputBuilder:
             if entry.bond_to is None or entry.bond_length is None:
                 raise ValueError(f"Missing bond definition for Z-matrix atom {atom_position}.")
             if atom_position == 2:
-                lines.append(f"{entry.element} {entry.bond_to} bnd{variable_index}")
-                variable_lines.append(f"bnd{variable_index}={entry.bond_length:.6f}")
+                bond_token = coordinate_token(f"bnd{variable_index}", entry.bond_length)
+                lines.append(f"{entry.element} {entry.bond_to} {bond_token}")
                 continue
             if entry.angle_to is None or entry.angle_degrees is None:
                 raise ValueError(f"Missing angle definition for Z-matrix atom {atom_position}.")
             if atom_position == 3:
+                bond_token = coordinate_token(f"bnd{variable_index}", entry.bond_length)
+                angle_token = coordinate_token(f"ang{variable_index}", entry.angle_degrees)
                 lines.append(
-                    f"{entry.element} {entry.bond_to} bnd{variable_index} "
-                    f"{entry.angle_to} ang{variable_index}"
+                    f"{entry.element} {entry.bond_to} {bond_token} "
+                    f"{entry.angle_to} {angle_token}"
                 )
-                variable_lines.append(f"bnd{variable_index}={entry.bond_length:.6f}")
-                variable_lines.append(f"ang{variable_index}={entry.angle_degrees:.6f}")
                 continue
             if entry.dihedral_to is None or entry.dihedral_degrees is None:
                 raise ValueError(
                     f"Missing dihedral definition for Z-matrix atom {atom_position}."
                 )
-            lines.append(
-                f"{entry.element} {entry.bond_to} bnd{variable_index} "
-                f"{entry.angle_to} ang{variable_index} "
-                f"{entry.dihedral_to} dih{variable_index}"
+            bond_token = coordinate_token(f"bnd{variable_index}", entry.bond_length)
+            angle_token = coordinate_token(f"ang{variable_index}", entry.angle_degrees)
+            dihedral_token = coordinate_token(
+                f"dih{variable_index}", entry.dihedral_degrees
             )
-            variable_lines.append(f"bnd{variable_index}={entry.bond_length:.6f}")
-            variable_lines.append(f"ang{variable_index}={entry.angle_degrees:.6f}")
-            variable_lines.append(f"dih{variable_index}={entry.dihedral_degrees:.6f}")
+            lines.append(
+                f"{entry.element} {entry.bond_to} {bond_token} "
+                f"{entry.angle_to} {angle_token} "
+                f"{entry.dihedral_to} {dihedral_token}"
+            )
+
+        unknown_fixed_names = fixed_names - observed_names
+        if unknown_fixed_names:
+            unknown = ", ".join(sorted(unknown_fixed_names))
+            raise ValueError(f"Unknown fixed internal coordinate(s): {unknown}")
 
         lines.append("")
-        lines.append("Variables:")
         lines.extend(variable_lines)
-        lines.append("Constants:")
         if config.pcm_eps is not None:
-            lines.append(f"EPS={config.pcm_eps:.1f}")
+            lines.extend(["", f"EPS={config.pcm_eps:.1f}"])
         lines.extend(["", ""])
         return "\n".join(lines)
+
+    def render_com_from_zmat_file(
+        self,
+        zmat_path: str | Path,
+        settings: GaussianSettings,
+    ) -> str:
+        """Render Gaussian input from a saved CSPToolbox numeric Z-matrix."""
+
+        document = load_zmatrix(zmat_path)
+        entries = [
+            ZMatrixEntry(
+                label=atom.label,
+                element=atom.element,
+                bond_to=atom.bond_to,
+                bond_length=atom.bond_length,
+                angle_to=atom.angle_to,
+                angle_degrees=atom.angle_degrees,
+                dihedral_to=atom.dihedral_to,
+                dihedral_degrees=atom.dihedral_degrees,
+            )
+            for atom in document.atoms
+        ]
+        zmatrix = ZMatrixRepresentation(
+            molecule_index=1,
+            entries=entries,
+            ordered_atom_labels=[atom.label for atom in document.atoms],
+            warnings=[],
+        )
+        return self.render_com_text(zmatrix, settings)
+
+    def write_com_from_zmat_file(
+        self,
+        zmat_path: str | Path,
+        com_path: str | Path,
+        settings: GaussianSettings,
+    ) -> Path:
+        """Write Gaussian input whose sole molecular source is ``zmat_path``."""
+
+        destination = Path(com_path)
+        destination.write_text(
+            self.render_com_from_zmat_file(zmat_path, settings),
+            encoding="utf-8",
+        )
+        return destination
 
     def render_zmat_text(
         self,
@@ -188,6 +254,7 @@ class GaussianInputBuilder:
         lines = [
             "# ZMAT v1",
             f"# title: {title}",
+            "# labels: " + " ".join(zmatrix.ordered_atom_labels),
             "# bonds: " + " ".join(
                 f"{entry.bond_to}-{index}"
                 for index, entry in enumerate(zmatrix.entries, start=1)
@@ -361,6 +428,7 @@ def _normalized_settings(settings: GaussianSettings) -> GaussianSettings:
         pop=_normalize_optional_keyword(settings.pop),
         others=_normalize_optional_keyword(settings.others),
         pcm_eps=settings.pcm_eps,
+        fixed_internal_coordinates=frozenset(settings.fixed_internal_coordinates),
         title=settings.title,
         walltime=settings.walltime,
         pbs_select=settings.pbs_select,

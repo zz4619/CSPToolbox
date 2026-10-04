@@ -23,6 +23,8 @@ The importable modules live under `Source/`:
   calculation health/status classification, and system summaries.
 - `vasp_file_manifest.py`: reusable file manifest and tarball helpers for
   collecting selected VASP output files.
+- `zmatrix_viewer/`: numeric `# ZMAT v1` parsing, Cartesian reconstruction,
+  viewer molecule payload construction, and standalone HTML export.
 
 `Source/__init__.py` lazily exports the main classes and functions so lightweight
 tools can import CSPToolbox without immediately importing the full scientific
@@ -33,21 +35,27 @@ modules from `Source/`.
 
 ## PyZMAT Compatibility
 
-`Source.gaussian_input.GaussianInputBuilder` writes Gaussian symbolic
-Z-matrix inputs in a PyZMAT-readable form. The generated `.com` files now include
-an explicit `Variables:` section, and internal-coordinate values are written as
-Gaussian-style assignments such as `bnd2=1.234567`.
-
-For standalone Z-matrix files, `GaussianInputBuilder.render_zmat_text()` writes
-the numeric `# ZMAT v1` format. These files keep Gaussian/CSPToolbox 1-based
-atom references on disk. PyZMAT converts those references to its internal
-0-based convention when loaded with:
+`GaussianInputBuilder.render_zmat_text()` writes the numeric `# ZMAT v1`
+interchange format. These files include stable atom labels and keep
+Gaussian/CSPToolbox 1-based atom references on disk. PyZMAT converts those
+references to its internal 0-based convention when loaded with:
 
 ```python
 from pyzmat import ZMatrix
 
 zmat = ZMatrix.load_from_csp_zmat("molecule.zmat")
 ```
+
+Gaussian `.com` files use a separate syntax contract. Build them from a saved
+and validated `# ZMAT v1` file with
+`GaussianInputBuilder.write_com_from_zmat_file()`. The Gaussian symbolic
+Z-matrix contains assignments such as `bnd2=1.234567` directly after the atom
+rows and does not add a `Variables:` label. By default every internal
+coordinate is variable. To hold selected coordinates fixed, pass their names
+through `GaussianSettings.fixed_internal_coordinates`; the builder writes each
+fixed value as a numeric literal in its Z-matrix atom row, omits its symbolic
+assignment, and rejects unknown coordinate names. This avoids relying on a
+Gaussian `Constants:` block for geometry symbols.
 
 ## CLI Scripts
 
