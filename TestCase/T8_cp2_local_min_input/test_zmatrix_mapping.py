@@ -1,0 +1,285 @@
+"""Regression tests for the engine-neutral Z-matrix atom matcher."""
+
+from __future__ import annotations
+
+from dataclasses import replace
+from pathlib import Path
+import sys
+import unittest
+
+import networkx as nx
+import numpy as np
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from Source.zmatrix_mapping import (  # noqa: E402
+    MAPPING_METHOD_VERSION,
+    InternalCoordinateKey,
+    MappingCandidate,
+    MappingScoreSettings,
+    ZMatrixSite,
+    match_zmatrix_atoms,
+    proper_rotation_rmsd,
+    score_mapping_candidate,
+    select_mapping_candidate,
+)
+
+
+def _candidate(
+    *, score: float, rmsd: float, mapping: tuple[int, ...], gross: int = 0
+) -> MappingCandidate:
+    return MappingCandidate(
+        canonical_to_experimental=tuple(
+            (f"A{position}", index)
+            for position, index in enumerate(mapping, start=1)
+        ),
+        gross_bond_angle_mismatches=gross,
+        internal_coordinate_score=score,
+        fixed_pair_all_atom_rmsd_angstrom=rmsd,
+        heavy_atom_rmsd_angstrom=rmsd,
+        bond_rms_delta_angstrom=0.0,
+        bond_max_abs_delta_angstrom=0.0,
+        angle_rms_delta_degrees=0.0,
+        angle_max_abs_delta_degrees=0.0,
+        rigid_torsion_rms_delta_degrees=0.0,
+        rigid_torsion_max_abs_delta_degrees=0.0,
+        independent_torsion_rms_delta_degrees=0.0,
+        independent_torsion_max_abs_delta_degrees=0.0,
+        reference_values=(),
+        experimental_values=(),
+    )
+
+
+class ZMatrixMappingTests(unittest.TestCase):
+    def test_rigid_and_independent_torsions_use_separate_scales(self) -> None:
+        sites = (
+            ZMatrixSite(1, "C1", "C"),
+            ZMatrixSite(2, "C2", "C", bond_to=1),
+            ZMatrixSite(3, "C3", "C", bond_to=2, angle_to=1),
+            ZMatrixSite(4, "H1", "H", bond_to=3, angle_to=2, dihedral_to=1),
+            ZMatrixSite(5, "H2", "H", bond_to=3, angle_to=2, dihedral_to=1),
+        )
+        reference = {
+            0: (0.0, 0.0, 0.0),
+            1: (1.0, 0.0, 0.0),
+            2: (1.0, 1.0, 0.0),
+            3: (1.0, 1.0, 1.0),
+            4: (1.0, 1.0, -1.0),
+        }
+        # Rotating both terminal atoms by the same 15 degrees around the C3-C2
+        # axis leaves bonds and angles unchanged and gives equal torsion deltas
+        # at rows 4 and 5.
+        angle = np.deg2rad(15.0)
+        experimental = dict(reference)
+        for index in (3, 4):
+            x, y, z = reference[index]
+            experimental[index] = (
+                1.0 + (x - 1.0) * np.cos(angle) + z * np.sin(angle),
+                y,
+                -(x - 1.0) * np.sin(angle) + z * np.cos(angle),
+            )
+        mapping = {"C1": 0, "C2": 1, "C3": 2, "H1": 3, "H2": 4}
+        independent = frozenset({InternalCoordinateKey("dihedral", 5)})
+
+        candidate = score_mapping_candidate(
+            sites=sites,
+            reference_coordinates=reference,
+            canonical_to_reference=mapping,
+            experimental_coordinates=experimental,
+            canonical_to_experimental=mapping,
+            flexible_coordinates=independent,
+        )
+
+        self.assertAlmostEqual(15.0, candidate.rigid_torsion_rms_delta_degrees)
+        self.assertAlmostEqual(
+            15.0, candidate.independent_torsion_rms_delta_degrees
+        )
+        # Two equal angular deltas contribute 2.25 and 1.0 squared units;
+        # the score averages those with all other populated coordinates.
+        populated_coordinate_count = 4 + 3 + 2
+        expected = np.sqrt((2.25 + 1.0) / populated_coordinate_count)
+        self.assertAlmostEqual(expected, candidate.internal_coordinate_score)
+
+    def test_gross_mismatch_count_is_diagnostic_not_a_selection_gate(self) -> None:
+        continuous_winner = _candidate(
+            score=0.10, rmsd=0.5, mapping=(1, 0), gross=1
+        )
+        zero_gross_but_worse = _candidate(
+            score=0.20, rmsd=0.0, mapping=(0, 1), gross=0
+        )
+
+        decision = select_mapping_candidate(
+            (zero_gross_but_worse, continuous_winner)
+        )
+
+        self.assertEqual(continuous_winner, decision.selected)
+        self.assertEqual("unique_primary_score", decision.selection_reason)
+
+    def test_independent_torsions_contribute_to_primary_score(self) -> None:
+        sites = (
+            ZMatrixSite(1, "C1", "C"),
+            ZMatrixSite(2, "C2", "C", bond_to=1),
+            ZMatrixSite(3, "C3", "C", bond_to=2, angle_to=1),
+            ZMatrixSite(4, "H1", "H", bond_to=3, angle_to=2, dihedral_to=1),
+            ZMatrixSite(5, "H2", "H", bond_to=3, angle_to=2, dihedral_to=1),
+        )
+        coordinates = {
+            0: (0.0, 0.0, 0.0),
+            1: (1.0, 0.0, 0.0),
+            2: (1.0, 1.0, 0.0),
+            3: (1.0, 1.0, 1.0),
+            4: (1.0, 1.0, -1.0),
+        }
+        canonical_to_reference = {
+            "C1": 0,
+            "C2": 1,
+            "C3": 2,
+            "H1": 3,
+            "H2": 4,
+        }
+        independent_torsions = frozenset(
+            {
+                InternalCoordinateKey("dihedral", 4),
+                InternalCoordinateKey("dihedral", 5),
+            }
+        )
+        correct = score_mapping_candidate(
+            sites=sites,
+            reference_coordinates=coordinates,
+            canonical_to_reference=canonical_to_reference,
+            experimental_coordinates=coordinates,
+            canonical_to_experimental=canonical_to_reference,
+            flexible_coordinates=independent_torsions,
+        )
+        swapped = score_mapping_candidate(
+            sites=sites,
+            reference_coordinates=coordinates,
+            canonical_to_reference=canonical_to_reference,
+            experimental_coordinates=coordinates,
+            canonical_to_experimental={
+                **canonical_to_reference,
+                "H1": 4,
+                "H2": 3,
+            },
+            flexible_coordinates=independent_torsions,
+        )
+
+        decision = select_mapping_candidate((swapped, correct))
+
+        self.assertEqual(correct, decision.selected)
+        self.assertEqual("unique_primary_score", decision.selection_reason)
+        self.assertEqual(0.0, correct.independent_torsion_rms_delta_degrees)
+        self.assertAlmostEqual(
+            180.0, swapped.independent_torsion_rms_delta_degrees
+        )
+        self.assertGreater(swapped.internal_coordinate_score, 0.0)
+
+    def test_hydrogen_permutation_uses_fixed_pair_all_atom_rmsd(self) -> None:
+        sites = (
+            ZMatrixSite(1, "C1", "C"),
+            ZMatrixSite(2, "H1", "H", bond_to=1),
+            ZMatrixSite(3, "H2", "H", bond_to=1, angle_to=2),
+        )
+        reference_graph = nx.Graph()
+        experimental_graph = nx.Graph()
+        for graph in (reference_graph, experimental_graph):
+            graph.add_node(0, element="C")
+            graph.add_node(1, element="H")
+            graph.add_node(2, element="H")
+            graph.add_edges_from(((0, 1), (0, 2)))
+        reference_coordinates = {
+            0: (0.0, 0.0, 0.0),
+            1: (1.00, 0.00, 0.00),
+            2: (-0.25, 0.95, 0.00),
+        }
+        # Experimental atom indices 1 and 2 deliberately occupy the opposite
+        # template positions.  Heavy-atom RMSD is identical for both mappings.
+        experimental_coordinates = {
+            0: (4.0, -2.0, 1.0),
+            1: (3.75, -1.05, 1.0),
+            2: (5.00, -2.00, 1.0),
+        }
+        flexible = frozenset(
+            {
+                InternalCoordinateKey("bond", 2),
+                InternalCoordinateKey("bond", 3),
+                InternalCoordinateKey("angle", 3),
+            }
+        )
+
+        decision = match_zmatrix_atoms(
+            sites=sites,
+            reference_graph=reference_graph,
+            reference_coordinates=reference_coordinates,
+            canonical_to_reference={"C1": 0, "H1": 1, "H2": 2},
+            experimental_graph=experimental_graph,
+            experimental_coordinates=experimental_coordinates,
+            flexible_coordinates=flexible,
+        )
+
+        self.assertEqual(MAPPING_METHOD_VERSION, decision.method_version)
+        self.assertEqual(2, decision.primary_tie_count)
+        self.assertEqual(1, decision.final_tie_count)
+        self.assertEqual("fixed_pair_all_atom_rmsd", decision.selection_reason)
+        self.assertEqual(
+            {"C1": 0, "H1": 2, "H2": 1},
+            decision.selected.as_index_mapping(),
+        )
+        self.assertAlmostEqual(
+            0.0, decision.selected.fixed_pair_all_atom_rmsd_angstrom, places=12
+        )
+
+    def test_nonplanar_reflection_cannot_be_removed_by_proper_rotation(self) -> None:
+        target = np.asarray(
+            [
+                (0.0, 0.0, 0.0),
+                (1.0, 0.0, 0.0),
+                (0.0, 1.0, 0.0),
+                (0.0, 0.0, 1.0),
+            ]
+        )
+        reflected = target.copy()
+        reflected[:, 0] *= -1.0
+
+        self.assertGreater(proper_rotation_rmsd(reflected, target), 0.40)
+
+    def test_primary_score_wins_before_fixed_pair_rmsd(self) -> None:
+        lower_primary = _candidate(score=0.10, rmsd=1.0, mapping=(1, 0))
+        lower_rmsd = _candidate(score=0.20, rmsd=0.0, mapping=(0, 1))
+
+        decision = select_mapping_candidate((lower_rmsd, lower_primary))
+
+        self.assertEqual(lower_primary, decision.selected)
+        self.assertEqual("unique_primary_score", decision.selection_reason)
+
+    def test_rmsd_is_used_only_inside_primary_tolerance(self) -> None:
+        settings = MappingScoreSettings(primary_score_atol=1.0e-8)
+        first = _candidate(score=0.1, rmsd=0.5, mapping=(1, 0))
+        within_tolerance = _candidate(
+            score=0.1 + 0.5e-8, rmsd=0.1, mapping=(0, 1)
+        )
+
+        decision = select_mapping_candidate(
+            (first, within_tolerance), settings=settings
+        )
+
+        self.assertEqual(within_tolerance, decision.selected)
+        self.assertEqual("fixed_pair_all_atom_rmsd", decision.selection_reason)
+
+    def test_unresolved_tie_is_explicit_and_deterministic(self) -> None:
+        first = _candidate(score=0.1, rmsd=0.2, mapping=(1, 0))
+        second = replace(first, canonical_to_experimental=(("A1", 0), ("A2", 1)))
+
+        decision = select_mapping_candidate((first, second))
+
+        self.assertTrue(decision.mapping_ambiguous)
+        self.assertEqual(2, decision.final_tie_count)
+        self.assertEqual("deterministic_unresolved_tie", decision.selection_reason)
+        self.assertEqual((0, 1), decision.selected.deterministic_key)
+
+
+if __name__ == "__main__":
+    unittest.main()

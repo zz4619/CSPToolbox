@@ -32,6 +32,8 @@ csp-vasp-manifest = "Source.CLI_scripts.vasp_file_manifest:main"
 csp-zmat-viewer = "Source.CLI_scripts.zmatrix_viewer:main"
 csp-view = "Source.CLI_scripts.zmatrix_viewer:main"
 csp-rdkit-conformers = "Source.CLI_scripts.generate_rdkit_conformers:main"
+csp-cp2-local-min = "Source.CLI_scripts.prepare_cp2_local_min:main"
+csp-cp2-local-min-batch = "Source.CLI_scripts.prepare_cp2_local_min_batch:main"
 
 [tool.setuptools.packages.find]
 include = ["Source", "Source.*", "csptoolbox", "csptoolbox.*"]
