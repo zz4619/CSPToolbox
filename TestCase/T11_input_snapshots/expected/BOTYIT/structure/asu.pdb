@@ -1,0 +1,14 @@
+HEADER    BOTYIT
+REMARK   1 CSPTOOLBOX_EXPLICT_UNIT_CELL FALSE
+CRYST1    7.509   10.776    7.198  90.00  92.92  90.00 P 2_1/c       1
+HETATM    1 Cl1_ MOL A   1       4.295   6.876   0.701  1.00  0.00          Cl
+HETATM    2 Cl2_ MOL A   1       1.132   8.945   2.523  1.00  0.00          Cl
+HETATM    3 N1_1 MOL A   1       4.677   9.423   0.656  1.00  0.00           N
+HETATM    4 N2_1 MOL A   1       6.398   8.073   1.589  1.00  0.00           N
+HETATM    5 C1_1 MOL A   1       6.663  10.432   1.489  1.00  0.00           C
+HETATM    6 H1_1 MOL A   1       7.172   0.414   1.668  1.00  0.00           H
+HETATM    7 C2_1 MOL A   1       5.415  10.508   0.900  1.00  0.00           C
+HETATM    8 H2_1 MOL A   1       5.078   0.567   0.666  1.00  0.00           H
+HETATM    9 C3_1 MOL A   1       5.225   8.296   1.009  1.00  0.00           C
+HETATM   10 C4_1 MOL A   1       7.100   9.181   1.790  1.00  0.00           C
+END

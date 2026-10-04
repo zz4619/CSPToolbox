@@ -1,0 +1,10 @@
+Cl1_1 Cl Cl_ 1 None
+Cl2_1 Cl Cl_ 1 None
+N1_1 N N__ 1 None
+N2_1 N N__ 1 None
+C1_1 C C__ 1 None
+H1_1 H H_c 1 C1_1
+C2_1 C C__ 1 None
+H2_1 H H_c 1 C2_1
+C3_1 C C__ 1 None
+C4_1 C C__ 1 None

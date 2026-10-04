@@ -1,0 +1,17 @@
+HEADER    XAGWIM
+REMARK   1 CSPTOOLBOX_EXPLICT_UNIT_CELL FALSE
+CRYST1   13.337    5.075   15.151  90.00  99.21  90.00 C 2/c         1
+HETATM    1 O1_1 MOL A   1       0.580   1.324   1.165  1.00  0.00           O
+HETATM    2 N1_1 MOL A   1       3.979   2.377   1.544  1.00  0.00           N
+HETATM    3 C1_1 MOL A   1       1.622   2.097   0.952  1.00  0.00           C
+HETATM    4 C2_1 MOL A   1       2.811   1.680   1.654  1.00  0.00           C
+HETATM    5 C3_1 MOL A   1       3.031   0.619   2.496  1.00  0.00           C
+HETATM    6 C4_1 MOL A   1       4.926   1.773   2.294  1.00  0.00           C
+HETATM    7 C5_1 MOL A   1       4.368   0.684   2.904  1.00  0.00           C
+HETATM    8 O2_1 MOL A   1       1.574   3.089   0.225  1.00  0.00           O
+HETATM    9 H1_1 MOL A   1       4.080   3.060   1.033  1.00  0.00           H
+HETATM   10 H2_1 MOL A   1       4.826   0.041   3.510  1.00  0.00           H
+HETATM   11 H3_1 MOL A   1       2.372   5.034   2.749  1.00  0.00           H
+HETATM   12 H4_1 MOL A   1       5.836   2.137   2.320  1.00  0.00           H
+HETATM   13 H5_1 MOL A   1      13.154   1.543   0.634  1.00  0.00           H
+END

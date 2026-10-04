@@ -136,7 +136,7 @@ def main() -> int:
                 continue
 
             output_dir = output_root / system_name
-            artifacts = builder.write_job_from_crystal(reduced_structure, output_dir, system_name=system_name)
+            builder.write_job_from_crystal(reduced_structure, output_dir, system_name=system_name)
             summary_row["status"] = "generated"
             summary_row["reason"] = "ok"
             summary_row["output_dir"] = str(output_dir)

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 
 from zmatrix_generation_helpers import (
     CASE_ROOT,

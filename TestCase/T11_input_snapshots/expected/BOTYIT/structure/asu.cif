@@ -1,0 +1,27 @@
+data_BOTYIT
+_audit_creation_method 'CSPToolbox CrystalStructure'
+_csptoolbox_explict_unit_cell false
+_cell_length_a 7.5090000000
+_cell_length_b 10.7760000000
+_cell_length_c 7.1980000000
+_cell_angle_alpha 90.0000000000
+_cell_angle_beta 92.9200000000
+_cell_angle_gamma 90.0000000000
+_symmetry_space_group_name_H-M 'P 2_1/c'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+Cl1_1 Cl 0.5768000000 0.6380900000 0.0975000000 1.0
+Cl2_1 Cl 0.1679000000 0.8301000000 0.3510000000 1.0
+N1_1 N 0.6273000000 0.8744000000 0.0912000000 1.0
+N2_1 N 0.8628000000 0.7492000000 0.2211000000 1.0
+C1_1 C 0.8975000000 0.9681000000 0.2072000000 1.0
+H1_1 H 0.9665000000 0.0384000000 0.2321000000 1.0
+C2_1 C 0.7272000000 0.9751000000 0.1252000000 1.0
+H2_1 H 0.6808000000 0.0526000000 0.0927000000 1.0
+C3_1 C 0.7027000000 0.7699000000 0.1403000000 1.0
+C4_1 C 0.9577000000 0.8520000000 0.2490000000 1.0

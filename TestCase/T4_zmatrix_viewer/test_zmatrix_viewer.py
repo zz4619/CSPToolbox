@@ -20,7 +20,7 @@ from Source.zmatrix_viewer.geometry import (  # noqa: E402
     measure_dihedral_degrees,
     reconstruct_coordinates,
 )
-from Source.zmatrix_viewer.html_export import render_viewer_html, write_viewer_html, viewer_payload  # noqa: E402
+from Source.zmatrix_viewer.html_export import render_viewer_html, viewer_payload  # noqa: E402
 
 
 BRANCH_IMPROPER_ROOT = (

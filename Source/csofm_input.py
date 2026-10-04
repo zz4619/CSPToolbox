@@ -11,7 +11,7 @@ import shutil
 
 from ase.data import atomic_masses, atomic_numbers
 
-from .crystal_structure import AtomRecord, CrystalStructure, MoleculeGroup
+from .crystal_structure import AtomRecord, CrystalStructure
 from .vasp_results import read_contcar_as_crystal
 
 

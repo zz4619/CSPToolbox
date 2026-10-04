@@ -1,0 +1,3 @@
+# Approval snapshots are exact program output: keep their bytes (trailing
+# spaces, final blank lines, LF endings) and exempt them from whitespace checks.
+TestCase/T11_input_snapshots/expected/** -text -whitespace
