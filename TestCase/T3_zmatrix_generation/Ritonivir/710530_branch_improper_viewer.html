@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ritonivir 710530 branch improper API</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f6f8;
+      --panel: #ffffff;
+      --text: #1d2430;
+      --muted: #5d6978;
+      --line: #d8dee7;
+      --line-strong: #b7c0cc;
+      --accent: #d76b00;
+      --accent-soft: #fff0df;
+      --atom-hover: #0077c8;
+      --atom-hover-soft: #e6f3ff;
+      --focus: #0089a7;
+      --shadow: 0 10px 28px rgba(33, 43, 54, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    body {
+      min-width: 320px;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      height: 100vh;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 64px;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    h1,
+    h2,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(18px, 2vw, 24px);
+      line-height: 1.2;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .source {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .summary {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .summary span {
+      padding: 5px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fafbfc;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+      min-height: 0;
+    }
+
+    .viewer {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      background: #eef2f6;
+      border-right: 1px solid var(--line);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    canvas.is-dragging {
+      cursor: grabbing;
+    }
+
+    canvas.is-atom-hover {
+      cursor: pointer;
+    }
+
+    .canvas-actions {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .tool-button {
+      min-height: 34px;
+      padding: 0 12px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(33, 43, 54, 0.10);
+      cursor: pointer;
+    }
+
+    .tool-button:hover,
+    .tool-button:focus-visible {
+      border-color: var(--focus);
+      outline: none;
+    }
+
+    aside {
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      min-width: 0;
+      min-height: 0;
+      background: var(--panel);
+    }
+
+    .side-header {
+      padding: 16px 16px 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      font-size: 17px;
+      line-height: 1.3;
+    }
+
+    .active-detail {
+      min-height: 50px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .active-detail strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .dihedral-list {
+      overflow: auto;
+      padding: 8px;
+    }
+
+    .dihedral-row {
+      display: grid;
+      width: 100%;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 6px 12px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .dihedral-row + .dihedral-row {
+      margin-top: 4px;
+    }
+
+    .dihedral-row:hover,
+    .dihedral-row:focus-visible,
+    .dihedral-row.is-active,
+    .dihedral-row.is-atom-hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      outline: none;
+    }
+
+    .dihedral-row.is-atom-hover {
+      border-color: var(--atom-hover);
+      background: var(--atom-hover-soft);
+    }
+
+    .dihedral-row.is-active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .quartet {
+      min-width: 0;
+      font-size: 13px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .value {
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .meta {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .kind {
+      color: var(--muted);
+    }
+
+    .warnings {
+      border-top: 1px solid var(--line);
+      padding: 10px 16px;
+      color: #8a4c00;
+      background: #fff8ef;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .warnings:empty {
+      display: none;
+    }
+
+    @media (max-width: 820px) {
+      .shell {
+        height: auto;
+        min-height: 100vh;
+      }
+
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .summary {
+        justify-content: flex-start;
+      }
+
+      main {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(360px, 56vh) minmax(320px, auto);
+      }
+
+      .viewer {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div>
+        <h1 id="viewerTitle"></h1>
+        <p class="source" id="viewerSource"></p>
+      </div>
+      <div class="summary">
+        <span id="atomCount"></span>
+        <span id="bondCount"></span>
+        <span id="dihedralCount"></span>
+      </div>
+    </header>
+    <main>
+      <section class="viewer" aria-label="Molecule visualization">
+        <canvas id="moleculeCanvas"></canvas>
+        <div class="canvas-actions">
+          <button class="tool-button" type="button" id="resetView">Reset</button>
+          <button class="tool-button" type="button" id="clearSelection">Clear</button>
+        </div>
+      </section>
+      <aside>
+        <div class="side-header">
+          <h2>Dihedral Angles</h2>
+        </div>
+        <div class="active-detail" id="activeDetail"></div>
+        <div class="dihedral-list" id="dihedralList"></div>
+        <div class="warnings" id="warnings"></div>
+      </aside>
+    </main>
+  </div>
+  <script type="application/json" id="moleculeData">{"title": "Ritonivir 710530 branch improper API", "source_name": "/Users/zianzhan/Desktop/CSP_sandbox/CSPToolbox/TestCase/T3_zmatrix_generation/Ritonivir/710530_branch_improper.zmat", "atoms": [{"index": 1, "label": "C1", "element": "C", "x": 0.0, "y": 0.0, "z": 0.0, "color": "#30343b", "display_radius": 0.2}, {"index": 2, "label": "N1", "element": "N", "x": 1.4387817982, "y": 0.0, "z": 0.0, "color": "#2f66d0", "display_radius": 0.19}, {"index": 3, "label": "C2", "element": "C", "x": 2.1802934272386434, "y": 0.0, "z": -1.1685572385222216, "color": "#30343b", "display_radius": 0.2}, {"index": 4, "label": "C3", "element": "C", "x": 3.7051495261221374, "y": 0.10036815067049212, "z": -0.8876293580939376, "color": "#30343b", "display_radius": 0.2}, {"index": 5, "label": "N2", "element": "N", "x": 4.365475316204713, "y": -1.0134569131886102, "z": -1.574394391932733, "color": "#2f66d0", "display_radius": 0.19}, {"index": 6, "label": "C4", "element": "C", "x": 4.826525665981387, "y": -1.9871132604078114, "z": -0.8625977464637746, "color": "#30343b", "display_radius": 0.2}, {"index": 7, "label": "N3", "element": "N", "x": 5.506897350169155, "y": -2.954840308253341, "z": -1.5863937412041977, "color": "#2f66d0", "display_radius": 0.19}, {"index": 8, "label": "C5", "element": "C", "x": 6.220282744276124, "y": -4.0586784832524385, "z": -0.8267806917484584, "color": "#30343b", "display_radius": 0.2}, {"index": 9, "label": "C6", "element": "C", "x": 5.817047524451872, "y": -5.429553903394911, "z": -1.1398341493781294, "color": "#30343b", "display_radius": 0.2}, {"index": 10, "label": "N4", "element": "N", "x": 4.60542775194605, "y": -5.872071080412716, "z": -0.8517234425738099, "color": "#2f66d0", "display_radius": 0.19}, {"index": 11, "label": "C7", "element": "C", "x": 4.49297081431438, "y": -7.171852519195838, "z": -1.1708445813468964, "color": "#30343b", "display_radius": 0.2}, {"index": 12, "label": "C8", "element": "C", "x": 3.2323220732522295, "y": -7.83102382654417, "z": -0.846567396042134, "color": "#30343b", "display_radius": 0.2}, {"index": 13, "label": "C9", "element": "C", "x": 3.0702763939486872, "y": -8.112275738607922, "z": 0.6787158750101023, "color": "#30343b", "display_radius": 0.2}, {"index": 14, "label": "H1", "element": "H", "x": 3.844225940656283, "y": -8.610271296364468, "z": 0.890680644298291, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 15, "label": "H2", "element": "H", "x": 3.037126942846273, "y": -7.301461931805158, "z": 1.0996761172979417, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 16, "label": "H3", "element": "H", "x": 2.2960717058872135, "y": -8.62922011390387, "z": 0.7880735503633824, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 17, "label": "H4", "element": "H", "x": 2.4971998093423116, "y": -7.1858161419611735, "z": -1.0404285051601512, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 18, "label": "C10", "element": "C", "x": 2.9933355281117433, "y": -8.953590768082577, "z": -1.7263454984147117, "color": "#30343b", "display_radius": 0.2}, {"index": 19, "label": "H5", "element": "H", "x": 2.1392127536998413, "y": -9.305821257815479, "z": -1.569638150620314, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 20, "label": "H6", "element": "H", "x": 2.9831421436048613, "y": -8.562687086436483, "z": -2.6380383109838794, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 21, "label": "H7", "element": "H", "x": 3.673746616543693, "y": -9.529401616999625, "z": -1.6418722021154195, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 22, "label": "C11", "element": "C", "x": 6.663481064685235, "y": -6.331464046725518, "z": -1.7123678142611687, "color": "#30343b", "display_radius": 0.2}, {"index": 23, "label": "S1", "element": "S", "x": 5.8897263977560055, "y": -7.798454680398647, "z": -1.8188489139525497, "color": "#d8b52f", "display_radius": 0.24}, {"index": 24, "label": "H8", "element": "H", "x": 7.587662585143459, "y": -6.1538456820255885, "z": -1.9127302501377896, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 25, "label": "H9", "element": "H", "x": 7.191999636754552, "y": -3.9445386391393216, "z": -0.991368334924684, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 26, "label": "H10", "element": "H", "x": 6.111300796104858, "y": -3.897495623487399, "z": 0.12317152363470474, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 27, "label": "C12", "element": "C", "x": 5.80118304084001, "y": -2.8611994837060832, "z": -2.9850652505571094, "color": "#30343b", "display_radius": 0.2}, {"index": 28, "label": "H11", "element": "H", "x": 4.992520574704346, "y": -2.8124999779297246, "z": -3.496544061064915, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 29, "label": "H12", "element": "H", "x": 6.319624044514642, "y": -2.07706859496534, "z": -3.1723043584154733, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 30, "label": "H13", "element": "H", "x": 6.297481562084337, "y": -3.6248494018118667, "z": -3.280469887188692, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 31, "label": "O1", "element": "O", "x": 4.643615694027803, "y": -2.1397966723367974, "z": 0.3394381245536455, "color": "#d83b36", "display_radius": 0.18}, {"index": 32, "label": "H14", "element": "H", "x": 4.423165563121847, "y": -1.0028036271029486, "z": -2.523814648970098, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 33, "label": "H15", "element": "H", "x": 3.886590516213387, "y": 0.06510552168530398, "z": 0.035247343623350025, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 34, "label": "C13", "element": "C", "x": 4.159296559193187, "y": 1.392425014755523, "z": -1.3625749693150346, "color": "#30343b", "display_radius": 0.2}, {"index": 35, "label": "C14", "element": "C", "x": 3.4812469934989334, "y": 2.630312865466747, "z": -0.6875400789029051, "color": "#30343b", "display_radius": 0.2}, {"index": 36, "label": "H16", "element": "H", "x": 3.6428125079163713, "y": 2.6431074558101963, "z": 0.2108768556580899, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 37, "label": "H17", "element": "H", "x": 3.780394938975734, "y": 3.436147402662339, "z": -1.114030936574742, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 38, "label": "H18", "element": "H", "x": 2.5198784775699576, "y": 2.5700764055894583, "z": -0.8570546999238318, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 39, "label": "H19", "element": "H", "x": 3.97166189609739, "y": 1.4385272986357127, "z": -2.310795453707177, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 40, "label": "C15", "element": "C", "x": 5.689763247866733, "y": 1.574607295950068, "z": -1.2546445623192328, "color": "#30343b", "display_radius": 0.2}, {"index": 41, "label": "H20", "element": "H", "x": 6.178768029253932, "y": 0.9746109347665161, "z": -1.7775637098884332, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 42, "label": "H21", "element": "H", "x": 5.961205161248296, "y": 2.484191012108268, "z": -1.4919275086708053, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 43, "label": "H22", "element": "H", "x": 5.97325044934954, "y": 1.4665717254686867, "z": -0.3211029919834357, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 44, "label": "O2", "element": "O", "x": 1.697888653791352, "y": -0.03307907383918506, "z": -2.2722130585559595, "color": "#d83b36", "display_radius": 0.18}, {"index": 45, "label": "H23", "element": "H", "x": 1.8831265762300733, "y": 0.07166170207831182, "z": 0.8553343715939348, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 46, "label": "H24", "element": "H", "x": -0.29471215964262804, "y": 0.013821920497957926, "z": -0.9042380919821984, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 47, "label": "C16", "element": "C", "x": -0.4700387322462988, "y": -1.3164383165188174, "z": 0.6641151667704351, "color": "#30343b", "display_radius": 0.2}, {"index": 48, "label": "C17", "element": "C", "x": -0.15517374636642245, "y": -2.5709703742429575, "z": -0.09352022365402068, "color": "#30343b", "display_radius": 0.2}, {"index": 49, "label": "C18", "element": "C", "x": 1.0959019443204288, "y": -3.0982768827879354, "z": 0.0015277141890248647, "color": "#30343b", "display_radius": 0.2}, {"index": 50, "label": "C19", "element": "C", "x": 1.382805667290177, "y": -4.252420006176172, "z": -0.7858812625384415, "color": "#30343b", "display_radius": 0.2}, {"index": 51, "label": "C20", "element": "C", "x": 0.3459826698490194, "y": -4.889278832893024, "z": -1.5641724557971468, "color": "#30343b", "display_radius": 0.2}, {"index": 52, "label": "H25", "element": "H", "x": 0.563693845925728, "y": -5.656401072173131, "z": -2.068281368138152, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 53, "label": "H26", "element": "H", "x": 2.242038437379705, "y": -4.639668461694603, "z": -0.7930271514236149, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 54, "label": "H27", "element": "H", "x": 1.7622294654728035, "y": -2.6674673953619172, "z": 0.4746794942369933, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 55, "label": "C21", "element": "C", "x": -1.1315910024190088, "y": -3.1860202670938342, "z": -0.8737476668754008, "color": "#30343b", "display_radius": 0.2}, {"index": 56, "label": "C22", "element": "C", "x": -0.8756682142964998, "y": -4.3559674565660265, "z": -1.5952588785978241, "color": "#30343b", "display_radius": 0.2}, {"index": 57, "label": "H28", "element": "H", "x": -1.5355162219342642, "y": -4.80702979631153, "z": -2.103808891771446, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 58, "label": "H29", "element": "H", "x": -1.9767535698509109, "y": -2.775915675480886, "z": -0.9817199584715113, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 59, "label": "H30", "element": "H", "x": -0.06965422581750874, "y": -1.3966512887327998, "z": 1.4989650381706956, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 60, "label": "H31", "element": "H", "x": -1.422641090791052, "y": -1.277266317995682, "z": 0.7490508930339788, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 61, "label": "C23", "element": "C", "x": -0.4985969729666752, "y": 1.215159606701374, "z": 0.6895125893516404, "color": "#30343b", "display_radius": 0.2}, {"index": 62, "label": "C24", "element": "C", "x": -2.0695563460364816, "y": 1.497623850394719, "z": 0.4679225432655987, "color": "#30343b", "display_radius": 0.2}, {"index": 63, "label": "C25", "element": "C", "x": -2.6608766130879578, "y": 2.6256418403924995, "z": 1.364932017675582, "color": "#30343b", "display_radius": 0.2}, {"index": 64, "label": "N5", "element": "N", "x": -2.8493142044890667, "y": 2.025936039511382, "z": 2.720891896239969, "color": "#2f66d0", "display_radius": 0.19}, {"index": 65, "label": "C26", "element": "C", "x": -3.9082760872620312, "y": 1.4139207814767527, "z": 3.171063376297461, "color": "#30343b", "display_radius": 0.2}, {"index": 66, "label": "O3", "element": "O", "x": -4.9785611757808965, "y": 1.4752196666356034, "z": 2.3571143884543027, "color": "#d83b36", "display_radius": 0.18}, {"index": 67, "label": "C27", "element": "C", "x": -6.168394251236564, "y": 0.7760552259133305, "z": 2.835749679587018, "color": "#30343b", "display_radius": 0.2}, {"index": 68, "label": "C28", "element": "C", "x": -7.168910457068938, "y": 0.9550886991579333, "z": 1.8133289390126184, "color": "#30343b", "display_radius": 0.2}, {"index": 69, "label": "C29", "element": "C", "x": -7.3574973062258335, "y": 1.8645784333366153, "z": 0.8191853305180119, "color": "#30343b", "display_radius": 0.2}, {"index": 70, "label": "N6", "element": "N", "x": -8.501983967833782, "y": 1.7581554612675343, "z": 0.052512397357857954, "color": "#2f66d0", "display_radius": 0.19}, {"index": 71, "label": "C30", "element": "C", "x": -9.16252764511522, "y": 0.8064878079454533, "z": 0.4121921274985816, "color": "#30343b", "display_radius": 0.2}, {"index": 72, "label": "H32", "element": "H", "x": -9.947836475460573, "y": 0.5211795825861865, "z": -0.028727694318474828, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 73, "label": "H33", "element": "H", "x": -6.731036947750814, "y": 2.559609579394551, "z": 0.7229399960992657, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 74, "label": "S2", "element": "S", "x": -8.572319371535261, "y": -0.08965242266324958, "z": 1.7508514855536255, "color": "#d8b52f", "display_radius": 0.24}, {"index": 75, "label": "H34", "element": "H", "x": -5.958737136458843, "y": -0.11231517086545373, "z": 2.9772555686656554, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 76, "label": "H35", "element": "H", "x": -6.456694175239239, "y": 1.1998897158486574, "z": 3.637419886311494, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 77, "label": "O4", "element": "O", "x": -4.032959984966109, "y": 0.9411417123821056, "z": 4.353515286783525, "color": "#d83b36", "display_radius": 0.18}, {"index": 78, "label": "H36", "element": "H", "x": -2.092043994644704, "y": 2.076283421142641, "z": 3.312211853877619, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 79, "label": "H37", "element": "H", "x": -3.4959302636009904, "y": 2.8502707691550104, "z": 1.0114039430410178, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 80, "label": "C31", "element": "C", "x": -1.8306474237277652, "y": 3.8035196631914197, "z": 1.4068346664539022, "color": "#30343b", "display_radius": 0.2}, {"index": 81, "label": "C32", "element": "C", "x": -2.558442734076572, "y": 5.08788695642807, "z": 1.951650101380393, "color": "#30343b", "display_radius": 0.2}, {"index": 82, "label": "C33", "element": "C", "x": -2.469465744206886, "y": 5.479092547329129, "z": 3.1873859258322477, "color": "#30343b", "display_radius": 0.2}, {"index": 83, "label": "C34", "element": "C", "x": -3.059497453123571, "y": 6.606357040294959, "z": 3.663113911158696, "color": "#30343b", "display_radius": 0.2}, {"index": 84, "label": "C35", "element": "C", "x": -3.7968707371091295, "y": 7.4340706104831575, "z": 2.712601473404869, "color": "#30343b", "display_radius": 0.2}, {"index": 85, "label": "H38", "element": "H", "x": -4.171436043467383, "y": 8.24183970970142, "z": 3.017803707526093, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 86, "label": "H39", "element": "H", "x": -3.0247746597664786, "y": 6.940528123324773, "z": 4.539366403443463, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 87, "label": "H40", "element": "H", "x": -1.9551847294104512, "y": 4.974492222944834, "z": 3.8314472394033166, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 88, "label": "C36", "element": "C", "x": -3.2871944663763797, "y": 5.885332891707628, "z": 1.1049126595311791, "color": "#30343b", "display_radius": 0.2}, {"index": 89, "label": "C37", "element": "C", "x": -3.9336970697446807, "y": 6.974518804552851, "z": 1.4511832472603488, "color": "#30343b", "display_radius": 0.2}, {"index": 90, "label": "H41", "element": "H", "x": -4.491391516409857, "y": 7.471748787126977, "z": 0.794000631624308, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 91, "label": "H42", "element": "H", "x": -3.3293649540762624, "y": 5.579180073711074, "z": 0.2139125750432036, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 92, "label": "H43", "element": "H", "x": -1.08483024407474, "y": 3.669721213929576, "z": 1.9424450794071837, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 93, "label": "H44", "element": "H", "x": -1.561812750657452, "y": 4.035073316782784, "z": 0.5122716842605736, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 94, "label": "H45", "element": "H", "x": -2.530104482218886, "y": 0.7001216717702604, "z": 0.5779094894261596, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 95, "label": "O5", "element": "O", "x": -2.1438841002144375, "y": 1.9252662530393323, "z": -0.9385378988207804, "color": "#d83b36", "display_radius": 0.18}, {"index": 96, "label": "H46", "element": "H", "x": -0.38407746728214004, "y": 1.1391702193753208, "z": 1.6326703177202846, "color": "#f7f7f2", "display_radius": 0.13}, {"index": 97, "label": "H47", "element": "H", "x": -0.03238570335946622, "y": 1.9874442939914907, "z": 0.38359069002056795, "color": "#f7f7f2", "display_radius": 0.13}], "bonds": [{"left": 1, "right": 2, "kind": "construction"}, {"left": 1, "right": 46, "kind": "construction"}, {"left": 1, "right": 47, "kind": "construction"}, {"left": 1, "right": 61, "kind": "construction"}, {"left": 2, "right": 3, "kind": "construction"}, {"left": 2, "right": 45, "kind": "construction"}, {"left": 3, "right": 4, "kind": "construction"}, {"left": 3, "right": 44, "kind": "construction"}, {"left": 4, "right": 5, "kind": "construction"}, {"left": 4, "right": 33, "kind": "construction"}, {"left": 4, "right": 34, "kind": "construction"}, {"left": 5, "right": 6, "kind": "construction"}, {"left": 5, "right": 32, "kind": "construction"}, {"left": 6, "right": 7, "kind": "construction"}, {"left": 6, "right": 31, "kind": "construction"}, {"left": 7, "right": 8, "kind": "construction"}, {"left": 7, "right": 27, "kind": "construction"}, {"left": 8, "right": 9, "kind": "construction"}, {"left": 8, "right": 25, "kind": "construction"}, {"left": 8, "right": 26, "kind": "construction"}, {"left": 9, "right": 10, "kind": "construction"}, {"left": 9, "right": 22, "kind": "construction"}, {"left": 10, "right": 11, "kind": "construction"}, {"left": 11, "right": 12, "kind": "construction"}, {"left": 11, "right": 23, "kind": "inferred"}, {"left": 12, "right": 13, "kind": "construction"}, {"left": 12, "right": 17, "kind": "construction"}, {"left": 12, "right": 18, "kind": "construction"}, {"left": 13, "right": 14, "kind": "construction"}, {"left": 13, "right": 15, "kind": "construction"}, {"left": 13, "right": 16, "kind": "construction"}, {"left": 18, "right": 19, "kind": "construction"}, {"left": 18, "right": 20, "kind": "construction"}, {"left": 18, "right": 21, "kind": "construction"}, {"left": 22, "right": 23, "kind": "construction"}, {"left": 22, "right": 24, "kind": "construction"}, {"left": 27, "right": 28, "kind": "construction"}, {"left": 27, "right": 29, "kind": "construction"}, {"left": 27, "right": 30, "kind": "construction"}, {"left": 34, "right": 35, "kind": "construction"}, {"left": 34, "right": 39, "kind": "construction"}, {"left": 34, "right": 40, "kind": "construction"}, {"left": 35, "right": 36, "kind": "construction"}, {"left": 35, "right": 37, "kind": "construction"}, {"left": 35, "right": 38, "kind": "construction"}, {"left": 40, "right": 41, "kind": "construction"}, {"left": 40, "right": 42, "kind": "construction"}, {"left": 40, "right": 43, "kind": "construction"}, {"left": 47, "right": 48, "kind": "construction"}, {"left": 47, "right": 59, "kind": "construction"}, {"left": 47, "right": 60, "kind": "construction"}, {"left": 48, "right": 49, "kind": "construction"}, {"left": 48, "right": 55, "kind": "construction"}, {"left": 49, "right": 50, "kind": "construction"}, {"left": 49, "right": 54, "kind": "construction"}, {"left": 50, "right": 51, "kind": "construction"}, {"left": 50, "right": 53, "kind": "construction"}, {"left": 51, "right": 52, "kind": "construction"}, {"left": 51, "right": 56, "kind": "inferred"}, {"left": 55, "right": 56, "kind": "construction"}, {"left": 55, "right": 58, "kind": "construction"}, {"left": 56, "right": 57, "kind": "construction"}, {"left": 61, "right": 62, "kind": "construction"}, {"left": 61, "right": 96, "kind": "construction"}, {"left": 61, "right": 97, "kind": "construction"}, {"left": 62, "right": 63, "kind": "construction"}, {"left": 62, "right": 94, "kind": "construction"}, {"left": 62, "right": 95, "kind": "construction"}, {"left": 63, "right": 64, "kind": "construction"}, {"left": 63, "right": 79, "kind": "construction"}, {"left": 63, "right": 80, "kind": "construction"}, {"left": 64, "right": 65, "kind": "construction"}, {"left": 64, "right": 78, "kind": "construction"}, {"left": 65, "right": 66, "kind": "construction"}, {"left": 65, "right": 77, "kind": "construction"}, {"left": 66, "right": 67, "kind": "construction"}, {"left": 67, "right": 68, "kind": "construction"}, {"left": 67, "right": 75, "kind": "construction"}, {"left": 67, "right": 76, "kind": "construction"}, {"left": 68, "right": 69, "kind": "construction"}, {"left": 68, "right": 74, "kind": "construction"}, {"left": 69, "right": 70, "kind": "construction"}, {"left": 69, "right": 73, "kind": "construction"}, {"left": 70, "right": 71, "kind": "construction"}, {"left": 71, "right": 72, "kind": "construction"}, {"left": 71, "right": 74, "kind": "inferred"}, {"left": 80, "right": 81, "kind": "construction"}, {"left": 80, "right": 92, "kind": "construction"}, {"left": 80, "right": 93, "kind": "construction"}, {"left": 81, "right": 82, "kind": "construction"}, {"left": 81, "right": 88, "kind": "construction"}, {"left": 82, "right": 83, "kind": "construction"}, {"left": 82, "right": 87, "kind": "construction"}, {"left": 83, "right": 84, "kind": "construction"}, {"left": 83, "right": 86, "kind": "construction"}, {"left": 84, "right": 85, "kind": "construction"}, {"left": 84, "right": 89, "kind": "inferred"}, {"left": 88, "right": 89, "kind": "construction"}, {"left": 88, "right": 91, "kind": "construction"}, {"left": 89, "right": 90, "kind": "construction"}], "dihedrals": [{"id": "row-4", "row_index": 4, "atom_indices": [4, 3, 2, 1], "atom_labels": ["C3", "C2", "N1", "C1"], "value_degrees": 176.0074948313, "kind": "proper", "links": [[3, 4], [2, 3], [1, 2]]}, {"id": "row-5", "row_index": 5, "atom_indices": [5, 4, 3, 2], "atom_labels": ["N2", "C3", "C2", "N1"], "value_degrees": 126.2567418147, "kind": "proper", "links": [[4, 5], [3, 4], [2, 3]]}, {"id": "row-6", "row_index": 6, "atom_indices": [6, 5, 4, 3], "atom_labels": ["C4", "N2", "C3", "C2"], "value_degrees": -107.7235329475, "kind": "proper", "links": [[5, 6], [4, 5], [3, 4]]}, {"id": "row-7", "row_index": 7, "atom_indices": [7, 6, 5, 4], "atom_labels": ["N3", "C4", "N2", "C3"], "value_degrees": -176.196539501, "kind": "proper", "links": [[6, 7], [5, 6], [4, 5]]}, {"id": "row-8", "row_index": 8, "atom_indices": [8, 7, 6, 5], "atom_labels": ["C5", "N3", "C4", "N2"], "value_degrees": 173.2551744451, "kind": "proper", "links": [[7, 8], [6, 7], [5, 6]]}, {"id": "row-9", "row_index": 9, "atom_indices": [9, 8, 7, 6], "atom_labels": ["C6", "C5", "N3", "C4"], "value_degrees": 122.0957380174, "kind": "proper", "links": [[8, 9], [7, 8], [6, 7]]}, {"id": "row-10", "row_index": 10, "atom_indices": [10, 9, 8, 7], "atom_labels": ["N4", "C6", "C5", "N3"], "value_degrees": -66.1403787297, "kind": "proper", "links": [[9, 10], [8, 9], [7, 8]]}, {"id": "row-11", "row_index": 11, "atom_indices": [11, 10, 9, 8], "atom_labels": ["C7", "N4", "C6", "C5"], "value_degrees": -176.9418661387, "kind": "proper", "links": [[10, 11], [9, 10], [8, 9]]}, {"id": "row-12", "row_index": 12, "atom_indices": [12, 11, 10, 9], "atom_labels": ["C8", "C7", "N4", "C6"], "value_degrees": 176.7966009007, "kind": "proper", "links": [[11, 12], [10, 11], [9, 10]]}, {"id": "row-13", "row_index": 13, "atom_indices": [13, 12, 11, 10], "atom_labels": ["C9", "C8", "C7", "N4"], "value_degrees": -73.9465632127, "kind": "proper", "links": [[12, 13], [11, 12], [10, 11]]}, {"id": "row-14", "row_index": 14, "atom_indices": [14, 13, 12, 11], "atom_labels": ["H1", "C9", "C8", "C7"], "value_degrees": -55.4088954536, "kind": "proper", "links": [[13, 14], [12, 13], [11, 12]]}, {"id": "row-15", "row_index": 15, "atom_indices": [15, 13, 12, 14], "atom_labels": ["H2", "C9", "C8", "H1"], "value_degrees": 119.7469274004, "kind": "improper", "links": [[13, 15], [12, 13], [12, 14]]}, {"id": "row-16", "row_index": 16, "atom_indices": [16, 13, 12, 14], "atom_labels": ["H3", "C9", "C8", "H1"], "value_degrees": -117.4846245267, "kind": "improper", "links": [[13, 16], [12, 13], [12, 14]]}, {"id": "row-17", "row_index": 17, "atom_indices": [17, 12, 11, 13], "atom_labels": ["H4", "C8", "C7", "C9"], "value_degrees": 113.2932736963, "kind": "improper", "links": [[12, 17], [11, 12], [11, 13]]}, {"id": "row-18", "row_index": 18, "atom_indices": [18, 12, 11, 13], "atom_labels": ["C10", "C8", "C7", "C9"], "value_degrees": -132.1349988767, "kind": "improper", "links": [[12, 18], [11, 12], [11, 13]]}, {"id": "row-19", "row_index": 19, "atom_indices": [19, 18, 12, 17], "atom_labels": ["H5", "C10", "C8", "H4"], "value_degrees": -57.6455249082, "kind": "proper", "links": [[18, 19], [12, 18], [12, 17]]}, {"id": "row-20", "row_index": 20, "atom_indices": [20, 18, 12, 19], "atom_labels": ["H6", "C10", "C8", "H5"], "value_degrees": 114.6574491203, "kind": "improper", "links": [[18, 20], [12, 18], [12, 19]]}, {"id": "row-21", "row_index": 21, "atom_indices": [21, 18, 12, 20], "atom_labels": ["H7", "C10", "C8", "H6"], "value_degrees": 117.8506243397, "kind": "improper", "links": [[18, 21], [12, 18], [12, 20]]}, {"id": "row-22", "row_index": 22, "atom_indices": [22, 9, 8, 10], "atom_labels": ["C11", "C6", "C5", "N4"], "value_degrees": -178.5000711267, "kind": "improper", "links": [[9, 22], [8, 9], [8, 10]]}, {"id": "row-23", "row_index": 23, "atom_indices": [23, 22, 9, 10], "atom_labels": ["S1", "C11", "C6", "N4"], "value_degrees": -2.3982497498, "kind": "proper", "links": [[22, 23], [9, 22], [9, 10]]}, {"id": "row-24", "row_index": 24, "atom_indices": [24, 22, 9, 23], "atom_labels": ["H8", "C11", "C6", "S1"], "value_degrees": -173.1314216729, "kind": "improper", "links": [[22, 24], [9, 22], [9, 23]]}, {"id": "row-25", "row_index": 25, "atom_indices": [25, 8, 7, 9], "atom_labels": ["H9", "C5", "N3", "C6"], "value_degrees": 123.5275873004, "kind": "improper", "links": [[8, 25], [7, 8], [7, 9]]}, {"id": "row-26", "row_index": 26, "atom_indices": [26, 8, 7, 9], "atom_labels": ["H10", "C5", "N3", "C6"], "value_degrees": -124.0136561225, "kind": "improper", "links": [[8, 26], [7, 8], [7, 9]]}, {"id": "row-27", "row_index": 27, "atom_indices": [27, 7, 6, 8], "atom_labels": ["C12", "N3", "C4", "C5"], "value_degrees": -167.7700723283, "kind": "improper", "links": [[7, 27], [6, 7], [6, 8]]}, {"id": "row-28", "row_index": 28, "atom_indices": [28, 27, 7, 8], "atom_labels": ["H11", "C12", "N3", "C5"], "value_degrees": 130.5173243424, "kind": "proper", "links": [[27, 28], [7, 27], [7, 8]]}, {"id": "row-29", "row_index": 29, "atom_indices": [29, 27, 7, 28], "atom_labels": ["H12", "C12", "N3", "H11"], "value_degrees": 119.8402413853, "kind": "improper", "links": [[27, 29], [7, 27], [7, 28]]}, {"id": "row-30", "row_index": 30, "atom_indices": [30, 27, 28, 29], "atom_labels": ["H13", "C12", "H11", "H12"], "value_degrees": -116.9570158016, "kind": "improper", "links": [[27, 30], [27, 28], [28, 29]]}, {"id": "row-31", "row_index": 31, "atom_indices": [31, 6, 5, 7], "atom_labels": ["O1", "C4", "N2", "N3"], "value_degrees": -175.7727673853, "kind": "improper", "links": [[6, 31], [5, 6], [5, 7]]}, {"id": "row-32", "row_index": 32, "atom_indices": [32, 5, 4, 6], "atom_labels": ["H14", "N2", "C3", "C4"], "value_degrees": 178.7508636716, "kind": "improper", "links": [[5, 32], [4, 5], [4, 6]]}, {"id": "row-33", "row_index": 33, "atom_indices": [33, 4, 3, 5], "atom_labels": ["H15", "C3", "C2", "N2"], "value_degrees": -121.0028367305, "kind": "improper", "links": [[4, 33], [3, 4], [3, 5]]}, {"id": "row-34", "row_index": 34, "atom_indices": [34, 4, 3, 5], "atom_labels": ["C13", "C3", "C2", "N2"], "value_degrees": 121.7782769481, "kind": "improper", "links": [[4, 34], [3, 4], [3, 5]]}, {"id": "row-35", "row_index": 35, "atom_indices": [35, 34, 4, 33], "atom_labels": ["C14", "C13", "C3", "H15"], "value_degrees": -59.6944676805, "kind": "proper", "links": [[34, 35], [4, 34], [4, 33]]}, {"id": "row-36", "row_index": 36, "atom_indices": [36, 35, 34, 4], "atom_labels": ["H16", "C14", "C13", "C3"], "value_degrees": 61.0577180426, "kind": "proper", "links": [[35, 36], [34, 35], [4, 34]]}, {"id": "row-37", "row_index": 37, "atom_indices": [37, 35, 34, 36], "atom_labels": ["H17", "C14", "C13", "H16"], "value_degrees": 124.029344226, "kind": "improper", "links": [[35, 37], [34, 35], [34, 36]]}, {"id": "row-38", "row_index": 38, "atom_indices": [38, 35, 34, 37], "atom_labels": ["H18", "C14", "C13", "H17"], "value_degrees": 115.2865941536, "kind": "improper", "links": [[35, 38], [34, 35], [34, 37]]}, {"id": "row-39", "row_index": 39, "atom_indices": [39, 34, 4, 35], "atom_labels": ["H19", "C13", "C3", "C14"], "value_degrees": -120.0000581359, "kind": "improper", "links": [[34, 39], [4, 34], [4, 35]]}, {"id": "row-40", "row_index": 40, "atom_indices": [40, 34, 35, 39], "atom_labels": ["C15", "C13", "C14", "H19"], "value_degrees": 112.4682087855, "kind": "improper", "links": [[34, 40], [34, 35], [35, 39]]}, {"id": "row-41", "row_index": 41, "atom_indices": [41, 40, 34, 39], "atom_labels": ["H20", "C15", "C13", "H19"], "value_degrees": -54.0528414871, "kind": "proper", "links": [[40, 41], [34, 40], [34, 39]]}, {"id": "row-42", "row_index": 42, "atom_indices": [42, 40, 34, 41], "atom_labels": ["H21", "C15", "C13", "H20"], "value_degrees": 123.0859400469, "kind": "improper", "links": [[40, 42], [34, 40], [34, 41]]}, {"id": "row-43", "row_index": 43, "atom_indices": [43, 40, 41, 42], "atom_labels": ["H22", "C15", "H20", "H21"], "value_degrees": -112.9055005985, "kind": "improper", "links": [[40, 43], [40, 41], [41, 42]]}, {"id": "row-44", "row_index": 44, "atom_indices": [44, 3, 2, 4], "atom_labels": ["O2", "C2", "N1", "C3"], "value_degrees": -177.904665228, "kind": "improper", "links": [[3, 44], [2, 3], [2, 4]]}, {"id": "row-45", "row_index": 45, "atom_indices": [45, 2, 1, 3], "atom_labels": ["H23", "N1", "C1", "C2"], "value_degrees": 175.2108246677, "kind": "improper", "links": [[2, 45], [1, 2], [1, 3]]}, {"id": "row-46", "row_index": 46, "atom_indices": [46, 1, 2, 45], "atom_labels": ["H24", "C1", "N1", "H23"], "value_degrees": 174.3350862472, "kind": "proper", "links": [[1, 46], [1, 2], [2, 45]]}, {"id": "row-47", "row_index": 47, "atom_indices": [47, 1, 2, 46], "atom_labels": ["C16", "C1", "N1", "H24"], "value_degrees": 117.6457127419, "kind": "improper", "links": [[1, 47], [1, 2], [2, 46]]}, {"id": "row-48", "row_index": 48, "atom_indices": [48, 47, 1, 2], "atom_labels": ["C17", "C16", "C1", "N1"], "value_degrees": -66.6271754659, "kind": "proper", "links": [[47, 48], [1, 47], [1, 2]]}, {"id": "row-49", "row_index": 49, "atom_indices": [49, 48, 47, 1], "atom_labels": ["C18", "C17", "C16", "C1"], "value_degrees": 80.7167441173, "kind": "proper", "links": [[48, 49], [47, 48], [1, 47]]}, {"id": "row-50", "row_index": 50, "atom_indices": [50, 49, 48, 47], "atom_labels": ["C19", "C18", "C17", "C16"], "value_degrees": -176.8236354092, "kind": "proper", "links": [[49, 50], [48, 49], [47, 48]]}, {"id": "row-51", "row_index": 51, "atom_indices": [51, 50, 49, 48], "atom_labels": ["C20", "C19", "C18", "C17"], "value_degrees": -4.8993375514, "kind": "proper", "links": [[50, 51], [49, 50], [48, 49]]}, {"id": "row-52", "row_index": 52, "atom_indices": [52, 51, 50, 49], "atom_labels": ["H25", "C20", "C19", "C18"], "value_degrees": -179.3808316083, "kind": "proper", "links": [[51, 52], [50, 51], [49, 50]]}, {"id": "row-53", "row_index": 53, "atom_indices": [53, 50, 49, 51], "atom_labels": ["H26", "C19", "C18", "C20"], "value_degrees": -177.9181724818, "kind": "improper", "links": [[50, 53], [49, 50], [49, 51]]}, {"id": "row-54", "row_index": 54, "atom_indices": [54, 49, 48, 50], "atom_labels": ["H27", "C18", "C17", "C19"], "value_degrees": 172.6482642309, "kind": "improper", "links": [[49, 54], [48, 49], [48, 50]]}, {"id": "row-55", "row_index": 55, "atom_indices": [55, 48, 47, 49], "atom_labels": ["C21", "C17", "C16", "C18"], "value_degrees": 179.6569491231, "kind": "improper", "links": [[48, 55], [47, 48], [47, 49]]}, {"id": "row-56", "row_index": 56, "atom_indices": [56, 55, 48, 47], "atom_labels": ["C22", "C21", "C17", "C16"], "value_degrees": 179.949591876, "kind": "proper", "links": [[55, 56], [48, 55], [47, 48]]}, {"id": "row-57", "row_index": 57, "atom_indices": [57, 56, 51, 50], "atom_labels": ["H28", "C22", "C20", "C19"], "value_degrees": -179.0067324646, "kind": "proper", "links": [[56, 57], [51, 56], [50, 51]]}, {"id": "row-58", "row_index": 58, "atom_indices": [58, 55, 48, 56], "atom_labels": ["H29", "C21", "C17", "C22"], "value_degrees": -175.1372117887, "kind": "improper", "links": [[55, 58], [48, 55], [48, 56]]}, {"id": "row-59", "row_index": 59, "atom_indices": [59, 47, 1, 48], "atom_labels": ["H30", "C16", "C1", "C17"], "value_degrees": 120.5144851949, "kind": "improper", "links": [[47, 59], [1, 47], [1, 48]]}, {"id": "row-60", "row_index": 60, "atom_indices": [60, 47, 48, 59], "atom_labels": ["H31", "C16", "C17", "H30"], "value_degrees": -118.4577655436, "kind": "improper", "links": [[47, 60], [47, 48], [48, 59]]}, {"id": "row-61", "row_index": 61, "atom_indices": [61, 1, 2, 47], "atom_labels": ["C23", "C1", "N1", "C16"], "value_degrees": 123.6583424984, "kind": "improper", "links": [[1, 61], [1, 2], [2, 47]]}, {"id": "row-62", "row_index": 62, "atom_indices": [62, 61, 1, 46], "atom_labels": ["C24", "C23", "C1", "H24"], "value_degrees": 48.8606352576, "kind": "proper", "links": [[61, 62], [1, 61], [1, 46]]}, {"id": "row-63", "row_index": 63, "atom_indices": [63, 62, 61, 1], "atom_labels": ["C25", "C24", "C23", "C1"], "value_degrees": 170.4259771771, "kind": "proper", "links": [[62, 63], [61, 62], [1, 61]]}, {"id": "row-64", "row_index": 64, "atom_indices": [64, 63, 62, 61], "atom_labels": ["N5", "C25", "C24", "C23"], "value_degrees": -77.4833556352, "kind": "proper", "links": [[63, 64], [62, 63], [61, 62]]}, {"id": "row-65", "row_index": 65, "atom_indices": [65, 64, 63, 62], "atom_labels": ["C26", "N5", "C25", "C24"], "value_degrees": -89.8701062945, "kind": "proper", "links": [[64, 65], [63, 64], [62, 63]]}, {"id": "row-66", "row_index": 66, "atom_indices": [66, 65, 64, 63], "atom_labels": ["O3", "C26", "N5", "C25"], "value_degrees": -7.8356106137, "kind": "proper", "links": [[65, 66], [64, 65], [63, 64]]}, {"id": "row-67", "row_index": 67, "atom_indices": [67, 66, 65, 64], "atom_labels": ["C27", "O3", "C26", "N5"], "value_degrees": 179.0470746725, "kind": "proper", "links": [[66, 67], [65, 66], [64, 65]]}, {"id": "row-68", "row_index": 68, "atom_indices": [68, 67, 66, 65], "atom_labels": ["C28", "C27", "O3", "C26"], "value_degrees": -179.1972175001, "kind": "proper", "links": [[67, 68], [66, 67], [65, 66]]}, {"id": "row-69", "row_index": 69, "atom_indices": [69, 68, 67, 66], "atom_labels": ["C29", "C28", "C27", "O3"], "value_degrees": -22.4239600668, "kind": "proper", "links": [[68, 69], [67, 68], [66, 67]]}, {"id": "row-70", "row_index": 70, "atom_indices": [70, 69, 68, 67], "atom_labels": ["N6", "C29", "C28", "C27"], "value_degrees": -176.5430795282, "kind": "proper", "links": [[69, 70], [68, 69], [67, 68]]}, {"id": "row-71", "row_index": 71, "atom_indices": [71, 70, 69, 68], "atom_labels": ["C30", "N6", "C29", "C28"], "value_degrees": -1.0045470953, "kind": "proper", "links": [[70, 71], [69, 70], [68, 69]]}, {"id": "row-72", "row_index": 72, "atom_indices": [72, 71, 70, 69], "atom_labels": ["H32", "C30", "N6", "C29"], "value_degrees": -174.9928840025, "kind": "proper", "links": [[71, 72], [70, 71], [69, 70]]}, {"id": "row-73", "row_index": 73, "atom_indices": [73, 69, 68, 70], "atom_labels": ["H33", "C29", "C28", "N6"], "value_degrees": 176.4473690286, "kind": "improper", "links": [[69, 73], [68, 69], [68, 70]]}, {"id": "row-74", "row_index": 74, "atom_indices": [74, 68, 67, 69], "atom_labels": ["S2", "C28", "C27", "C29"], "value_degrees": -175.5978694641, "kind": "improper", "links": [[68, 74], [67, 68], [67, 69]]}, {"id": "row-75", "row_index": 75, "atom_indices": [75, 67, 66, 68], "atom_labels": ["H34", "C27", "O3", "C28"], "value_degrees": 121.4621713646, "kind": "improper", "links": [[67, 75], [66, 67], [66, 68]]}, {"id": "row-76", "row_index": 76, "atom_indices": [76, 67, 66, 68], "atom_labels": ["H35", "C27", "O3", "C28"], "value_degrees": -117.0968276068, "kind": "improper", "links": [[67, 76], [66, 67], [66, 68]]}, {"id": "row-77", "row_index": 77, "atom_indices": [77, 65, 64, 66], "atom_labels": ["O4", "C26", "N5", "O3"], "value_degrees": -170.5600299616, "kind": "improper", "links": [[65, 77], [64, 65], [64, 66]]}, {"id": "row-78", "row_index": 78, "atom_indices": [78, 64, 63, 65], "atom_labels": ["H36", "N5", "C25", "C26"], "value_degrees": 177.9243402459, "kind": "improper", "links": [[64, 78], [63, 64], [63, 65]]}, {"id": "row-79", "row_index": 79, "atom_indices": [79, 63, 62, 64], "atom_labels": ["H37", "C25", "C24", "N5"], "value_degrees": -116.5355883251, "kind": "improper", "links": [[63, 79], [62, 63], [62, 64]]}, {"id": "row-80", "row_index": 80, "atom_indices": [80, 63, 64, 79], "atom_labels": ["C31", "C25", "N5", "H37"], "value_degrees": 121.022201171, "kind": "improper", "links": [[63, 80], [63, 64], [64, 79]]}, {"id": "row-81", "row_index": 81, "atom_indices": [81, 80, 63, 79], "atom_labels": ["C32", "C31", "C25", "H37"], "value_degrees": 44.5216288775, "kind": "proper", "links": [[80, 81], [63, 80], [63, 79]]}, {"id": "row-82", "row_index": 82, "atom_indices": [82, 81, 80, 63], "atom_labels": ["C33", "C32", "C31", "C25"], "value_degrees": 96.751196666, "kind": "proper", "links": [[81, 82], [80, 81], [63, 80]]}, {"id": "row-83", "row_index": 83, "atom_indices": [83, 82, 81, 80], "atom_labels": ["C34", "C33", "C32", "C31"], "value_degrees": 177.9950035171, "kind": "proper", "links": [[82, 83], [81, 82], [80, 81]]}, {"id": "row-84", "row_index": 84, "atom_indices": [84, 83, 82, 81], "atom_labels": ["C35", "C34", "C33", "C32"], "value_degrees": -1.9064370486, "kind": "proper", "links": [[83, 84], [82, 83], [81, 82]]}, {"id": "row-85", "row_index": 85, "atom_indices": [85, 84, 83, 82], "atom_labels": ["H38", "C35", "C34", "C33"], "value_degrees": -176.7356123419, "kind": "proper", "links": [[84, 85], [83, 84], [82, 83]]}, {"id": "row-86", "row_index": 86, "atom_indices": [86, 83, 82, 84], "atom_labels": ["H39", "C34", "C33", "C35"], "value_degrees": -177.5945025694, "kind": "improper", "links": [[83, 86], [82, 83], [82, 84]]}, {"id": "row-87", "row_index": 87, "atom_indices": [87, 82, 81, 83], "atom_labels": ["H40", "C33", "C32", "C34"], "value_degrees": -179.1475280298, "kind": "improper", "links": [[82, 87], [81, 82], [81, 83]]}, {"id": "row-88", "row_index": 88, "atom_indices": [88, 81, 80, 82], "atom_labels": ["C36", "C32", "C31", "C33"], "value_degrees": 177.3935318619, "kind": "improper", "links": [[81, 88], [80, 81], [80, 82]]}, {"id": "row-89", "row_index": 89, "atom_indices": [89, 88, 81, 82], "atom_labels": ["C37", "C36", "C32", "C33"], "value_degrees": -2.5466481153, "kind": "proper", "links": [[88, 89], [81, 88], [81, 82]]}, {"id": "row-90", "row_index": 90, "atom_indices": [90, 89, 84, 83], "atom_labels": ["H41", "C37", "C35", "C34"], "value_degrees": 174.9848014379, "kind": "proper", "links": [[89, 90], [84, 89], [83, 84]]}, {"id": "row-91", "row_index": 91, "atom_indices": [91, 88, 81, 89], "atom_labels": ["H42", "C36", "C32", "C37"], "value_degrees": -177.8339844124, "kind": "improper", "links": [[88, 91], [81, 88], [81, 89]]}, {"id": "row-92", "row_index": 92, "atom_indices": [92, 80, 63, 81], "atom_labels": ["H43", "C31", "C25", "C32"], "value_degrees": 121.0271521653, "kind": "improper", "links": [[80, 92], [63, 80], [63, 81]]}, {"id": "row-93", "row_index": 93, "atom_indices": [93, 80, 81, 92], "atom_labels": ["H44", "C31", "C32", "H43"], "value_degrees": -117.0176924366, "kind": "improper", "links": [[80, 93], [80, 81], [81, 92]]}, {"id": "row-94", "row_index": 94, "atom_indices": [94, 62, 61, 63], "atom_labels": ["H45", "C24", "C23", "C25"], "value_degrees": -125.3331341561, "kind": "improper", "links": [[62, 94], [61, 62], [61, 63]]}, {"id": "row-95", "row_index": 95, "atom_indices": [95, 62, 61, 63], "atom_labels": ["O5", "C24", "C23", "C25"], "value_degrees": 118.1810674912, "kind": "improper", "links": [[62, 95], [61, 62], [61, 63]]}, {"id": "row-96", "row_index": 96, "atom_indices": [96, 61, 1, 62], "atom_labels": ["H46", "C23", "C1", "C24"], "value_degrees": 118.8023888914, "kind": "improper", "links": [[61, 96], [1, 61], [1, 62]]}, {"id": "row-97", "row_index": 97, "atom_indices": [97, 61, 62, 96], "atom_labels": ["H47", "C23", "C24", "H46"], "value_degrees": -115.8047466332, "kind": "improper", "links": [[61, 97], [61, 62], [62, 96]]}], "warnings": []}</script>
+  <script>
+    "use strict";
+
+    const molecule = JSON.parse(document.getElementById("moleculeData").textContent);
+    window.__viewerMolecule = molecule;
+
+    const canvas = document.getElementById("moleculeCanvas");
+    const ctx = canvas.getContext("2d");
+    const list = document.getElementById("dihedralList");
+    const activeDetail = document.getElementById("activeDetail");
+    const buttonsById = new Map();
+
+    const state = {
+      rotX: -0.45,
+      rotY: 0.72,
+      zoom: 1.0,
+      hovered: null,
+      hoveredAtom: null,
+      selected: null,
+      dragging: false,
+      lastX: 0,
+      lastY: 0
+    };
+
+    const atomsByIndex = new Map(molecule.atoms.map((atom) => [atom.index, atom]));
+    const bondKeys = new Set(molecule.bonds.map((bond) => linkKey(bond.left, bond.right)));
+    const center = moleculeCenter(molecule.atoms);
+    const radius = Math.max(1.0, moleculeRadius(molecule.atoms, center));
+
+    document.getElementById("viewerTitle").textContent = molecule.title || "Z-matrix viewer";
+    document.getElementById("viewerSource").textContent = molecule.source_name || "";
+    document.getElementById("atomCount").textContent = molecule.atoms.length + " atoms";
+    document.getElementById("bondCount").textContent = molecule.bonds.length + " bonds";
+    document.getElementById("dihedralCount").textContent = molecule.dihedrals.length + " dihedrals";
+    document.getElementById("warnings").textContent = molecule.warnings.join(" ");
+
+    buildDihedralList();
+    resizeCanvas();
+    draw();
+    window.__viewerReady = true;
+
+    window.addEventListener("resize", () => {
+      resizeCanvas();
+      draw();
+    });
+
+    document.getElementById("resetView").addEventListener("click", () => {
+      state.rotX = -0.45;
+      state.rotY = 0.72;
+      state.zoom = 1.0;
+      draw();
+    });
+
+    document.getElementById("clearSelection").addEventListener("click", () => {
+      state.selected = null;
+      state.hovered = null;
+      state.hoveredAtom = null;
+      canvas.classList.remove("is-atom-hover");
+      updateRows();
+      draw();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        state.selected = null;
+        state.hovered = null;
+        state.hoveredAtom = null;
+        canvas.classList.remove("is-atom-hover");
+        updateRows();
+        draw();
+      }
+    });
+
+    canvas.addEventListener("pointerdown", (event) => {
+      state.dragging = true;
+      state.lastX = event.clientX;
+      state.lastY = event.clientY;
+      state.hoveredAtom = null;
+      canvas.classList.add("is-dragging");
+      canvas.classList.remove("is-atom-hover");
+      canvas.setPointerCapture(event.pointerId);
+    });
+
+    canvas.addEventListener("pointermove", (event) => {
+      if (!state.dragging) {
+        const nextHoveredAtom = hitTestAtom(event);
+        if (state.hoveredAtom !== nextHoveredAtom) {
+          state.hoveredAtom = nextHoveredAtom;
+          canvas.classList.toggle("is-atom-hover", state.hoveredAtom !== null);
+          updateRows();
+          draw();
+        }
+        return;
+      }
+      const dx = event.clientX - state.lastX;
+      const dy = event.clientY - state.lastY;
+      state.lastX = event.clientX;
+      state.lastY = event.clientY;
+      state.rotY += dx * 0.010;
+      state.rotX += dy * 0.010;
+      state.rotX = Math.max(-Math.PI * 0.49, Math.min(Math.PI * 0.49, state.rotX));
+      draw();
+    });
+
+    canvas.addEventListener("pointerup", (event) => {
+      state.dragging = false;
+      canvas.classList.remove("is-dragging");
+      canvas.releasePointerCapture(event.pointerId);
+    });
+
+    canvas.addEventListener("pointercancel", () => {
+      state.dragging = false;
+      state.hoveredAtom = null;
+      canvas.classList.remove("is-dragging");
+      canvas.classList.remove("is-atom-hover");
+      updateRows();
+      draw();
+    });
+
+    canvas.addEventListener("pointerleave", () => {
+      if (state.dragging) {
+        return;
+      }
+      state.hoveredAtom = null;
+      canvas.classList.remove("is-atom-hover");
+      updateRows();
+      draw();
+    });
+
+    canvas.addEventListener("wheel", (event) => {
+      event.preventDefault();
+      const nextZoom = state.zoom * Math.exp(-event.deltaY * 0.001);
+      state.zoom = Math.max(0.35, Math.min(5.0, nextZoom));
+      draw();
+    }, { passive: false });
+
+    function buildDihedralList() {
+      if (molecule.dihedrals.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "active-detail";
+        empty.textContent = "No dihedral rows";
+        list.appendChild(empty);
+        activeDetail.textContent = "";
+        return;
+      }
+
+      for (const dihedral of molecule.dihedrals) {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "dihedral-row";
+        row.dataset.id = dihedral.id;
+
+        const quartet = document.createElement("span");
+        quartet.className = "quartet";
+        quartet.textContent = dihedral.atom_labels.join("-");
+        row.appendChild(quartet);
+
+        const value = document.createElement("span");
+        value.className = "value";
+        value.textContent = formatAngle(dihedral.value_degrees);
+        row.appendChild(value);
+
+        const meta = document.createElement("span");
+        meta.className = "meta";
+        meta.textContent = "row " + dihedral.row_index + " / " + dihedral.kind;
+        row.appendChild(meta);
+
+        row.addEventListener("mouseenter", () => {
+          state.hovered = dihedral.id;
+          updateRows();
+          draw();
+        });
+        row.addEventListener("mouseleave", () => {
+          state.hovered = null;
+          updateRows();
+          draw();
+        });
+        row.addEventListener("focus", () => {
+          state.hovered = dihedral.id;
+          updateRows();
+          draw();
+        });
+        row.addEventListener("blur", () => {
+          state.hovered = null;
+          updateRows();
+          draw();
+        });
+        row.addEventListener("click", () => {
+          state.selected = state.selected === dihedral.id ? null : dihedral.id;
+          updateRows();
+          draw();
+        });
+
+        buttonsById.set(dihedral.id, row);
+        list.appendChild(row);
+      }
+      updateRows();
+    }
+
+    function activeDihedral() {
+      const id = state.hovered || state.selected;
+      if (!id) {
+        return null;
+      }
+      return molecule.dihedrals.find((dihedral) => dihedral.id === id) || null;
+    }
+
+    function atomHoverDihedrals() {
+      if (state.hoveredAtom === null) {
+        return [];
+      }
+      return molecule.dihedrals.filter((dihedral) => dihedral.atom_indices[0] === state.hoveredAtom);
+    }
+
+    function updateRows() {
+      const active = activeDihedral();
+      const atomHoverIds = new Set(atomHoverDihedrals().map((dihedral) => dihedral.id));
+      for (const [id, row] of buttonsById) {
+        row.classList.toggle("is-active", active !== null && active.id === id);
+        row.classList.toggle("is-atom-hover", atomHoverIds.has(id) && !(active !== null && active.id === id));
+      }
+      if (!active) {
+        const atomDihedrals = atomHoverDihedrals();
+        if (atomDihedrals.length === 0) {
+          activeDetail.textContent = "";
+          return;
+        }
+        const atom = atomsByIndex.get(state.hoveredAtom);
+        activeDetail.innerHTML = "";
+        const strong = document.createElement("strong");
+        strong.textContent = atom ? atom.label : "Atom " + state.hoveredAtom;
+        activeDetail.appendChild(strong);
+        activeDetail.appendChild(document.createTextNode(
+          " starts " + atomDihedrals.length + " dihedral" + (atomDihedrals.length === 1 ? "" : "s")
+        ));
+        return;
+      }
+      activeDetail.innerHTML = "";
+      const strong = document.createElement("strong");
+      strong.textContent = active.atom_labels.join("-");
+      activeDetail.appendChild(strong);
+      activeDetail.appendChild(document.createTextNode(
+        "  " + formatAngle(active.value_degrees) + "  " + active.kind
+      ));
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+      canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function draw() {
+      updateRows();
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#eef2f6";
+      ctx.fillRect(0, 0, width, height);
+
+      const active = activeDihedral();
+      const atomHover = atomHoverDihedrals();
+      const activeAtoms = new Set(active ? active.atom_indices : []);
+      const activeLinks = new Set(active ? active.links.map((link) => linkKey(link[0], link[1])) : []);
+      const atomHoverAtoms = new Set(atomHover.flatMap((dihedral) => dihedral.atom_indices));
+      const atomHoverLinks = new Set(atomHover.flatMap((dihedral) => dihedral.links.map((link) => linkKey(link[0], link[1]))));
+      const projected = new Map();
+      for (const atom of molecule.atoms) {
+        projected.set(atom.index, projectAtom(atom, width, height));
+      }
+
+      const bonds = molecule.bonds.map((bond) => {
+        const left = projected.get(bond.left);
+        const right = projected.get(bond.right);
+        return {
+          bond,
+          left,
+          right,
+          z: (left.z + right.z) * 0.5
+        };
+      }).sort((a, b) => a.z - b.z);
+
+      for (const item of bonds) {
+        const key = linkKey(item.bond.left, item.bond.right);
+        drawBond(item.left, item.right, {
+          active: activeLinks.has(key),
+          atomHover: atomHoverLinks.has(key) && !activeLinks.has(key),
+          inferred: item.bond.kind === "inferred"
+        });
+      }
+
+      if (atomHover.length > 0) {
+        for (const dihedral of atomHover) {
+          for (const link of dihedral.links) {
+            const key = linkKey(link[0], link[1]);
+            if (activeLinks.has(key)) {
+              continue;
+            }
+            const left = projected.get(link[0]);
+            const right = projected.get(link[1]);
+            drawReferenceLink(left, right, !bondKeys.has(key), "#0077c8", 2.5);
+          }
+        }
+      }
+
+      if (active) {
+        for (const link of active.links) {
+          const left = projected.get(link[0]);
+          const right = projected.get(link[1]);
+          drawReferenceLink(left, right, !bondKeys.has(linkKey(link[0], link[1])), "#d76b00", 3);
+        }
+      }
+
+      const atoms = molecule.atoms.map((atom) => ({
+        atom,
+        point: projected.get(atom.index)
+      })).sort((a, b) => a.point.z - b.point.z);
+      for (const item of atoms) {
+        drawAtom(
+          item.atom,
+          item.point,
+          activeAtoms.has(item.atom.index),
+          atomHoverAtoms.has(item.atom.index) && !activeAtoms.has(item.atom.index)
+        );
+      }
+    }
+
+    function drawBond(left, right, options) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(left.x, left.y);
+      ctx.lineTo(right.x, right.y);
+      ctx.lineCap = "round";
+      ctx.lineWidth = options.active ? 8 : options.atomHover ? 7 : 5;
+      ctx.strokeStyle = options.active ? "#d76b00" : options.atomHover ? "#0077c8" : options.inferred ? "#b9c3cf" : "#8995a3";
+      if (options.inferred && !options.active && !options.atomHover) {
+        ctx.setLineDash([6, 6]);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawReferenceLink(left, right, dashed, color, width) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(left.x, left.y);
+      ctx.lineTo(right.x, right.y);
+      ctx.lineCap = "round";
+      ctx.lineWidth = width;
+      ctx.strokeStyle = color;
+      if (dashed) {
+        ctx.setLineDash([7, 5]);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawAtom(atom, point, highlighted, atomHoverHighlighted) {
+      const scale = projectionScale(canvas.clientWidth, canvas.clientHeight);
+      const radiusPx = Math.max(5, atom.display_radius * scale);
+      if (highlighted || atomHoverHighlighted) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, radiusPx + 6, 0, Math.PI * 2);
+        ctx.strokeStyle = highlighted ? "#d76b00" : "#0077c8";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      const gradient = ctx.createRadialGradient(
+        point.x - radiusPx * 0.35,
+        point.y - radiusPx * 0.45,
+        Math.max(1, radiusPx * 0.08),
+        point.x,
+        point.y,
+        radiusPx
+      );
+      gradient.addColorStop(0, "#ffffff");
+      gradient.addColorStop(0.25, atom.color);
+      gradient.addColorStop(1, adjustHex(atom.color, -38));
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, radiusPx, 0, Math.PI * 2);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = "#26303a";
+      ctx.stroke();
+      ctx.restore();
+
+      drawLabel(atom.label, point.x + radiusPx + 4, point.y - radiusPx - 2, highlighted, atomHoverHighlighted);
+    }
+
+    function drawLabel(text, x, y, highlighted, atomHoverHighlighted) {
+      ctx.save();
+      ctx.font = (highlighted || atomHoverHighlighted ? "700 " : "600 ") + "12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "rgba(255,255,255,0.90)";
+      ctx.strokeText(text, x, y);
+      ctx.fillStyle = highlighted ? "#a34400" : atomHoverHighlighted ? "#005b99" : "#1d2430";
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+
+    function hitTestAtom(event) {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      const scale = projectionScale(width, height);
+      let best = null;
+      let bestDistance = Infinity;
+
+      for (const atom of molecule.atoms) {
+        const point = projectAtom(atom, width, height);
+        const radiusPx = Math.max(5, atom.display_radius * scale) + 8;
+        const dx = x - point.x;
+        const dy = y - point.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance <= radiusPx && distance < bestDistance) {
+          best = atom.index;
+          bestDistance = distance;
+        }
+      }
+
+      return best;
+    }
+
+    function projectAtom(atom, width, height) {
+      const x0 = atom.x - center.x;
+      const y0 = atom.y - center.y;
+      const z0 = atom.z - center.z;
+      const cy = Math.cos(state.rotY);
+      const sy = Math.sin(state.rotY);
+      const cx = Math.cos(state.rotX);
+      const sx = Math.sin(state.rotX);
+
+      const x1 = x0 * cy + z0 * sy;
+      const z1 = -x0 * sy + z0 * cy;
+      const y1 = y0 * cx - z1 * sx;
+      const z2 = y0 * sx + z1 * cx;
+      const scale = projectionScale(width, height);
+      return {
+        x: width * 0.5 + x1 * scale,
+        y: height * 0.5 - y1 * scale,
+        z: z2
+      };
+    }
+
+    function projectionScale(width, height) {
+      return Math.min(width, height) / (radius * 2.7) * state.zoom;
+    }
+
+    function moleculeCenter(atoms) {
+      if (atoms.length === 0) {
+        return { x: 0, y: 0, z: 0 };
+      }
+      const total = atoms.reduce((acc, atom) => ({
+        x: acc.x + atom.x,
+        y: acc.y + atom.y,
+        z: acc.z + atom.z
+      }), { x: 0, y: 0, z: 0 });
+      return {
+        x: total.x / atoms.length,
+        y: total.y / atoms.length,
+        z: total.z / atoms.length
+      };
+    }
+
+    function moleculeRadius(atoms, centerPoint) {
+      let maxRadius = 0;
+      for (const atom of atoms) {
+        const dx = atom.x - centerPoint.x;
+        const dy = atom.y - centerPoint.y;
+        const dz = atom.z - centerPoint.z;
+        maxRadius = Math.max(maxRadius, Math.sqrt(dx * dx + dy * dy + dz * dz));
+      }
+      return maxRadius;
+    }
+
+    function linkKey(left, right) {
+      return left < right ? left + "-" + right : right + "-" + left;
+    }
+
+    function formatAngle(value) {
+      return Number(value).toFixed(2) + " deg";
+    }
+
+    function adjustHex(hex, amount) {
+      const clean = hex.replace("#", "");
+      if (clean.length !== 6) {
+        return hex;
+      }
+      const parts = [0, 2, 4].map((index) => {
+        const next = Math.max(0, Math.min(255, parseInt(clean.slice(index, index + 2), 16) + amount));
+        return next.toString(16).padStart(2, "0");
+      });
+      return "#" + parts.join("");
+    }
+  </script>
+</body>
+</html>
