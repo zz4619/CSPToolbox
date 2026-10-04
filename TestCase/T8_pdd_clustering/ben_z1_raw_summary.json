@@ -1,0 +1,270 @@
+{
+  "scope": "All raw successful minima; replaces both native reduction and COMPACK",
+  "descriptor_build": {
+    "structures": 548435,
+    "workers": 6,
+    "elapsed_s": 302.57780037494376,
+    "largest_worker_peak_rss_bytes": 146182144,
+    "parent_peak_rss_bytes": 3686146048,
+    "k": 100,
+    "typed": true,
+    "asu_orbit_rows": 15,
+    "collapse": false,
+    "distance_bytes": 6581220000
+  },
+  "reconstruction_validation": {
+    "passed": true,
+    "structures": 4953,
+    "lam_points": 426,
+    "raw_record_union_exact": true,
+    "raw_count": 548435,
+    "raw_sha256": "66b3ad0068b06298463f957eeb5680fd2f403e004c5a9a19246df01942b06f17",
+    "historical_smooth": 0.4,
+    "historical_cutoff": 1000.0,
+    "archived_pdd_errors_angstrom": {
+      "max": 0.001081713024197839,
+      "median": 0.00011553298760175562,
+      "p99": 0.0003370582348371451
+    },
+    "worst": [
+      [
+        0.001081713024197839,
+        "A4_01856",
+        183401,
+        14
+      ],
+      [
+        0.0006033861829972231,
+        "A4_02563",
+        566585,
+        14
+      ],
+      [
+        0.0005251027207548553,
+        "A4_02768",
+        293879,
+        15
+      ],
+      [
+        0.0005243247071824147,
+        "A4_00948",
+        798294,
+        61
+      ],
+      [
+        0.0005023695369720175,
+        "A4_02775",
+        294568,
+        15
+      ],
+      [
+        0.0004991208144509152,
+        "A4_02556",
+        277773,
+        14
+      ],
+      [
+        0.0004808800316183988,
+        "A4_02770",
+        423517,
+        15
+      ],
+      [
+        0.0004674422398097751,
+        "A4_02776",
+        690171,
+        15
+      ],
+      [
+        0.000465188302881551,
+        "A4_02772",
+        323382,
+        15
+      ],
+      [
+        0.00045924145531301975,
+        "A4_01506",
+        653201,
+        15
+      ],
+      [
+        0.00041674197232811254,
+        "A4_02771",
+        848173,
+        15
+      ],
+      [
+        0.0004146604220645204,
+        "A4_02767",
+        860118,
+        15
+      ],
+      [
+        0.00040938217506223393,
+        "A4_02800",
+        806863,
+        14
+      ],
+      [
+        0.0004053658085757009,
+        "A4_01407",
+        979402,
+        61
+      ],
+      [
+        0.0004004720842843904,
+        "A4_01508",
+        652275,
+        15
+      ],
+      [
+        0.0003957027000269046,
+        "A4_02777",
+        315226,
+        15
+      ],
+      [
+        0.0003922479288162547,
+        "A4_01401",
+        119194,
+        15
+      ],
+      [
+        0.0003896020510166724,
+        "A4_01849",
+        581495,
+        14
+      ],
+      [
+        0.0003875226204041423,
+        "A4_02388",
+        813465,
+        14
+      ],
+      [
+        0.0003873741726642639,
+        "A4_02887",
+        56132,
+        15
+      ]
+    ],
+    "asu_full_cell_equivalence_by_sg": {
+      "14": 7.96399982997779e-15,
+      "29": 1.139828971948494e-14,
+      "4": 6.9277916736609774e-15,
+      "9": 7.37188088351104e-15,
+      "61": 1.1194748831636996e-14,
+      "7": 7.786364146037764e-15,
+      "96": 1.164994027173331e-14,
+      "15": 9.825473767932634e-15,
+      "56": 1.1749860343949573e-14,
+      "60": 1.0876484897911116e-14,
+      "43": 1.5765166949677226e-14,
+      "76": 1.0495308326123146e-14,
+      "33": 1.0835776720341529e-14,
+      "1": 0.0,
+      "19": 1.0939397535973207e-14,
+      "2": 9.917992353318063e-16,
+      "86": 1.1609232094163721e-14,
+      "13": 7.290464528371862e-15,
+      "18": 1.059892914175483e-14,
+      "88": 1.2912818962244432e-14,
+      "152": 1.5375355309919948e-14,
+      "5": 7.804867863114852e-15,
+      "20": 1.1968204205459189e-14,
+      "148": 1.7293985173957348e-14,
+      "169": 1.5957605607278918e-14,
+      "145": 1.342136278657967e-14
+    },
+    "seconds": 25.23957550013438
+  },
+  "results": [
+    {
+      "threshold": 0.1,
+      "structures": 548435,
+      "clusters": 2921,
+      "historical_reference_clusters": 2777,
+      "clustering_wall_s": 747.0342326252721,
+      "clustering_workers": 1,
+      "peak_rss_scope": "single_process",
+      "peak_rss_bytes": 3489251328,
+      "anchor_metrics": {
+        "structures": 4953,
+        "reference_clusters": 2777,
+        "predicted_clusters": 2913,
+        "reference_same_cluster_pairs": 3340,
+        "predicted_same_cluster_pairs": 2980,
+        "shared_same_cluster_pairs": 2785,
+        "pair_precision": 0.9345637583892618,
+        "pair_recall": 0.8338323353293413,
+        "adjusted_rand": 0.8812986270833125,
+        "b_cubed_precision": 0.9841852956026184,
+        "b_cubed_recall": 0.9458097749436333,
+        "reference_clusters_split": 182,
+        "predicted_clusters_merging_reference": 49
+      },
+      "clusters_without_first_representative_anchor": 8,
+      "raw_members_in_those_clusters": 161,
+      "per_batch_clusters": {
+        "1": 28,
+        "2": 248,
+        "3": 897,
+        "4": 1748
+      },
+      "statistics": {
+        "index_candidates": 14392939,
+        "amd_checks": 14392939,
+        "emd_calls": 7363502,
+        "exhaustive_representatives": 217193672
+      },
+      "labels_validated": true
+    },
+    {
+      "threshold": 0.15,
+      "structures": 548435,
+      "clusters": 2696,
+      "historical_reference_clusters": 2777,
+      "clustering_wall_s": 721.4316864996217,
+      "clustering_workers": 2,
+      "peak_rss_scope": "largest_worker_not_aggregate",
+      "peak_rss_bytes": 2453745664,
+      "anchor_metrics": {
+        "structures": 4953,
+        "reference_clusters": 2777,
+        "predicted_clusters": 2689,
+        "reference_same_cluster_pairs": 3340,
+        "predicted_same_cluster_pairs": 3504,
+        "shared_same_cluster_pairs": 2994,
+        "pair_precision": 0.8544520547945206,
+        "pair_recall": 0.8964071856287426,
+        "adjusted_rand": 0.8748920536682004,
+        "b_cubed_precision": 0.9506063198976584,
+        "b_cubed_recall": 0.9744119689001578,
+        "reference_clusters_split": 75,
+        "predicted_clusters_merging_reference": 149
+      },
+      "clusters_without_first_representative_anchor": 7,
+      "raw_members_in_those_clusters": 316,
+      "per_batch_clusters": {
+        "1": 28,
+        "2": 233,
+        "3": 836,
+        "4": 1599
+      },
+      "statistics": {
+        "index_candidates": 17298073,
+        "amd_checks": 17298073,
+        "emd_calls": 12642134,
+        "exhaustive_representatives": 201669796
+      },
+      "labels_validated": true
+    }
+  ],
+  "limitations": [
+    "Reference pair metrics cover 4,953 saved anchors, not all raw memberships.",
+    "Original four analysis partitions retained; no cross-batch deduplication.",
+    "Historical native executable has not been hash-matched.",
+    "Local times are observed, not a matched CX3 speedup benchmark.",
+    "No production threshold selected."
+  ]
+}

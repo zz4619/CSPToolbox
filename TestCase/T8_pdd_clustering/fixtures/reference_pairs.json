@@ -1,0 +1,40 @@
+{
+  "settings": {
+    "k": 100,
+    "typed": true,
+    "collapse_tol": 0.0001,
+    "compack_shell": 15,
+    "rmsd_threshold": 0.2
+  },
+  "positive": {
+    "a": 26,
+    "b": 18,
+    "reference_match": true,
+    "rmsd15": 0.0233,
+    "nmatched": 15,
+    "amd": 0.007125165057452421,
+    "pdd": 0.053520117285341506
+  },
+  "negative": {
+    "a": 16,
+    "b": 9,
+    "reference_match": false,
+    "rmsd15": null,
+    "nmatched": 12,
+    "amd": 0.051237168048103854,
+    "pdd": 0.18206063534726918
+  },
+  "provenance": "2026-09-22 Nicotinamide Z4/26SG, original AXOSOW script, CSD/2025.3.1 API3.6.1",
+  "controlled_positive": {
+    "base_id": 181,
+    "control_id": "control_181_2",
+    "base_path": "baseline/unique_pool/181-1/181.res",
+    "control_path": "controls/control_181_2.res",
+    "amplitude": 0.15,
+    "split": "validation",
+    "nmatched": 15,
+    "rmsd": 0.14911476622975878,
+    "reference_match": true,
+    "pdd": 0.1853740203079001
+  }
+}

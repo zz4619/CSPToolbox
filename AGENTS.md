@@ -33,6 +33,7 @@ python -m unittest discover -s TestCase/T3_zmatrix_generation -p 'test_*.py' -v
 python -m unittest discover -s TestCase/T7_shared_zmatrix -p 'test_*.py' -v
 python -m unittest discover -s TestCase/T5_vasp_results -p 'test_*.py' -v
 python -m unittest discover -s TestCase/T6_conformer_generation -p 'test_*.py' -v
+python -m unittest discover -s TestCase/T8_pdd_clustering -p 'test_*.py' -v
 python -m pip wheel --no-deps --no-build-isolation . -w /tmp/csptoolbox-wheel
 git diff --check
 ```
@@ -51,6 +52,11 @@ workflow was found. Report these as unconfigured rather than claiming they pass.
 The wheel build requires the setuptools/wheel build dependencies to be available;
 `--no-build-isolation` avoids implicitly downloading another build environment.
 Verify viewer HTML/CSS/JS assets are included in a wheel after packaging edits.
+
+For descriptor/clustering work read `docs/PDD_CLUSTERING.md`. Preserve full-cell
+periodicity and typed element fractions. AMD shortlisting must not change results
+relative to exhaustive PDD comparison. A PDD threshold is not interchangeable with
+COMPACK RMSD; calibrate false merges and missed duplicates on independent pairs.
 
 ## Scientific and file conventions
 
