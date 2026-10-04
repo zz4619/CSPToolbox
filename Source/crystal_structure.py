@@ -19,7 +19,7 @@ Notes:
 
 from __future__ import annotations
 
-from collections import Counter
+from collections import Counter, defaultdict
 from dataclasses import dataclass
 from fractions import Fraction
 import math
@@ -292,13 +292,9 @@ class CrystalStructure:
             symprec=symprec,
             angle_tolerance=angle_tolerance,
         )
-        representative_indices: list[int] = []
-        seen_representatives: set[int] = set()
-        for atom_index, representative in enumerate(detection.equivalent_atoms):
-            if representative in seen_representatives:
-                continue
-            seen_representatives.add(representative)
-            representative_indices.append(atom_index)
+        representative_indices = self._molecule_aware_representative_indices(
+            detection.equivalent_atoms
+        )
 
         reduced_atoms = [self.atoms[index] for index in representative_indices]
         return CrystalStructure(
@@ -312,6 +308,56 @@ class CrystalStructure:
             shelx_latt_value=detection.shelx_latt_value,
             symmetry_operations=detection.symmetry_operations,
         )
+
+    def _molecule_aware_representative_indices(
+        self,
+        equivalent_atoms: Iterable[int],
+    ) -> list[int]:
+        """Choose one site from each symmetry orbit while preserving molecules.
+
+        spglib reports atom orbits independently. Picking the first atom from
+        every orbit can combine atoms from different symmetry-equivalent
+        molecular copies, which leaves otherwise intact molecules fragmented in
+        the reduced structure. Prefer representatives from the same connected
+        component where possible; this still selects exactly one atom per orbit.
+        """
+
+        orbit_by_index = [int(value) for value in equivalent_atoms]
+        orbit_to_indices: dict[int, list[int]] = defaultdict(list)
+        for atom_index, orbit in enumerate(orbit_by_index):
+            orbit_to_indices[orbit].append(atom_index)
+
+        remaining_orbits = set(orbit_to_indices)
+        if not remaining_orbits:
+            return []
+
+        adjacency = self._build_connectivity(DEFAULT_COVALENT_SCALE)
+        components = self._connected_components(adjacency)
+        selected_indices: list[int] = []
+
+        while remaining_orbits:
+            best_component: list[int] | None = None
+            best_cover: set[int] = set()
+            for component in components:
+                cover = {orbit_by_index[index] for index in component} & remaining_orbits
+                if len(cover) > len(best_cover):
+                    best_component = component
+                    best_cover = cover
+
+            if best_component is None or not best_cover:
+                orbit = min(remaining_orbits)
+                selected_indices.append(orbit_to_indices[orbit][0])
+                remaining_orbits.remove(orbit)
+                continue
+
+            for atom_index in sorted(best_component):
+                orbit = orbit_by_index[atom_index]
+                if orbit not in remaining_orbits:
+                    continue
+                selected_indices.append(atom_index)
+                remaining_orbits.remove(orbit)
+
+        return selected_indices
 
     def expand_to_explicit_unit_cell(self) -> "CrystalStructure":
         if self.explict_unit_cell:
