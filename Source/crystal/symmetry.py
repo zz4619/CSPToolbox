@@ -57,7 +57,7 @@ def apply_symmetry_operation(
 
     x, y, z = frac_coords
     components = [part.strip().replace(" ", "").lower() for part in operation.split(",")]
-    values = [eval(component, {"__builtins__": {}}, {"x": x, "y": y, "z": z}) for component in components]
+    values = [_evaluate_symmetry_component(component, {"x": x, "y": y, "z": z}) for component in components]
     return tuple(float(value) for value in values)  # type: ignore[return-value]
 
 
@@ -558,3 +558,48 @@ def _round_res_fractional_translation(value: float) -> float:
         if abs(normalized - target) <= _RES_TRANSLATION_ROUNDING_TOLERANCE:
             return 0.0 if math.isclose(target, 1.0, abs_tol=1e-12) else target
     return normalized
+
+
+def _evaluate_symmetry_component(component: str, variables: dict[str, float]) -> float:
+    """Evaluate one operation component such as ``-x+1/2`` or ``x-y``.
+
+    Terms are summed left to right with the same floating-point operations
+    Python arithmetic would use, so results are bit-identical to evaluating the
+    text as an expression. Only x/y/z, integers, decimals and fractions are
+    accepted; anything else raises ValueError (operations come from files and
+    must never be executed as code).
+    """
+
+    if not component:
+        raise ValueError("Empty symmetry-operation component.")
+    total: float | None = None
+    index = 0
+    while index < len(component):
+        sign = 1.0
+        while index < len(component) and component[index] in "+-":
+            if component[index] == "-":
+                sign = -sign
+            index += 1
+        end = index
+        while end < len(component) and component[end] not in "+-":
+            end += 1
+        operand = component[index:end]
+        if not operand:
+            raise ValueError(f"Missing operand in symmetry component {component!r}.")
+        if operand in variables:
+            value = variables[operand]
+        elif "/" in operand:
+            numerator, _, denominator = operand.partition("/")
+            try:
+                value = float(numerator) / float(denominator)
+            except ValueError as error:
+                raise ValueError(f"Invalid term {operand!r} in symmetry component {component!r}.") from error
+        else:
+            try:
+                value = float(operand)
+            except ValueError as error:
+                raise ValueError(f"Invalid term {operand!r} in symmetry component {component!r}.") from error
+        term = -value if sign < 0 else value
+        total = term if total is None else total + term
+        index = end
+    return total
