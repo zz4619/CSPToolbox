@@ -2,7 +2,7 @@
 SYSTEM_NAME=DUMMY_SYSTEM_NAME
 
 OUTPUT=./local_minimisation_output
-BIN=/rds/general/user/zz4619/home/CSP-Imperial-suite/CSO-RM/CrystalStructureOptimzer-RMV1.4.1/unix_executable
+BIN=$HOME/CSP-Imperial-suite/CSO-RM/CrystalStructureOptimzer-RMV1.4.1/unix_executable/
 
 rm -rf ${OUTPUT}
 mkdir -p ${OUTPUT}

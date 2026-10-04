@@ -15,7 +15,7 @@ module load Gaussian/16.C.02-AVX2
 #Defining dirs
 EPHEMERAL=/rds/general/user/zz4619/ephemeral/${PBS_JOBNAME}/
 OUTPUT=${PBS_O_WORKDIR}/local_minimisation_output
-BIN=/rds/general/user/zz4619/home/CSP-Imperial-suite/CSO-RM/CrystalStructureOptimzer-RMV1.4.1/unix_executable
+BIN=$HOME/CSP-Imperial-suite/CSO-RM/CrystalStructureOptimzer-RMV1.4.1/unix_executable/
 
 rm -rf ${EPHEMERAL}
 mkdir -p ${EPHEMERAL}
